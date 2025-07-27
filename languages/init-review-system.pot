@@ -1,0 +1,173 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Init Review System\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-27\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "General Settings"
+msgstr ""
+
+msgid "Multi-Criteria Review"
+msgstr ""
+
+msgid "Require login to vote"
+msgstr ""
+
+msgid "Enable strict IP check"
+msgstr ""
+
+msgid "Display score position"
+msgstr ""
+
+msgid "Display review system"
+msgstr ""
+
+msgid "Criteria #%d"
+msgstr ""
+
+msgid "Only allow logged-in users to vote."
+msgstr ""
+
+msgid "Prevent multiple votes from the same IP (via hashed IP & transient)."
+msgstr ""
+
+msgid "No (manual shortcode only)"
+msgstr ""
+
+msgid "Before content"
+msgstr ""
+
+msgid "After content"
+msgstr ""
+
+msgid "Before comment form"
+msgstr ""
+
+msgid "After comment form"
+msgstr ""
+
+msgid "Auto-display average score at selected position."
+msgstr ""
+
+msgid "Auto-display star rating system at selected position."
+msgstr ""
+
+msgid "Leave blank to disable"
+msgstr ""
+
+msgid "Init Review System Settings"
+msgstr ""
+
+msgid "Init Review System"
+msgstr ""
+
+msgid "Shortcode Builder"
+msgstr ""
+
+msgid "Please select scores and write a review."
+msgstr ""
+
+msgid "Your review has been submitted!"
+msgstr ""
+
+msgid "Submission failed. Please try again later."
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Copied!"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Shortcode Preview"
+msgstr ""
+
+msgid "Review Score"
+msgstr ""
+
+msgid "Review System"
+msgstr ""
+
+msgid "Show Icon"
+msgstr ""
+
+msgid "Enable Schema.org"
+msgstr ""
+
+msgid "Custom Class"
+msgstr ""
+
+msgid "Post ID"
+msgstr ""
+
+msgid "Posts per page"
+msgstr ""
+
+msgid "reviews"
+msgstr ""
+
+msgid "Write a review"
+msgstr ""
+
+msgid "Anonymous"
+msgstr ""
+
+msgid "No reviews yet."
+msgstr ""
+
+msgid "Load more reviews"
+msgstr ""
+
+msgid "Submit your review"
+msgstr ""
+
+msgid "Review content"
+msgstr ""
+
+msgid "Write your thoughts..."
+msgstr ""
+
+msgid "Submit Review"
+msgstr ""
+
+msgid "Invalid post ID or score."
+msgstr ""
+
+msgid "Login required to vote."
+msgstr ""
+
+msgid "Invalid nonce."
+msgstr ""
+
+msgid "You have already voted recently."
+msgstr ""
+
+msgid "Invalid request data."
+msgstr ""
+
+msgid "Login required to submit review."
+msgstr ""
+
+msgid "No valid scores provided."
+msgstr ""
+
+msgid "You have already submitted a review."
+msgstr ""
+
+msgid "You have already submitted a review from this IP."
+msgstr ""
+
+msgid "Could not insert review."
+msgstr ""
+
+msgid "Review submitted successfully."
+msgstr ""
+
+msgid "Invalid post ID."
+msgstr ""

@@ -1,0 +1,507 @@
+/* ================================
+    Init Review System - Style.css
+   ================================ */
+
+/* Score display */
+.init-review-score {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1rem;
+    gap: 4px;
+    color: inherit; /* dùng màu của theme */
+}
+.init-review-score svg {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+/* Review block */
+.init-review-system {
+    max-width: 100%;
+    font-family: inherit;
+}
+.init-review-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.init-review-stars {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    justify-content: flex-start;
+}
+.init-review-stars .star {
+    cursor: pointer;
+    color: #ddd;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.init-review-stars .star.active {
+    color: #f39c12;
+}
+.init-review-stars .star.hovering {
+    color: #ffa500;
+    transform: scale(1.1);
+}
+.init-review-stars .i-star {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+.init-review-disabled .star {
+    pointer-events: none;
+}
+
+/* Right-side info */
+.init-review-info {
+    font-size: 1rem;
+    color: inherit;
+}
+.init-review-info sub {
+    font-size: 0.8em;
+    opacity: 0.9;
+    margin-left: 2px;
+}
+.init-review-info::after {
+    content: '';
+    display: inline-block;
+    width: 4px;
+}
+
+/* ================================
+   Init Review System - Criteria Review Display
+   ================================ */
+
+.init-review-criteria-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+    font-family: inherit;
+}
+
+/* Tổng điểm trung bình */
+.init-review-score-box {
+    text-align: center;
+    line-height: 1.3;
+}
+.init-review-score-box .init-review-score-value {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #f39c12;
+}
+.init-review-score-box .init-review-stars-line {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 4px 0;
+}
+.init-review-score-box .init-review-stars-line svg {
+    width: 24px;
+    height: 24px;
+}
+.init-review-score-box .init-review-score-count {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Mỗi dòng tiêu chí */
+.init-review-criteria-breakdown-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 480px;
+    margin-inline: auto;
+    width: 100%;
+}
+.init-review-criteria-breakdown-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.init-review-criteria-breakdown-row .label {
+    flex: 0 0 130px;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+}
+.init-review-criteria-breakdown-row .bar-bg {
+    flex: 1;
+    height: 10px;
+    background: #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.init-review-criteria-breakdown-row .bar-fill {
+    height: 100%;
+    background: #f39c12;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+.init-review-criteria-breakdown-row .value {
+    flex: 0 0 40px;
+    text-align: right;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+/* Nút mở modal */
+.init-review-open-modal.init-review-open-modal-btn {
+    background: #f1c40f;
+    color: #000;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    display: block;
+    margin-inline: auto;
+    transition: background 0.2s ease;
+}
+.init-review-open-modal.init-review-open-modal-btn:hover {
+    background: #e0b300;
+}
+.init-review-open-modal.init-review-open-modal-btn.is-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Danh sách review */
+.init-review-feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Item container */
+.init-review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Top: avatar + header (tên, sao, thời gian) */
+.init-review-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Avatar */
+.init-review-avatar img {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+/* Header bên phải avatar */
+.init-review-header {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Tên và sao */
+.author-and-stars {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: space-between;
+}
+
+/* Tên người viết */
+.init-review-header .author {
+    color: #333;
+    margin: 0;
+}
+
+/* Ngày đăng */
+.review-date {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+/* Các sao đánh giá */
+.init-review-header .init-review-stars {
+    display: flex;
+    gap: 4px;
+}
+.init-review-header .init-review-stars .star {
+    width: 20px;
+    height: 20px;
+    color: #f39c12;
+    cursor: auto;
+}
+
+/* Body: nội dung + tiêu chí */
+.init-review-body {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Nội dung review */
+.init-review-text {
+    color: #444;
+    line-height: 1.5;
+}
+
+/* Phân tích tiêu chí */
+.init-review-criteria-breakdown {
+    color: #777;
+}
+.init-review-criteria-breakdown .criteria-score {
+    margin-right: 1rem;
+}
+
+/* Trường hợp không có review */
+.init-review-no-feedback {
+    font-style: italic;
+    color: #aaa;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+/* Nút load thêm */
+.init-review-load-more-wrapper {
+    text-align: center;
+}
+
+/* Ngắt dòng cho mobile nếu có <br class="visible-mobile"> */
+br.visible-mobile {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .author-and-stars {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+    }
+    br.visible-mobile {
+        display: block;
+    }
+}
+
+/* ===== Dark Mode Support (if parent has .dark) ===== */
+
+.init-review-criteria-summary.dark {
+    color: #eee;
+}
+
+.init-review-criteria-summary.dark .init-review-score-box .init-review-score-count,
+.init-review-criteria-summary.dark .init-review-criteria-breakdown-row .value,
+.init-review-criteria-summary.dark .init-review-criteria-breakdown-row .label {
+    color: #ccc;
+}
+
+.init-review-criteria-summary.dark .init-review-criteria-breakdown-row .bar-bg {
+    background: #444;
+}
+
+.init-review-criteria-summary.dark .init-review-criteria-breakdown-row .bar-fill {
+    background: #f39c12;
+}
+
+.init-review-criteria-summary.dark .init-review-no-feedback {
+    color: #888;
+}
+
+.init-review-criteria-summary.dark .init-review-text {
+    color: #ddd;
+}
+
+.init-review-criteria-summary.dark .init-review-criteria-breakdown {
+    color: #999;
+}
+
+.init-review-criteria-summary.dark .init-review-header .author {
+    color: #fff;
+}
+
+/* ============================
+    Init Review Modal Styles
+   ============================ */
+
+/* === Modal Overlay === */
+#init-review-modal {
+    display: none;
+    max-width: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    margin: 0;
+}
+
+#init-review-modal.is-active {
+    display: block;
+}
+
+/* === Modal Content === */
+#init-review-modal .init-review-modal-content {
+    background: #fff;
+    color: #111;
+    width: 96%;
+    max-width: 620px;
+    margin: 5% auto;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    animation: initModalSlide 0.3s ease-out forwards;
+    box-sizing: border-box;
+}
+
+/* === Modal Title === */
+#init-review-modal .init-review-modal-title {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* === Modal Close Button === */
+#init-review-modal .init-review-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+}
+
+#init-review-modal .init-review-modal-close:hover {
+    color: #000;
+}
+
+/* === Review Lines === */
+.init-review-modal-line {
+    margin-bottom: 18px;
+}
+
+.init-review-modal-line span {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    background: none !important;
+}
+
+/* === Star Rating === */
+.init-review-modal-stars {
+    display: flex;
+    gap: 6px;
+}
+
+.init-review-modal-stars .star {
+    cursor: pointer;
+    color: #ccc;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.init-review-modal-stars .star.active {
+    color: #f39c12;
+}
+
+.init-review-modal-stars .star.hovering {
+    color: #ffa500;
+    transform: scale(1.1);
+}
+
+.init-review-modal-stars .i-star {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+/* === Textarea === */
+#init-review-content {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    resize: vertical;
+    box-sizing: border-box;
+    background: #fff;
+    color: #111;
+}
+
+#init-review-content:focus {
+    border-color: #0073aa;
+    outline: none;
+    box-shadow: 0 0 0 2px #0073aa44;
+}
+
+/* === Submit Button === */
+.init-review-modal-form button[type="submit"] {
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.init-review-modal-form button[type="submit"]:hover {
+    background: #444;
+}
+
+/* === Animation === */
+@keyframes initModalSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === Dark Mode Support === */
+#init-review-modal.dark .init-review-modal-content {
+    background: #111;
+    color: #eee;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+}
+
+#init-review-modal.dark .init-review-modal-title,
+#init-review-modal.dark .init-review-modal-close {
+    color: #aaa;
+}
+#init-review-modal.dark .init-review-modal-close:hover {
+    color: #fff;
+}
+#init-review-modal.dark span {
+    color: #ddd;
+}
+#init-review-modal.dark #init-review-content {
+    background: #222;
+    color: #eee;
+    border-color: #555;
+}
+#init-review-modal.dark button[type="submit"] {
+    background: #eee;
+    color: #111;
+}
+#init-review-modal.dark button[type="submit"]:hover {
+    background: #fff;
+}

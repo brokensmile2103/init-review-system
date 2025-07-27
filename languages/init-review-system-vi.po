@@ -1,0 +1,173 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Init Review System\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-27\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "General Settings"
+msgstr "Cài đặt chung"
+
+msgid "Multi-Criteria Review"
+msgstr "Đánh giá theo nhiều tiêu chí"
+
+msgid "Require login to vote"
+msgstr "Yêu cầu đăng nhập để bình chọn"
+
+msgid "Enable strict IP check"
+msgstr "Bật kiểm tra IP nghiêm ngặt"
+
+msgid "Display score position"
+msgstr "Vị trí hiển thị điểm trung bình"
+
+msgid "Display review system"
+msgstr "Vị trí hiển thị hệ thống đánh giá"
+
+msgid "Criteria #%d"
+msgstr "Tiêu chí #%d"
+
+msgid "Only allow logged-in users to vote."
+msgstr "Chỉ cho phép người dùng đã đăng nhập đánh giá."
+
+msgid "Prevent multiple votes from the same IP (via hashed IP & transient)."
+msgstr "Ngăn người dùng bình chọn nhiều lần từ cùng một IP (sử dụng IP hash & transient)."
+
+msgid "No (manual shortcode only)"
+msgstr "Không (chỉ hiển thị bằng shortcode thủ công)"
+
+msgid "Before content"
+msgstr "Trước nội dung"
+
+msgid "After content"
+msgstr "Sau nội dung"
+
+msgid "Before comment form"
+msgstr "Trước biểu mẫu bình luận"
+
+msgid "After comment form"
+msgstr "Sau biểu mẫu bình luận"
+
+msgid "Auto-display average score at selected position."
+msgstr "Tự động hiển thị điểm trung bình ở vị trí đã chọn."
+
+msgid "Auto-display star rating system at selected position."
+msgstr "Tự động hiển thị hệ thống sao đánh giá ở vị trí đã chọn."
+
+msgid "Leave blank to disable"
+msgstr "Để trống để tắt"
+
+msgid "Init Review System Settings"
+msgstr "Cài đặt Init Review System"
+
+msgid "Init Review System"
+msgstr "Init Review System"
+
+msgid "Shortcode Builder"
+msgstr "Trình tạo Shortcode"
+
+msgid "Please select scores and write a review."
+msgstr "Vui lòng chọn điểm và viết đánh giá."
+
+msgid "Your review has been submitted!"
+msgstr "Đánh giá của bạn đã được gửi!"
+
+msgid "Submission failed. Please try again later."
+msgstr "Gửi đánh giá thất bại. Vui lòng thử lại sau."
+
+msgid "Copy"
+msgstr "Sao chép"
+
+msgid "Copied!"
+msgstr "Đã sao chép!"
+
+msgid "Close"
+msgstr "Đóng"
+
+msgid "Shortcode Preview"
+msgstr "Xem trước Shortcode"
+
+msgid "Review Score"
+msgstr "Điểm đánh giá"
+
+msgid "Review System"
+msgstr "Hệ thống đánh giá"
+
+msgid "Show Icon"
+msgstr "Hiển thị biểu tượng"
+
+msgid "Enable Schema.org"
+msgstr "Bật Schema.org"
+
+msgid "Custom Class"
+msgstr "Lớp CSS tùy chỉnh"
+
+msgid "Post ID"
+msgstr "ID bài viết"
+
+msgid "Posts per page"
+msgstr "Số bài trên mỗi trang"
+
+msgid "reviews"
+msgstr "đánh giá"
+
+msgid "Write a review"
+msgstr "Viết đánh giá"
+
+msgid "Anonymous"
+msgstr "Ẩn danh"
+
+msgid "No reviews yet."
+msgstr "Chưa có đánh giá nào."
+
+msgid "Load more reviews"
+msgstr "Tải thêm đánh giá"
+
+msgid "Submit your review"
+msgstr "Gửi đánh giá của bạn"
+
+msgid "Review content"
+msgstr "Nội dung đánh giá"
+
+msgid "Write your thoughts..."
+msgstr "Viết cảm nhận của bạn..."
+
+msgid "Submit Review"
+msgstr "Gửi đánh giá"
+
+msgid "Invalid post ID or score."
+msgstr "ID bài viết hoặc điểm đánh giá không hợp lệ."
+
+msgid "Login required to vote."
+msgstr "Cần đăng nhập để bình chọn."
+
+msgid "Invalid nonce."
+msgstr "Nonce không hợp lệ."
+
+msgid "You have already voted recently."
+msgstr "Bạn đã bình chọn gần đây rồi."
+
+msgid "Invalid request data."
+msgstr "Dữ liệu gửi lên không hợp lệ."
+
+msgid "Login required to submit review."
+msgstr "Cần đăng nhập để gửi đánh giá."
+
+msgid "No valid scores provided."
+msgstr "Không có điểm đánh giá hợp lệ nào được cung cấp."
+
+msgid "You have already submitted a review."
+msgstr "Bạn đã gửi đánh giá rồi."
+
+msgid "You have already submitted a review from this IP."
+msgstr "IP này đã gửi đánh giá trước đó."
+
+msgid "Could not insert review."
+msgstr "Không thể lưu đánh giá."
+
+msgid "Review submitted successfully."
+msgstr "Gửi đánh giá thành công."
+
+msgid "Invalid post ID."
+msgstr "ID bài viết không hợp lệ."

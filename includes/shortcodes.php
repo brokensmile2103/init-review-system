@@ -72,7 +72,17 @@ add_shortcode( 'init_review_score', function( $atts ) {
 
     $output  = '<span class="init-review-score ' . esc_attr( $class ) . '">';
     if ( $icon ) {
-        $output .= '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><polygon fill="none" stroke="currentColor" stroke-width="1.01" points="10 2 12.63 7.27 18.5 8.12 14.25 12.22 15.25 18 10 15.27 4.75 18 5.75 12.22 1.5 8.12 7.37 7.27"></polygon></svg> ';
+        // SVG mặc định
+        $default_svg = '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+            <polygon fill="none" stroke="currentColor" stroke-width="1.01" 
+                points="10 2 12.63 7.27 18.5 8.12 14.25 12.22 15.25 18 
+                        10 15.27 4.75 18 5.75 12.22 1.5 8.12 7.37 7.27"></polygon>
+        </svg> ';
+
+        // Cho phép thay thế SVG qua filter
+        $icon_svg = apply_filters( 'init_plugin_suite_review_score_star_icon', $default_svg, $post_id, $score );
+
+        $output .= $icon_svg;
     }
     $output .= esc_html( number_format( $score, 1 ) );
     if ( $sub ) {
@@ -107,8 +117,17 @@ add_shortcode( 'init_review_system', function( $atts ) {
 
     // Stars
     $output .= '<div class="init-review-stars">';
+
+    // SVG mặc định (giữ nguyên như trước)
+    $default_star_svg = '<svg class="i-star" width="20" height="20" viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" d="M63.9 24.28a2 2 0 0 0-1.6-1.35l-19.68-3-8.81-18.78a2 2 0 0 0-3.62 0l-8.82 18.78-19.67 3a2 2 0 0 0-1.13 3.38l14.3 14.66-3.39 20.7a2 2 0 0 0 2.94 2.07L32 54.02l17.57 9.72a2 2 0 0 0 2.12-.11 2 2 0 0 0 .82-1.96l-3.38-20.7 14.3-14.66a2 2 0 0 0 .46-2.03"></path></svg>';
+
     for ( $i = 1; $i <= 5; $i++ ) {
-        $output .= '<span class="star" data-value="' . $i . '"><svg class="i-star" width="20" height="20" viewBox="0 0 64 64"><path fill="currentColor" d="M63.9 24.28a2 2 0 0 0-1.6-1.35l-19.68-3-8.81-18.78a2 2 0 0 0-3.62 0l-8.82 18.78-19.67 3a2 2 0 0 0-1.13 3.38l14.3 14.66-3.39 20.7a2 2 0 0 0 2.94 2.07L32 54.02l17.57 9.72a2 2 0 0 0 2.12-.11 2 2 0 0 0 .82-1.96l-3.38-20.7 14.3-14.66a2 2 0 0 0 .46-2.03"></path></svg></span>';
+        // Cho phép thay thế icon ngôi sao qua filter:
+        // Hook: init_plugin_suite_review_system_star_icon
+        // Args: ($default_svg, $post_id, $score, $i)
+        $star_svg = apply_filters( 'init_plugin_suite_review_system_star_icon', $default_star_svg, $post_id, $score, $i );
+
+        $output .= '<span class="star" data-value="' . $i . '">' . $star_svg . '</span>';
     }
     $output .= '</div>';
 
@@ -211,7 +230,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
         return;
     }
 
-    if ( $hook !== 'settings_page_' . INIT_PLUGIN_SUITE_RS_SLUG ) {
+    if ( $hook !== 'toplevel_page_' . INIT_PLUGIN_SUITE_RS_SLUG ) {
         return;
     }
 
@@ -235,7 +254,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
                 'shortcode_preview' => __( 'Shortcode Preview', 'init-review-system' ),
                 'shortcode_builder' => __( 'Shortcode Builder', 'init-review-system' ),
                 'init_review_score' => __( 'Review Score', 'init-review-system' ),
-                'init_review_system'=> __( 'Review System', 'init-review-system' ),
+                'init_review_system'=> __( 'Init Review System', 'init-review-system' ),
                 'icon'              => __( 'Show Icon', 'init-review-system' ),
                 'schema'            => __( 'Enable Schema.org', 'init-review-system' ),
                 'class'             => __( 'Custom Class', 'init-review-system' ),

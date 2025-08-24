@@ -4,7 +4,7 @@ Tags: review, rating, vote, schema, multi-criteria
 Requires at least: 5.5  
 Tested up to: 6.8  
 Requires PHP: 7.4  
-Stable tag: 1.2  
+Stable tag: 1.3
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -151,6 +151,18 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.3 – August 25, 2025 =
+- Restructured admin interface: moved from Settings submenu to dedicated main menu with star icon
+- Added comprehensive review management system with bulk operations and filtering capabilities
+- Implemented review approval workflow with pending/approved/rejected status management
+- Enhanced admin dashboard with review statistics, search functionality, and pagination
+- Added individual review actions: approve, reject, delete with proper nonce security
+- Integrated bulk actions for managing multiple reviews simultaneously
+- Created dedicated review management page with detailed review display and user information
+- Improved database queries with proper prepared statements and PHPCS compliance
+- Added admin-only review management scripts with proper enqueueing standards
+- Refined plugin architecture for better scalability and maintainability
 
 = 1.2 – July 27, 2025 =
 - Standardized all output with `esc_html()`, `esc_attr()`, and `wp_kses()` for frontend safety

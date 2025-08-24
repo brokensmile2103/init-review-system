@@ -394,7 +394,8 @@ br.visible-mobile {
     margin-bottom: 18px;
 }
 
-.init-review-modal-line span {
+.init-review-modal-line span,
+.init-review-modal-line label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
@@ -454,6 +455,7 @@ br.visible-mobile {
     color: #fff;
     border: none;
     padding: 10px 24px;
+    text-transform: uppercase;
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
@@ -478,9 +480,8 @@ br.visible-mobile {
 
 /* === Dark Mode Support === */
 #init-review-modal.dark .init-review-modal-content {
-    background: #111;
+    background: #1e1e1e;
     color: #eee;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
 
 #init-review-modal.dark .init-review-modal-title,

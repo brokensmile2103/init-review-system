@@ -7,7 +7,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, and rich schema support for WordPress sites."
+msgstr ""
+
 msgid "General Settings"
+msgstr ""
+
+msgid "Settings"
 msgstr ""
 
 msgid "Multi-Criteria Review"
@@ -91,9 +97,6 @@ msgstr ""
 msgid "Review Score"
 msgstr ""
 
-msgid "Review System"
-msgstr ""
-
 msgid "Show Icon"
 msgstr ""
 
@@ -170,4 +173,131 @@ msgid "Review submitted successfully."
 msgstr ""
 
 msgid "Invalid post ID."
+msgstr ""
+
+msgid "Manage Reviews"
+msgstr ""
+
+msgid "All Statuses"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Rejected"
+msgstr ""
+
+msgid "User ID"
+msgstr ""
+
+msgid "Search content..."
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "Review"
+msgstr ""
+
+msgid "Post"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Score"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Bulk Actions"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Approve"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Review deleted successfully."
+msgstr ""
+
+msgid "Failed to delete review."
+msgstr ""
+
+msgid "Review approved."
+msgstr ""
+
+msgid "Review rejected."
+msgstr ""
+
+msgid "Security check failed."
+msgstr ""
+
+msgid "%d review deleted."
+msgid_plural "%d reviews deleted."
+msgstr[0] "Đã xóa %d đánh giá."
+
+msgid "%d review approved."
+msgid_plural "%d reviews approved."
+msgstr[0] "Đã duyệt %d đánh giá."
+
+msgid "%d review rejected."
+msgid_plural "%d reviews rejected."
+msgstr[0] "Đã từ chối %d đánh giá."
+
+msgid "Post not found"
+msgstr ""
+
+msgid "User not found"
+msgstr ""
+
+msgid "Guest"
+msgstr ""
+
+msgid "No reviews found."
+msgstr ""
+
+msgid "Are you sure you want to delete this review?"
+msgstr ""
+
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] "%s mục"
+
+msgid "Summary"
+msgstr ""
+
+msgid "Total Reviews:"
+msgstr ""
+
+msgid "Approved:"
+msgstr ""
+
+msgid "Pending:"
+msgstr ""
+
+msgid "Rejected:"
+msgstr ""
+
+msgid "Average Score:"
 msgstr ""

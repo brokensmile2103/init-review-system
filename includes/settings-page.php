@@ -1,6 +1,34 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Add settings menu
+ */
+add_action( 'admin_menu', 'init_plugin_suite_review_system_add_settings_page' );
+
+function init_plugin_suite_review_system_add_settings_page() {
+    // Main menu page
+    add_menu_page(
+        __( 'Init Review System', 'init-review-system' ),
+        __( 'Review System', 'init-review-system' ),
+        'manage_options',
+        INIT_PLUGIN_SUITE_RS_SLUG,
+        'init_plugin_suite_review_system_render_settings_page',
+        'dashicons-star-filled',
+        102
+    );
+    
+    // Settings submenu (same as main page)
+    add_submenu_page(
+        INIT_PLUGIN_SUITE_RS_SLUG,
+        __( 'Settings', 'init-review-system' ),
+        __( 'Settings', 'init-review-system' ),
+        'manage_options',
+        INIT_PLUGIN_SUITE_RS_SLUG,
+        'init_plugin_suite_review_system_render_settings_page'
+    );
+}
+
 // Register settings
 add_action( 'admin_init', 'init_plugin_suite_review_system_register_settings' );
 function init_plugin_suite_review_system_register_settings() {
@@ -183,18 +211,6 @@ function init_plugin_suite_review_system_field_criteria( $args ) {
         esc_attr( $value ),
         esc_attr__( 'Leave blank to disable', 'init-review-system' )
     );
-}
-
-// Add to admin menu
-add_action( 'admin_menu', 'init_plugin_suite_review_system_add_settings_page' );
-function init_plugin_suite_review_system_add_settings_page() {
-	add_options_page(
-		__( 'Init Review System Settings', 'init-review-system' ),
-		__( 'Init Review System', 'init-review-system' ),
-		'manage_options',
-		INIT_PLUGIN_SUITE_RS_SLUG,
-		'init_plugin_suite_review_system_render_settings_page'
-	);
 }
 
 // Render UI

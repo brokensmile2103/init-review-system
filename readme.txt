@@ -4,7 +4,7 @@ Tags: review, rating, vote, schema, multi-criteria
 Requires at least: 5.5  
 Tested up to: 6.8  
 Requires PHP: 7.4  
-Stable tag: 1.5
+Stable tag: 1.6
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -162,7 +162,19 @@ No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
 
-= 1.5 – September 2, 2025 =
+= 1.6 – September 2, 2025 =
+- Reactions endpoint `/reactions/toggle` now **requires login**: enforced `is_user_logged_in()` and nonce validation
+- Updated REST API registration: `permission_callback` for `/reactions/toggle` now only allows logged-in users
+- Shortcode `[init_reactions]` updated: `require_login` is always `true`, ensuring consistent frontend behavior
+- Improved JS logic: 
+  - Removed guest/localStorage fallback (no more anonymous reactions)
+  - Preserved initial `disabled` state for buttons; guest users always see counts but cannot interact
+  - Fixed bug where guest buttons could be re-enabled after API calls
+- CSS adjustments: new `.is-disabled` style keeps emoji + counts **fully visible**, while visually indicating login requirement
+- Enhanced accessibility: reaction buttons now toggle `aria-pressed` accurately and support `is-active` state for current user reaction
+- Code cleanup: removed obsolete guest handling code paths and simplified state management
+
+= 1.5 – September 1, 2025 =
 - Enhanced Reactions System with **total reactions counter** displayed under “What do you think?”
 - Added unique `id` for total counter span (`irs-total-reactions-{post_id}`) to support JS live updates
 - Updated JavaScript: total reaction count now updates instantly when users toggle reactions
@@ -171,7 +183,7 @@ No. The plugin currently supports only a 5-star scale.
 - Improved accessibility: total reactions wrapped with `aria-live="polite"` for screen reader updates
 - Minor code cleanups and consistency improvements
 
-= 1.4 – September 1, 2025 =
+= 1.4 – August 31, 2025 =
 - Introduced **Reactions System**: emoji-based reactions (👍 😄 😍 😯 😠 😢)
 - Added shortcode + template for reactions bar
 - Reactions stored in both post meta (counts) and dedicated `init_reactions` table (user↔post map)

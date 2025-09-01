@@ -79,7 +79,9 @@ add_action( 'rest_api_init', function() {
     register_rest_route( INIT_PLUGIN_SUITE_RS_NAMESPACE, '/reactions/toggle', [
         'methods'             => 'POST',
         'callback'            => 'init_plugin_suite_review_system_rest_toggle_reaction',
-        'permission_callback' => $permission_vote,
+        'permission_callback' => function () {
+            return is_user_logged_in();
+        },
         'args'                => [
             'post_id'  => ['required' => true, 'type' => 'integer'],
             'reaction' => ['required' => true, 'type' => 'string'],
@@ -274,32 +276,50 @@ function init_plugin_suite_review_system_rest_toggle_reaction( WP_REST_Request $
 
     $post_id = init_plugin_suite_review_system_assert_post($post_id);
     if ( ! $post_id ) {
-        return new WP_Error('invalid_post', __('Invalid post ID.', 'init-review-system'), ['status'=>400]);
+        return new WP_Error(
+            'invalid_post',
+            __( 'Invalid post ID.', 'init-review-system' ),
+            [ 'status' => 400 ]
+        );
     }
 
-    // Nếu yêu cầu login → verify nonce
-    $opt = get_option(INIT_PLUGIN_SUITE_RS_OPTION);
-    $require_login = !empty($opt['require_login']);
-    if ( $require_login ) {
-        if ( ! is_user_logged_in() ) {
-            return new WP_Error('login_required', __('Login required.', 'init-review-system'), ['status'=>403]);
-        }
-        $nonce = isset($_SERVER['HTTP_X_WP_NONCE']) ? sanitize_text_field( wp_unslash($_SERVER['HTTP_X_WP_NONCE']) ) : '';
-        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-            return new WP_Error('invalid_nonce', __('Invalid nonce.', 'init-review-system'), ['status'=>403]);
-        }
+    // Bắt buộc login
+    if ( ! is_user_logged_in() ) {
+        return new WP_Error(
+            'login_required',
+            __( 'Login required.', 'init-review-system' ),
+            [ 'status' => 403 ]
+        );
+    }
+
+    // Verify nonce
+    $nonce = isset($_SERVER['HTTP_X_WP_NONCE'])
+        ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) )
+        : '';
+
+    if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+        return new WP_Error(
+            'invalid_nonce',
+            __( 'Invalid nonce.', 'init-review-system' ),
+            [ 'status' => 403 ]
+        );
     }
 
     $user_id = get_current_user_id();
-    if ( ! $user_id ) {
-        // Nếu không yêu cầu login mà vẫn muốn cho anon — ở spec mình đang không hỗ trợ anon log theo table
-        return new WP_Error('login_required', __('Login required.', 'init-review-system'), ['status'=>403]);
-    }
 
-    // Áp dụng logic (add/switch/remove) từ core helpers (Step 2)
-    $result = init_plugin_suite_review_system_apply_user_reaction($post_id, $user_id, $reaction);
+    // Áp dụng logic (add/switch/remove) từ core helpers
+    $result = init_plugin_suite_review_system_apply_user_reaction(
+        $post_id,
+        $user_id,
+        $reaction
+    );
+
     if ( empty($result['success']) ) {
-        return new WP_Error('rx_failed', __('Could not update reaction.', 'init-review-system'), ['status'=>500]);
+        return new WP_Error(
+            'rx_failed',
+            __( 'Could not update reaction.', 'init-review-system' ),
+            [ 'status' => 500 ]
+        );
     }
 
     return rest_ensure_response([

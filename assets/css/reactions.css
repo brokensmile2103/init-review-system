@@ -82,10 +82,16 @@
     box-shadow: 0 0 0 2px #f39c1240;
 }
 
-/* disabled state */
-.init-reaction-bar .init-rx:disabled {
-    opacity: .55;
+/* state: disabled (không login) */
+.init-reaction-bar .init-rx.is-disabled {
     cursor: not-allowed;
+    background: #f9f9f9;
+    border: 1px dashed rgba(0,0,0,.2);
+    opacity: 1; /* giữ text/emoji rõ ràng */
+}
+.init-reaction-bar .init-rx.is-disabled:hover {
+    transform: none;
+    box-shadow: none;
     background: #f8f8f8;
 }
 

@@ -9,18 +9,26 @@
  * - $require_login (bool)
  * - $is_logged_in (bool)
  */
+
 defined('ABSPATH') || exit;
 
 $wrapper_class = trim('init-reaction-bar ' . ($class ?? ''));
+
+$user_rx = '';
+if ( ! empty( $is_logged_in ) ) {
+    $user_rx = init_plugin_suite_review_system_get_user_reaction( $post_id, get_current_user_id() );
+}
 ?>
-<div class="<?php echo esc_attr($wrapper_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
+<div class="<?php echo esc_attr($wrapper_class); ?>"
+     data-post-id="<?php echo esc_attr($post_id); ?>"
+     data-user-rx="<?php echo esc_attr($user_rx); ?>">
 
     <div class="init-reaction-title">
         <?php echo esc_html__('What do you think?', 'init-review-system'); ?>
     </div>
 
     <?php
-    // === NEW: Total reactions (inline, no extra helper) + ID for JS updates
+    // === Total reactions (inline)
     $total_reactions = 0;
     if ( ! empty( $counts ) && is_array( $counts ) ) {
         foreach ( $counts as $c ) {
@@ -29,14 +37,11 @@ $wrapper_class = trim('init-reaction-bar ' . ($class ?? ''));
     }
     $formatted_total = number_format_i18n( (int) $total_reactions );
 
-    // Build a pluralized label with the number wrapped in a span with unique ID
     $label_with_number = sprintf(
-        // translators: %s: total number of reactions.
         _n( '%s reaction', '%s reactions', (int) $total_reactions, 'init-review-system' ),
         '<span id="irs-total-reactions-' . esc_attr( $post_id ) . '">' . esc_html( $formatted_total ) . '</span>'
     );
 
-    // Allow only the span we injected
     echo '<div class="init-reaction-total" aria-live="polite">';
     echo wp_kses( $label_with_number, [ 'span' => [ 'id' => [] ] ] );
     echo '</div>';
@@ -47,13 +52,19 @@ $wrapper_class = trim('init-reaction-bar ' . ($class ?? ''));
             $label = isset($t[0]) ? $t[0] : ucfirst($key);
             $emoji = isset($t[1]) ? $t[1] : '';
             $count = isset($counts[$key]) ? (int) $counts[$key] : 0;
+
+            $is_active   = ( $user_rx === $key );
+            $is_disabled = ( $require_login && ! $is_logged_in );
+            $btn_class   = 'init-rx'
+                         . ( $is_active ? ' is-active' : '' )
+                         . ( $is_disabled ? ' is-disabled' : '' );
         ?>
             <button
                 type="button"
-                class="init-rx"
+                class="<?php echo esc_attr($btn_class); ?>"
                 data-rx="<?php echo esc_attr($key); ?>"
-                <?php disabled( $require_login && ! $is_logged_in ); ?>
-                aria-pressed="false"
+                <?php disabled( $is_disabled ); ?>
+                aria-pressed="<?php echo $is_active ? 'true' : 'false'; ?>"
                 aria-label="<?php echo esc_attr($label); ?>"
             >
                 <?php if ($emoji !== ''): ?>

@@ -288,15 +288,14 @@ add_shortcode('init_reactions', function ($atts) {
     ], $atts, 'init_reactions');
 
     $post_id = intval($atts['id']);
-    if (!$post_id) return '';
+    if ( ! $post_id ) return '';
 
     // Đảm bảo object InitReviewSystemData được set nếu script chính đã/đang dùng
-    // (Hàm này tự check trùng, safe để gọi)
     init_plugin_suite_review_system_enqueue_assets();
 
     // Bật/tắt CSS
     $use_css = filter_var($atts['css'], FILTER_VALIDATE_BOOLEAN);
-    if ($use_css) {
+    if ( $use_css ) {
         wp_enqueue_style(
             'init-review-system-reactions',
             INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'css/reactions.css',
@@ -314,13 +313,13 @@ add_shortcode('init_reactions', function ($atts) {
         true
     );
 
-    // Localize Fallback cho reactions.js (phòng khi InitReviewSystemData không có)
-    $options        = get_option(INIT_PLUGIN_SUITE_RS_OPTION);
-    $require_login  = apply_filters('init_plugin_suite_review_system_require_login', !empty($options['require_login']));
-    $is_logged_in   = is_user_logged_in();
-    $rest_url       = rest_url(INIT_PLUGIN_SUITE_RS_NAMESPACE);
-    $rest_nonce     = wp_create_nonce('wp_rest');
+    // Luôn yêu cầu đăng nhập
+    $require_login = true;
+    $is_logged_in  = is_user_logged_in();
+    $rest_url      = rest_url(INIT_PLUGIN_SUITE_RS_NAMESPACE);
+    $rest_nonce    = wp_create_nonce('wp_rest');
 
+    // Localize cho reactions.js
     wp_localize_script('init-review-system-reactions', 'InitReviewReactionsData', [
         'require_login' => $require_login,
         'is_logged_in'  => $is_logged_in,
@@ -330,8 +329,8 @@ add_shortcode('init_reactions', function ($atts) {
     ]);
 
     // Data cho template
-    $types   = init_plugin_suite_review_system_get_reaction_types();
-    $counts  = init_plugin_suite_review_system_get_reaction_counts($post_id);
+    $types  = init_plugin_suite_review_system_get_reaction_types();
+    $counts = init_plugin_suite_review_system_get_reaction_counts($post_id);
 
     $data = [
         'post_id'       => $post_id,

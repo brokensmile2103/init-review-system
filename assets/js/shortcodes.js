@@ -37,6 +37,15 @@
                     class: { label: t('class', 'Custom Class'), type: 'text', default: '' },
                     per_page: { label: t('per_page', 'Posts per page'), type: 'number', default: '0' }
                 }
+            },
+            {
+                label: t('init_reactions', 'Reactions Bar'),
+                shortcode: 'init_reactions',
+                attributes: {
+                    id:   { label: t('id', 'Post ID'), type: 'number', default: '' },
+                    class:{ label: t('class', 'Custom Class'), type: 'text', default: '' },
+                    css:  { label: t('css', 'Load CSS'), type: 'checkbox', default: true }
+                }
             }
         ];
 

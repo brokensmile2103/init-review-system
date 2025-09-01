@@ -66,6 +66,25 @@ add_action( 'rest_api_init', function() {
             ],
         ],
     ] );
+
+    register_rest_route( INIT_PLUGIN_SUITE_RS_NAMESPACE, '/reactions/summary', [
+        'methods'             => 'GET',
+        'callback'            => 'init_plugin_suite_review_system_rest_get_reactions_summary',
+        'permission_callback' => '__return_true',
+        'args'                => [
+            'post_id' => ['required' => true, 'type' => 'integer'],
+        ],
+    ] );
+
+    register_rest_route( INIT_PLUGIN_SUITE_RS_NAMESPACE, '/reactions/toggle', [
+        'methods'             => 'POST',
+        'callback'            => 'init_plugin_suite_review_system_rest_toggle_reaction',
+        'permission_callback' => $permission_vote,
+        'args'                => [
+            'post_id'  => ['required' => true, 'type' => 'integer'],
+            'reaction' => ['required' => true, 'type' => 'string'],
+        ],
+    ] );
 } );
 
 // Xử lý vote
@@ -219,5 +238,75 @@ function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Requ
         'total'     => $total,
         'max_page'  => $max_page,
         'reviews'   => $reviews,
+    ]);
+}
+
+/**
+ * GET /reactions/summary
+ */
+function init_plugin_suite_review_system_rest_get_reactions_summary( WP_REST_Request $req ) {
+    $post_id = absint( $req->get_param('post_id') );
+    $post_id = init_plugin_suite_review_system_assert_post($post_id);
+    if ( ! $post_id ) {
+        return new WP_Error('invalid_post', __('Invalid post ID.', 'init-review-system'), ['status'=>400]);
+    }
+
+    $counts = init_plugin_suite_review_system_get_reaction_counts($post_id);
+    $user_rx = is_user_logged_in()
+        ? init_plugin_suite_review_system_get_user_reaction($post_id, get_current_user_id())
+        : '';
+
+    return rest_ensure_response([
+        'success'       => true,
+        'post_id'       => $post_id,
+        'counts'        => $counts,
+        'user_reaction' => $user_rx,
+        'types'         => init_plugin_suite_review_system_get_reaction_types(),
+    ]);
+}
+
+/**
+ * POST /reactions/toggle
+ */
+function init_plugin_suite_review_system_rest_toggle_reaction( WP_REST_Request $req ) {
+    $post_id  = absint( $req->get_param('post_id') );
+    $reaction = sanitize_key( $req->get_param('reaction') );
+
+    $post_id = init_plugin_suite_review_system_assert_post($post_id);
+    if ( ! $post_id ) {
+        return new WP_Error('invalid_post', __('Invalid post ID.', 'init-review-system'), ['status'=>400]);
+    }
+
+    // Nếu yêu cầu login → verify nonce
+    $opt = get_option(INIT_PLUGIN_SUITE_RS_OPTION);
+    $require_login = !empty($opt['require_login']);
+    if ( $require_login ) {
+        if ( ! is_user_logged_in() ) {
+            return new WP_Error('login_required', __('Login required.', 'init-review-system'), ['status'=>403]);
+        }
+        $nonce = isset($_SERVER['HTTP_X_WP_NONCE']) ? sanitize_text_field( wp_unslash($_SERVER['HTTP_X_WP_NONCE']) ) : '';
+        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+            return new WP_Error('invalid_nonce', __('Invalid nonce.', 'init-review-system'), ['status'=>403]);
+        }
+    }
+
+    $user_id = get_current_user_id();
+    if ( ! $user_id ) {
+        // Nếu không yêu cầu login mà vẫn muốn cho anon — ở spec mình đang không hỗ trợ anon log theo table
+        return new WP_Error('login_required', __('Login required.', 'init-review-system'), ['status'=>403]);
+    }
+
+    // Áp dụng logic (add/switch/remove) từ core helpers (Step 2)
+    $result = init_plugin_suite_review_system_apply_user_reaction($post_id, $user_id, $reaction);
+    if ( empty($result['success']) ) {
+        return new WP_Error('rx_failed', __('Could not update reaction.', 'init-review-system'), ['status'=>500]);
+    }
+
+    return rest_ensure_response([
+        'success'       => true,
+        'post_id'       => $post_id,
+        'user_reaction' => $result['current'],  // '' nếu gỡ
+        'counts'        => $result['counts'],
+        'prev'          => $result['prev'],
     ]);
 }

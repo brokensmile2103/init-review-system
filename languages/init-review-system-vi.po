@@ -301,3 +301,51 @@ msgstr "Đã từ chối:"
 
 msgid "Average Score:"
 msgstr "Điểm trung bình:"
+
+msgid "What do you think?"
+msgstr "Bạn thấy sao?"
+
+msgid "Log in"
+msgstr "Đăng nhập"
+
+msgid "to join the reactions."
+msgstr "để tham gia reaction."
+
+msgid "Invalid post ID."
+msgstr "ID bài viết không hợp lệ."
+
+msgid "Login required."
+msgstr "Yêu cầu đăng nhập."
+
+msgid "Invalid nonce."
+msgstr "Nonce không hợp lệ."
+
+msgid "Could not update reaction."
+msgstr "Không thể cập nhật reaction."
+
+msgid "Upvote"
+msgstr "Ủng hộ"
+
+msgid "Funny"
+msgstr "Vui"
+
+msgid "Love"
+msgstr "Yêu thích"
+
+msgid "Surprised"
+msgstr "Ngạc nhiên"
+
+msgid "Angry"
+msgstr "Tức giận"
+
+msgid "Sad"
+msgstr "Buồn"
+
+msgid "Auto-insert Reactions Bar (before comment form)"
+msgstr "Tự động chèn Thanh Phản Ứng (trước form bình luận)"
+
+msgid "Automatically insert the Reactions Bar right before the comment form."
+msgstr "Tự động chèn Thanh Phản Ứng ngay trước form bình luận."
+
+msgid "Use this if you want a global injection without editing templates."
+msgstr "Dùng tuỳ chọn này nếu bạn muốn chèn tự động mà không cần chỉnh sửa template."

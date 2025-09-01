@@ -38,15 +38,16 @@ function init_plugin_suite_review_system_register_settings() {
 		[
 			'sanitize_callback' => 'init_plugin_suite_review_system_sanitize_options',
 			'default' => [
-			    'require_login'       	=> false,
-			    'strict_ip_check'     	=> false,
-			    'score_position'      	=> 'none',
-			    'vote_position'       	=> 'none',
-			    'criteria_1' 			=> '',
-			    'criteria_2' 			=> '',
-			    'criteria_3' 			=> '',
-			    'criteria_4' 			=> '',
-			    'criteria_5' 			=> '',
+			    'require_login'                    => false,
+			    'strict_ip_check'                  => false,
+			    'score_position'                   => 'none',
+			    'vote_position'                    => 'none',
+			    'auto_reactions_before_comment'    => false,
+			    'criteria_1'                       => '',
+			    'criteria_2'                       => '',
+			    'criteria_3'                       => '',
+			    'criteria_4'                       => '',
+			    'criteria_5'                       => '',
 			]
 		]
 	);
@@ -77,6 +78,14 @@ function init_plugin_suite_review_system_register_settings() {
 	    'strict_ip_check',
 	    __( 'Enable strict IP check', 'init-review-system' ),
 	    'init_plugin_suite_review_system_field_strict_ip_check',
+	    INIT_PLUGIN_SUITE_RS_SLUG,
+	    'init_plugin_suite_review_system_general'
+	);
+
+	add_settings_field(
+	    'auto_reactions_before_comment',
+	    __( 'Auto-insert Reactions Bar (before comment form)', 'init-review-system' ),
+	    'init_plugin_suite_review_system_field_auto_reactions_before_comment',
 	    INIT_PLUGIN_SUITE_RS_SLUG,
 	    'init_plugin_suite_review_system_general'
 	);
@@ -114,8 +123,9 @@ function init_plugin_suite_review_system_register_settings() {
 function init_plugin_suite_review_system_sanitize_options( $input ) {
 	$output = [];
 
-	$output['require_login']   = ! empty( $input['require_login'] );
-	$output['strict_ip_check'] = ! empty( $input['strict_ip_check'] );
+	$output['require_login']   				 = ! empty( $input['require_login'] );
+	$output['strict_ip_check'] 				 = ! empty( $input['strict_ip_check'] );
+	$output['auto_reactions_before_comment'] = ! empty( $input['auto_reactions_before_comment'] );
 
 	foreach ( ['score_position', 'vote_position'] as $key ) {
 		$val = $input[ $key ] ?? 'none';
@@ -133,6 +143,17 @@ function init_plugin_suite_review_system_sanitize_options( $input ) {
 	}
 
 	return $output;
+}
+
+// ===== 3) NEW: field renderer cho checkbox =====
+function init_plugin_suite_review_system_field_auto_reactions_before_comment() {
+    $options = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $current = ! empty( $options['auto_reactions_before_comment'] );
+
+    echo '<label><input type="checkbox" name="' . esc_attr( INIT_PLUGIN_SUITE_RS_OPTION ) . '[auto_reactions_before_comment]" value="1" ' . checked( $current, true, false ) . '> ';
+    esc_html_e( 'Automatically insert the Reactions Bar right before the comment form.', 'init-review-system' );
+    echo '</label>';
+    echo '<p class="description" style="margin-top:4px;">' . esc_html__( 'Use this if you want a global injection without editing templates.', 'init-review-system' ) . '</p>';
 }
 
 // Field: require_login (checkbox)
@@ -218,6 +239,7 @@ function init_plugin_suite_review_system_render_settings_page() {
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Init Review System Settings', 'init-review-system' ); ?></h1>
+		<?php settings_errors(); ?>
 		<form method="post" action="options.php">
 			<?php
 			settings_fields( INIT_PLUGIN_SUITE_RS_OPTION );

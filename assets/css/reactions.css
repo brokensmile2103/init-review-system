@@ -1,0 +1,89 @@
+/* ===== Reaction Bar (Centered Layout) ===== */
+.init-reaction-bar {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 12px;
+    background: var(--irs-rx-bg, rgba(125,125,125,.06));
+    text-align: center;
+    max-width: 640px; /* optional: giới hạn chiều rộng */
+}
+
+.init-reaction-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+/* danh sách reactions: căn giữa */
+.init-reaction-list {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+/* nút reaction */
+.init-reaction-bar .init-rx {
+    display: inline-flex;
+    flex-direction: column; /* emoji trên, text dưới */
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 70px;
+    height: 75px;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: #fff;
+    cursor: pointer;
+    font: inherit;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    text-align: center;
+}
+
+.init-reaction-bar .init-rx .rx-emoji {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.init-reaction-bar .init-rx .rx-count {
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.init-reaction-bar .init-rx .rx-label {
+    font-size: 0.8rem;
+    opacity: .8;
+    line-height: 1;
+}
+
+/* hover & active */
+.init-reaction-bar .init-rx:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    background: #fdfdfd;
+}
+.init-reaction-bar .init-rx.is-active {
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px #f39c1240;
+}
+
+/* disabled state */
+.init-reaction-bar .init-rx:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    background: #f8f8f8;
+}
+
+/* hint login */
+.init-reaction-login-hint {
+    margin-top: 10px;
+    font-size: .95rem;
+    opacity: .85;
+}
+.init-reaction-login-hint a {
+    text-decoration: underline;
+    font-weight: 500;
+}

@@ -1,10 +1,10 @@
-=== Init Review System – Lightweight, Multi-Criteria, Guest-Friendly ===
+=== Init Review System – Reactions, Multi-Criteria, Guest-Friendly ===
 Contributors: brokensmile.2103  
 Tags: review, rating, vote, schema, multi-criteria  
 Requires at least: 5.5  
 Tested up to: 6.8  
 Requires PHP: 7.4  
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -121,6 +121,16 @@ Trigger custom logic after a multi-criteria review is submitted.
 **Applies to:** REST `/submit-criteria-review`  
 **Params:** `int $post_id`, `int $user_id`, `float $avg_score`, `string $review_content`, `array $scores`
 
+**`init_plugin_suite_review_system_get_reaction_types`**  
+Customize available reaction types (labels + emojis).  
+**Applies to:** Reactions system  
+**Params:** `array $types`
+
+**`init_plugin_suite_review_system_reaction_meta_key`**  
+Customize the meta key used for storing reaction counts.  
+**Applies to:** Reaction counts storage  
+**Params:** `string $meta_key`, `string $rx_key`
+
 == Screenshots ==
 
 1. **Plugin Settings Page** – Configure general options like login requirement, IP restriction, auto-display position, and up to 5 custom criteria fields.
@@ -151,6 +161,16 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.4 – September 1, 2025 =
+- Introduced **Reactions System**: emoji-based reactions (👍 😄 😍 😯 😠 😢)
+- Added shortcode + template for reactions bar
+- Reactions stored in both post meta (counts) and dedicated `init_reactions` table (user↔post map)
+- Guest-friendly: works without login (tracked via localStorage)
+- Added developer filters:
+  - `init_plugin_suite_review_system_get_reaction_types`
+  - `init_plugin_suite_review_system_reaction_meta_key`
+- Internal refactor: extracted reaction-core functions, silent table creation with `dbDelta()`
 
 = 1.3 – August 25, 2025 =
 - Restructured admin interface: moved from Settings submenu to dedicated main menu with star icon

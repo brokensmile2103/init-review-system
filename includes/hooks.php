@@ -78,3 +78,34 @@ add_action( 'comment_form_after', function() {
         echo do_shortcode( init_plugin_suite_review_system_get_default_shortcode( 'vote' ) );
     }
 } );
+
+// Inject [init_reactions] ngay trước form bình luận nếu bật trong settings
+add_action( 'comment_form_before', function () {
+    if ( is_admin() || ! is_singular() ) return;
+
+    $options = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $enabled = ! empty( $options['auto_reactions_before_comment'] );
+    $post_id = get_the_ID();
+
+    // Cho phép override bằng filter (nếu cần)
+    $enabled = apply_filters( 'init_reactions_auto_insert_enabled', $enabled, $post_id, $options );
+    if ( ! $enabled || ! function_exists( 'do_shortcode' ) || ! function_exists( 'shortcode_exists' ) ) return;
+    if ( ! shortcode_exists( 'init_reactions' ) ) return;
+
+    // Mặc định: id = current post, class rỗng, css=true
+    $atts = [
+        'id'    => $post_id,
+        'class' => '',
+        'css'   => 'true',
+    ];
+
+    // Cho phép chỉnh atts trước khi render
+    $atts = apply_filters( 'init_reactions_auto_insert_atts', $atts, $post_id, $options );
+
+    // Render shortcode
+    $id    = intval( $atts['id'] ?? $post_id );
+    $class = isset( $atts['class'] ) && $atts['class'] !== '' ? ' class="' . esc_attr( $atts['class'] ) . '"' : '';
+    $css   = isset( $atts['css'] ) && filter_var( $atts['css'], FILTER_VALIDATE_BOOLEAN ) ? 'true' : 'false';
+
+    echo do_shortcode( sprintf( '[init_reactions id="%d"%s css="%s"]', $id, $class, $css ) );
+}, 10 );

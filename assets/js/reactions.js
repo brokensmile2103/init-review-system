@@ -5,6 +5,12 @@
         return Array.prototype.slice.call((root || document).querySelectorAll(sel));
     }
 
+    // Number formatter for total
+    function irsFormatNumber(n) {
+        try { return new Intl.NumberFormat().format(n); }
+        catch (e) { return String(n); }
+    }
+
     // Cấu hình an toàn: ưu tiên InitReviewSystemData, fallback InitReviewReactionsData
     var IRS_CFG = (typeof window !== "undefined")
         ? (window.InitReviewSystemData || window.InitReviewReactionsData || {})
@@ -92,6 +98,7 @@
 
     function updateBarsUI(postId, counts, userRx) {
         qsAll('.init-reaction-bar[data-post-id="' + postId + '"]').forEach(function (bar) {
+            // update từng nút
             qsAll(".init-rx", bar).forEach(function (btn) {
                 var key = btn.getAttribute("data-rx");
                 var cntEl = btn.querySelector(".rx-count");
@@ -105,5 +112,17 @@
                 btn.setAttribute("aria-pressed", active ? "true" : "false");
             });
         });
+
+        // update tổng reactions <span id="irs-total-reactions-{postId}">
+        var total = 0;
+        for (var k in counts) {
+            if (Object.prototype.hasOwnProperty.call(counts, k)) {
+                total += parseInt(counts[k] || 0, 10);
+            }
+        }
+        var totalEl = document.getElementById('irs-total-reactions-' + postId);
+        if (totalEl) {
+            totalEl.textContent = irsFormatNumber(total);
+        }
     }
 })();

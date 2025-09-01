@@ -4,7 +4,7 @@ Tags: review, rating, vote, schema, multi-criteria
 Requires at least: 5.5  
 Tested up to: 6.8  
 Requires PHP: 7.4  
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -161,6 +161,15 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.5 – September 2, 2025 =
+- Enhanced Reactions System with **total reactions counter** displayed under “What do you think?”
+- Added unique `id` for total counter span (`irs-total-reactions-{post_id}`) to support JS live updates
+- Updated JavaScript: total reaction count now updates instantly when users toggle reactions
+- Synced UIkit theme template with total reactions output for consistent frontend display
+- Added CSS styles for `.init-reaction-total` (font weight, spacing, responsive display)
+- Improved accessibility: total reactions wrapped with `aria-live="polite"` for screen reader updates
+- Minor code cleanups and consistency improvements
 
 = 1.4 – September 1, 2025 =
 - Introduced **Reactions System**: emoji-based reactions (👍 😄 😍 😯 😠 😢)

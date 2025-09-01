@@ -349,3 +349,8 @@ msgstr ""
 
 msgid "Default: OFF. Use this if you want a global injection without editing templates."
 msgstr ""
+
+msgid "%s reaction"
+msgid_plural "%s reactions"
+msgstr[0] ""
+msgstr[1] ""

@@ -349,3 +349,8 @@ msgstr "Tự động chèn Thanh Phản Ứng ngay trước form bình luận."
 
 msgid "Use this if you want a global injection without editing templates."
 msgstr "Dùng tuỳ chọn này nếu bạn muốn chèn tự động mà không cần chỉnh sửa template."
+
+msgid "%s reaction"
+msgid_plural "%s reactions"
+msgstr[0] "%s phản ứng"
+msgstr[1] "%s phản ứng"

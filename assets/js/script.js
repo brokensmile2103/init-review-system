@@ -50,25 +50,32 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({ post_id: postId, score: value })
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success) return console.warn('[InitReviewSystem] Vote failed:', data);
+        .then(async res => {
+            const payload = await res.json().catch(() => ({}));
+            if (!res.ok || !payload.success) {
+                console.warn('[InitReviewSystem] Vote failed:', payload);
+                notifyError(payload.message || (InitReviewSystemData?.i18n?.error || 'Submission failed. Please try again later.'));
+                return;
+            }
 
             localStorage.setItem(localKey, value);
             if (info) {
                 info.innerHTML =
-                    `<strong>${data.score.toFixed(1)}</strong><sub>/5</sub> (${data.total_votes})`;
+                    `<strong>${payload.score.toFixed(1)}</strong><sub>/5</sub> (${payload.total_votes})`;
             }
 
-            highlightStars(stars, Math.round(data.score));
+            highlightStars(stars, Math.round(payload.score));
             disableStars(stars);
             block.classList.add('init-review-disabled');
 
             if (typeof onSuccess === 'function') {
-                onSuccess(data.score);
+                onSuccess(payload.score);
             }
         })
-        .catch(err => console.error('[InitReviewSystem] API error:', err));
+        .catch(err => {
+            console.error('[InitReviewSystem] API error:', err);
+            notifyError(InitReviewSystemData?.i18n?.error || 'Submission failed. Please try again later.');
+        });
     }
 
     function canVote(voted) {
@@ -116,6 +123,8 @@ document.addEventListener('DOMContentLoaded', function () {
         error: 'Submission failed. Please try again later.'
     };
 
+    const precheckCfg = window.InitReviewSystemData?.precheck || { enabled: false, minLenWhitespaceCheck: 20, repeatThreshold: 8 };
+
     const hasReviewed = !!localStorage.getItem(localKey);
     const data = window.InitReviewSystemData || {};
     const requireLogin = !!data.require_login;
@@ -130,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
     openBtn?.addEventListener('click', () => {
         if (!canReview) return;
         modal?.classList.add('is-active');
+        clearInlineMsg(form);
     });
 
     closeBtn?.addEventListener('click', () => {
@@ -172,21 +182,53 @@ document.addEventListener('DOMContentLoaded', function () {
     form?.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const reviewContent = form.querySelector('#init-review-content')?.value.trim();
-        const scores = {};
+        clearInlineMsg(form);
+        clearCriteriaErrors(starsGroup);
 
+        const reviewContent = form.querySelector('#init-review-content')?.value?.trim() || '';
+        const scores = {};
+        const missingRequired = [];
+
+        // Thu thập điểm + tìm tiêu chí bắt buộc chưa chọn
         starsGroup?.forEach(group => {
-            const label = group.dataset.label;
-            const score = parseInt(group.dataset.score || '0', 10);
-            if (label && score >= 1 && score <= 5) {
-                scores[label] = score;
+            const label = group.dataset.label?.trim();
+            const isOptional = group.dataset.optional === '1' || group.dataset.optional === 'true';
+            const raw = group.dataset.score || '0';
+            const score = parseInt(raw, 10);
+
+            if (label) {
+                if (score >= 1 && score <= 5) {
+                    scores[label] = score;
+                } else if (!isOptional) {
+                    missingRequired.push(label);
+                    group.classList.add('init-review-criteria-error');
+                }
             }
         });
 
-        if (!reviewContent || Object.keys(scores).length === 0) {
-            console.warn('[Init Review] Validation failed:', { reviewContent, scores });
-            console.warn(i18n.validation_error);
+        // Validate: phải có nội dung + không thiếu tiêu chí bắt buộc
+        if (!reviewContent) {
+            notifyError((i18n.validation_error || 'Please select scores and write a review.'), form);
             return;
+        }
+        if (missingRequired.length > 0) {
+            const msg = (InitReviewSystemData?.i18n?.rate_all_criteria)
+                ? InitReviewSystemData.i18n.rate_all_criteria
+                : `Please rate all required criteria: ${missingRequired.join(', ')}`;
+            notifyError(msg, form);
+            // scroll tới tiêu chí đầu tiên lỗi
+            const firstErr = modal?.querySelector('.init-review-criteria-error');
+            firstErr?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        // === JS Prechecks (settings-only, không lộ blacklist) ===
+        if (precheckCfg?.enabled) {
+            const precheckError = runJsPrechecks(reviewContent, precheckCfg);
+            if (precheckError) {
+                notifyError(precheckError, form);
+                return;
+            }
         }
 
         const payload = {
@@ -205,11 +247,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify(payload)
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
 
-            if (data.success) {
+            if (response.ok && data?.success) {
                 localStorage.setItem(localKey, '1');
-                modal?.classList.remove('is-active');
+
+                notifySuccess(i18n.success, form);
+
+                setTimeout(() => {
+                    modal?.classList.remove('is-active');
+                }, 1000);
 
                 openBtn?.classList.add('is-disabled');
                 openBtn?.setAttribute('disabled', 'disabled');
@@ -217,12 +264,47 @@ document.addEventListener('DOMContentLoaded', function () {
                 insertNewReview(reviewContent, scores);
                 updateReviewSummaryAfterSubmit(scores);
             } else {
-                console.warn('[Init Review] Submission failed:', data.message || i18n.error);
+                const msg = mapBackendErrorToMessage(data) || i18n.error;
+                console.warn('[Init Review] Submission failed:', data);
+                notifyError(msg, form);
             }
 
         } catch (err) {
             console.error('[Init Review] Network or server error:', err);
+            notifyError(i18n.error, form);
         }
+    });
+
+    // Clear error khi user tương tác lại
+    starsGroup?.forEach(group => {
+        const stars = group.querySelectorAll('.star');
+
+        const clearGroupErr = () => group.classList.remove('init-review-criteria-error');
+
+        stars.forEach(star => {
+            const value = parseInt(star.dataset.value, 10);
+
+            star.addEventListener('mouseenter', () => {
+                stars.forEach(s => {
+                    const v = parseInt(s.dataset.value, 10);
+                    s.classList.toggle('hovering', v <= value);
+                });
+            });
+
+            star.addEventListener('mouseleave', () => {
+                stars.forEach(s => s.classList.remove('hovering'));
+            });
+
+            star.addEventListener('click', () => {
+                stars.forEach(s => {
+                    const v = parseInt(s.dataset.value, 10);
+                    s.classList.toggle('active', v <= value);
+                });
+                group.dataset.score = value;
+                clearGroupErr();
+                clearInlineMsg(form); // xoá báo lỗi chung nếu có
+            });
+        });
     });
 
     document.addEventListener('keydown', function (e) {
@@ -252,6 +334,64 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 });
 
+// ==== JS Prechecks (đồng bộ rule với backend qua thresholds) ====
+function runJsPrechecks(text, cfg) {
+    const i18n = window.InitReviewSystemData?.i18n || {};
+    const minLen = Math.max(0, parseInt(cfg?.minLenWhitespaceCheck ?? 20, 10));
+    const repeatThreshold = Math.max(2, parseInt(cfg?.repeatThreshold ?? 8, 10));
+
+    // 1) Không có khoảng trắng (khi đủ dài)
+    if ((text.length >= minLen) && !/\s/u.test(text)) {
+        return i18n.no_whitespace 
+            || 'Your review appears to contain no whitespace. Please rewrite it more naturally.';
+    }
+
+    // 2) Lặp từ quá nhiều
+    const tokens = (text.toLowerCase().normalize('NFKC').match(/[\p{L}\p{N}]+/gu) || []);
+    if (tokens.length) {
+        const freq = Object.create(null);
+        let max = 0;
+        for (const t of tokens) {
+            freq[t] = (freq[t] || 0) + 1;
+            if (freq[t] > max) max = freq[t];
+            if (max >= repeatThreshold) break;
+        }
+        if (max >= repeatThreshold) {
+            return i18n.excessive_repetition 
+                || 'Your review repeats the same word too many times.';
+        }
+    }
+
+    // Không check blacklist ở JS (chỉ backend xử lý)
+    return null; // pass
+}
+
+function mapBackendErrorToMessage(payload) {
+    if (!payload) return null;
+    const i18n = window.InitReviewSystemData?.i18n || {};
+    const code = payload.code || payload?.data?.code;
+    const message = payload.message;
+
+    // Ưu tiên message từ server (đã dịch)
+    if (typeof message === 'string' && message.trim().length > 0) return message;
+
+    // Fallback theo code -> i18n -> chuỗi mặc định
+    switch (code) {
+        case 'invalid_data':           return i18n.invalid_data           || 'Invalid request data.';
+        case 'login_required':         return i18n.login_required         || 'Login required to submit review.';
+        case 'invalid_nonce':          return i18n.invalid_nonce          || 'Invalid nonce.';
+        case 'no_valid_scores':        return i18n.no_valid_scores        || 'No valid scores provided.';
+        case 'duplicate_review':       return i18n.duplicate_review       || 'You have already submitted a review.';
+        case 'duplicate_ip':           return i18n.duplicate_ip           || 'You have already submitted a review from this IP.';
+        case 'banned_word_detected':   return i18n.banned_word_detected   || 'Your review contains banned words.';
+        case 'banned_phrase_detected': return i18n.banned_phrase_detected || 'Your review contains banned phrases.';
+        case 'no_whitespace':          return i18n.no_whitespace          || 'Your review appears to contain no whitespace. Please rewrite it more naturally.';
+        case 'excessive_repetition':   return i18n.excessive_repetition   || 'Your review repeats the same word too many times.';
+        case 'db_error':               return i18n.db_error               || 'Could not insert review.';
+        default: return null;
+    }
+}
+
 // Thêm nhanh bài review vừa gửi
 function insertNewReview(reviewContent, scores) {
     const wrapper = document.querySelector('.init-review-feedback-list');
@@ -276,7 +416,7 @@ function insertNewReview(reviewContent, scores) {
     for (const [label, score] of Object.entries(scores)) {
         breakdownHtml += `
             <span class="criteria-score ${cx(...(cls.scoreItem || []))}">
-                <strong>${label}</strong>: ${score} / 5
+                <strong>${escapeHtml(label)}</strong>: ${score} / 5
             </span>
             <br class="${cx(...(cls.scoreBreak || []))}">`;
     }
@@ -298,7 +438,7 @@ function insertNewReview(reviewContent, scores) {
                 </div>
                 <div class="init-review-header ${cx(...(cls.header || []))}">
                     <div class="author-and-stars ${cx(...(cls.authorAndStars || []))}">
-                        <h3 class="author ${cx(...(cls.author || []))}">${author}</h3>
+                        <h3 class="author ${cx(...(cls.author || []))}">${escapeHtml(author)}</h3>
                         <div class="init-review-stars ${cx(...(cls.stars || []))}">
                             ${starsHtml}
                         </div>
@@ -321,7 +461,7 @@ function insertNewReview(reviewContent, scores) {
 
 // Loại bỏ các kí tự HTML
 function escapeHtml(str) {
-    return str.replace(/[&<>"']/g, m => ({
+    return String(str).replace(/[&<>"']/g, m => ({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
@@ -349,12 +489,13 @@ function updateReviewSummaryAfterSubmit(scores) {
     // Cập nhật từng tiêu chí (breakdown)
     Object.entries(scores).forEach(([label, val]) => {
         val = parseFloat(val);
-        const oldAvg = parseFloat(aggregate[label] || 0);
+        const key = String(label);
+        const oldAvg = parseFloat(aggregate[key] || 0);
         const newAvg = ((oldAvg * totalReviews) + val) / (totalReviews + 1);
-        aggregate[label] = parseFloat(newAvg.toFixed(2));
+        aggregate[key] = parseFloat(newAvg.toFixed(2));
 
         // Update UI tiêu chí
-        const row = wrapper.querySelector(`.init-review-criteria-breakdown-row[data-label="${label}"]`);
+        const row = wrapper.querySelector(`.init-review-criteria-breakdown-row[data-label="${CSS.escape(key)}"]`);
         if (row) {
             const bar = row.querySelector('.bar-fill');
             const value = row.querySelector('.value');
@@ -442,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <div class="init-review-content">
                         <div class="init-review-header">
-                            <strong class="author">${author}</strong>
+                            <strong class="author">${escapeHtml(author)}</strong>
                             <div class="init-review-stars">
                                 ${[1,2,3,4,5].map(i => `
                                     <svg class="star ${i <= stars ? 'active' : ''}" width="20" height="20" viewBox="0 0 64 64">
@@ -452,10 +593,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                         </div>
                         <div class="review-date">${date.toLocaleDateString()}</div>
-                        <div class="init-review-text">${review.review_content || ''}</div>
+                        <div class="init-review-text">${escapeHtml(review.review_content || '')}</div>
                         <div class="init-review-criteria-breakdown">
                             ${Object.entries(scores).map(([label, val]) => `
-                                <span class="criteria-score"><strong>${label}</strong>: ${val} / 5</span>
+                                <span class="criteria-score"><strong>${escapeHtml(label)}</strong>: ${val} / 5</span>
                             `).join('')}
                         </div>
                     </div>
@@ -476,3 +617,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+// ==== Helpers: inline notify ngay sau nút submit ====
+function showInlineMsg(formEl, msg, type = 'error') {
+    if (!formEl) return;
+    const submitBtn = formEl.querySelector('[type="submit"], .init-review-submit');
+    let holder = formEl.querySelector('.init-review-inline-msg');
+
+    if (!holder) {
+        holder = document.createElement('div');
+        holder.className = 'init-review-inline-msg';
+        if (submitBtn && submitBtn.parentNode) {
+            submitBtn.insertAdjacentElement('afterend', holder);
+        } else {
+            formEl.appendChild(holder);
+        }
+    }
+
+    holder.innerHTML = `
+        <div class="init-inline-msg init-inline-${type}" role="alert" aria-live="polite">
+            ${escapeHtml(String(msg || ''))}
+        </div>
+    `;
+}
+
+function clearInlineMsg(formEl) {
+    const holder = formEl?.querySelector('.init-review-inline-msg');
+    if (holder) holder.innerHTML = '';
+}
+
+// helper xoá class lỗi cho toàn bộ nhóm
+function clearCriteriaErrors(nodeList) {
+    nodeList?.forEach(g => g.classList.remove('init-review-criteria-error'));
+}
+
+// Backward-compatible wrappers
+function notifyError(msg, formEl)  { showInlineMsg(formEl || document.querySelector('.init-review-modal-form'), msg, 'error'); }
+function notifySuccess(msg, formEl){ showInlineMsg(formEl || document.querySelector('.init-review-modal-form'), msg, 'success'); }

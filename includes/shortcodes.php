@@ -26,6 +26,11 @@ function init_plugin_suite_review_system_enqueue_assets() {
         ? get_avatar_url( get_current_user_id(), [ 'size' => 80 ] )
         : INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
 
+    // NEW: pass enable flag + thresholds to JS (no banned lists exposed)
+    $js_precheck_enabled   = ! empty( $options['js_precheck_enabled'] );
+    $ws_min_len_threshold  = (int) apply_filters( 'init_plugin_suite_review_system_min_len_for_ws_check', 20 );
+    $repeat_threshold      = (int) apply_filters( 'init_plugin_suite_review_system_repetition_threshold', 8 );
+
     wp_localize_script( 'init-review-system-script', 'InitReviewSystemData', [
         'require_login'        => $require_login,
         'is_logged_in'         => $is_logged_in,
@@ -34,11 +39,32 @@ function init_plugin_suite_review_system_enqueue_assets() {
         'current_user_name'    => $current_user_name,
         'current_user_avatar'  => $current_user_avatar,
         'assets_url'           => INIT_PLUGIN_SUITE_RS_ASSETS_URL,
-        'i18n'                 => [
-            'validation_error' => __( 'Please select scores and write a review.', 'init-review-system' ),
-            'success'          => __( 'Your review has been submitted!', 'init-review-system' ),
-            'error'            => __( 'Submission failed. Please try again later.', 'init-review-system' ),
-            'review_label'     => __( 'reviews', 'init-review-system' ),
+
+        // NEW: precheck config for front-end
+        'precheck' => [
+            'enabled'               => $js_precheck_enabled,
+            'minLenWhitespaceCheck' => $ws_min_len_threshold,
+            'repeatThreshold'       => $repeat_threshold,
+        ],
+
+        'i18n' => [
+            'validation_error'       => __( 'Please select scores and write a review.', 'init-review-system' ),
+            'success'                => __( 'Your review has been submitted!', 'init-review-system' ),
+            'error'                  => __( 'Submission failed. Please try again later.', 'init-review-system' ),
+            'review_label'           => __( 'reviews', 'init-review-system' ),
+
+            // Các chuỗi bổ sung cho moderation/backend
+            'login_required'         => __( 'Login required to submit review.', 'init-review-system' ),
+            'invalid_nonce'          => __( 'Invalid nonce.', 'init-review-system' ),
+            'no_valid_scores'        => __( 'No valid scores provided.', 'init-review-system' ),
+            'rate_all_criteria'      => __( 'Please rate all required criteria.', 'init-review-system' ),
+            'duplicate_review'       => __( 'You have already submitted a review.', 'init-review-system' ),
+            'duplicate_ip'           => __( 'You have already submitted a review from this IP.', 'init-review-system' ),
+            'banned_word_detected'   => __( 'Your review contains banned words.', 'init-review-system' ),
+            'banned_phrase_detected' => __( 'Your review contains banned phrases.', 'init-review-system' ),
+            'no_whitespace'          => __( 'Your review appears to contain no whitespace. Please rewrite it more naturally.', 'init-review-system' ),
+            'excessive_repetition'   => __( 'Your review repeats the same word too many times.', 'init-review-system' ),
+            'db_error'               => __( 'Could not insert review.', 'init-review-system' ),
         ],
     ] );
 }

@@ -354,3 +354,42 @@ msgid "%s reaction"
 msgid_plural "%s reactions"
 msgstr[0] "%s phản ứng"
 msgstr[1] "%s phản ứng"
+
+msgid "Content Quality Guard"
+msgstr "Bộ lọc chất lượng nội dung"
+
+msgid "Pre-submit JS checks and banned words configuration (settings only)."
+msgstr "Kiểm tra JS trước khi gửi và cấu hình từ bị cấm (chỉ phần cài đặt)."
+
+msgid "Enable JS pre-submit checks"
+msgstr "Bật kiểm tra JS trước khi gửi"
+
+msgid "Run basic client-side checks before submit (e.g., excessive repeated words, missing whitespaces)."
+msgstr "Chạy kiểm tra cơ bản phía trình duyệt trước khi gửi (ví dụ: từ lặp quá nhiều, thiếu khoảng trắng)."
+
+msgid "Banned words (exact match, one per line)"
+msgstr "Từ bị cấm (so khớp chính xác, mỗi dòng một từ)"
+
+msgid "One word per line. Exact match (case-insensitive)."
+msgstr "Mỗi dòng một từ. So khớp chính xác (không phân biệt hoa thường)."
+
+msgid "Banned phrases (substring, one per line)"
+msgstr "Cụm từ bị cấm (so khớp chuỗi con, mỗi dòng một cụm)"
+
+msgid "One phrase per line. Substring contains check (case-insensitive)."
+msgstr "Mỗi dòng một cụm từ. Kiểm tra chứa chuỗi con (không phân biệt hoa thường)."
+
+msgid "Your review contains banned words."
+msgstr "Bài đánh giá của bạn chứa từ bị cấm."
+
+msgid "Your review contains banned phrases."
+msgstr "Bài đánh giá của bạn chứa cụm từ bị cấm."
+
+msgid "Your review appears to contain no whitespace. Please rewrite it more naturally."
+msgstr "Bài đánh giá của bạn dường như không có khoảng trắng. Vui lòng viết lại tự nhiên hơn."
+
+msgid "Your review repeats the same word too many times."
+msgstr "Bài đánh giá của bạn lặp lại cùng một từ quá nhiều lần."
+
+msgid "Please rate all required criteria."
+msgstr "Vui lòng chấm điểm tất cả các tiêu chí bắt buộc."

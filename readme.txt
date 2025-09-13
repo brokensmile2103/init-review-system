@@ -1,10 +1,10 @@
 === Init Review System – Reactions, Multi-Criteria, Guest-Friendly ===
 Contributors: brokensmile.2103  
-Tags: review, rating, vote, schema, multi-criteria  
+Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5  
 Tested up to: 6.8  
 Requires PHP: 7.4  
-Stable tag: 1.6
+Stable tag: 1.7
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -14,7 +14,7 @@ Fast 5-star rating plugin with schema, REST API, shortcode control, localStorage
 
 **Init Review System** adds a clean and customizable 5-star rating system to your WordPress site. Votes are stored via REST API, tracked with `localStorage`, and the average score is auto-calculated and optionally displayed with schema markup.
 
-Built to be lightweight, developer-friendly, and easy to integrate into any theme or custom UI.
+Built to be lightweight, developer-friendly, and easy to integrate into any theme or custom UI. Now with **multi-criteria reviews** and an **emoji reactions system** for richer user interaction.
 
 This plugin is part of the [Init Plugin Suite](https://en.inithtml.com/init-plugin-suite-minimalist-powerful-and-free-wordpress-plugins/) — a collection of minimalist, fast, and developer-focused tools for WordPress.
 
@@ -24,6 +24,7 @@ GitHub repository: [https://github.com/brokensmile2103/init-review-system](https
 
 - 5-star voting via frontend
 - **NEW: Multi-criteria review support**
+- **NEW: Emoji Reactions with Login Enforcement**
 - Average score display
 - Optional login requirement
 - Optional strict IP checking
@@ -36,6 +37,10 @@ GitHub repository: [https://github.com/brokensmile2103/init-review-system](https
 
 - 5-star rating system
 - Multi-criteria review scoring (up to 5 custom criteria)
+- Emoji-based reactions bar with live counts (requires login)
+- REST API endpoint for reactions: `/wp-json/initrsys/v1/reactions/toggle`
+- Reactions stored in both post meta and dedicated user↔post mapping table
+- Accessibility-ready with `aria-pressed` + `aria-live` updates
 - Shortcode-based integration
 - Auto-insert blocks before/after content or comments
 - Optional login + IP check to prevent abuse
@@ -72,6 +77,14 @@ Attributes:
 - `schema`: `true|false` – Output schema markup (default: false)
 - `per_page`: Number of reviews to show (default: 0 = all)
 
+=== [init_reactions] ===
+Displays emoji reactions bar under a post.
+
+Attributes:
+- `id`: Post ID (default: current post)
+- `class`: Custom CSS class
+- `require_login`: Always true (login required)
+
 == Filters for Developers ==
 
 This plugin provides filters and actions to let developers customize auto-insert behavior, schema output, review permissions, and REST API logic.
@@ -100,6 +113,16 @@ Change the default shortcode used for voting block auto-insertion.
 Force login for submitting reviews, even if disabled in settings.  
 **Applies to:** REST `/submit-criteria-review`  
 **Params:** `bool $require_login`
+
+**`init_plugin_suite_review_system_min_len_for_ws_check`**  
+Adjust minimum length threshold for triggering no-whitespace check.  
+**Applies to:** Backend + JS precheck  
+**Params:** `int $threshold` (default `20`)
+
+**`init_plugin_suite_review_system_repetition_threshold`**  
+Adjust repetition threshold for detecting excessive word repetition.  
+**Applies to:** Backend + JS precheck  
+**Params:** `int $threshold` (default `8`)
 
 **`init_plugin_suite_review_system_schema_type`**  
 Customize schema.org type (e.g., `Book`, `Product`, `Course`).  
@@ -136,6 +159,7 @@ Customize the meta key used for storing reaction counts.
 1. **Plugin Settings Page** – Configure general options like login requirement, IP restriction, auto-display position, and up to 5 custom criteria fields.
 2. **Single-Star Rating Display** – Star-based rating shown on a post with average score and vote count.
 3. **Multi-Criteria Review Display** – Frontend layout showing score breakdown per criteria and full user review content.
+4. **Reactions Bar** – Emoji-based reactions under the post, showing total counts, current user reaction highlight, and requiring login to interact.
 
 == Installation ==
 
@@ -161,6 +185,13 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.7 – September 13, 2025 =
+- Added content moderation: banned words, banned phrases, no-whitespace, excessive repetition
+- New settings: enable JS precheck (optional), manage banned words/phrases in textarea fields
+- Improved modal UX: must rate all required criteria, inline error/success messages under submit button
+- JavaScript updated: i18n error mapping, client-side prechecks, red outline highlight for missing scores
+- CSS enhancements: `.init-review-inline-msg` for messages, `.init-review-criteria-error` for criteria validation (with dark mode support)
 
 = 1.6 – September 2, 2025 =
 - Reactions endpoint `/reactions/toggle` now **requires login**: enforced `is_user_logged_in()` and nonce validation

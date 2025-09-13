@@ -38,6 +38,7 @@ if ( ! empty( $is_logged_in ) ) {
     $formatted_total = number_format_i18n( (int) $total_reactions );
 
     $label_with_number = sprintf(
+        // translators: %s is the number of reactions.
         _n( '%s reaction', '%s reactions', (int) $total_reactions, 'init-review-system' ),
         '<span id="irs-total-reactions-' . esc_attr( $post_id ) . '">' . esc_html( $formatted_total ) . '</span>'
     );

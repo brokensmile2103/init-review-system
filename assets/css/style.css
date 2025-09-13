@@ -491,8 +491,12 @@ br.visible-mobile {
 #init-review-modal.dark .init-review-modal-close:hover {
     color: #fff;
 }
-#init-review-modal.dark span {
+#init-review-modal.dark span.star {
     color: #ddd;
+}
+#init-review-modal.dark span.star.hovering,
+#init-review-modal.dark span.star.active {
+    color: #f39c12;
 }
 #init-review-modal.dark #init-review-content {
     background: #222;
@@ -505,4 +509,54 @@ br.visible-mobile {
 }
 #init-review-modal.dark button[type="submit"]:hover {
     background: #fff;
+}
+
+/* Inline message ngay sau nút Submit */
+.init-review-inline-msg {
+    margin-top: 15px;
+}
+
+.init-inline-msg {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.45;
+    border: 1px solid transparent;
+}
+
+/* Success */
+.init-inline-success {
+    background: #ECFDF5;      /* xanh nhạt */
+    color: #065F46;           /* xanh đậm */
+    border-color: #6EE7B7;
+}
+
+/* Error */
+.init-inline-error {
+    background: #FEE2E2;      /* đỏ nhạt */
+    color: #991B1B;           /* đỏ đậm */
+    border-color: #FCA5A5;
+}
+
+/* Dark mode (khi modal/summary có .dark) */
+.dark .init-inline-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #A7F3D0;
+    border-color: rgba(16, 185, 129, 0.35);
+}
+
+.dark .init-inline-error {
+    background: rgba(239, 68, 68, 0.12);
+    color: #FCA5A5;
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Nhấn mạnh nhóm tiêu chí chưa chấm */
+.init-review-modal-stars.init-review-criteria-error {
+    border-bottom: 2px solid rgba(239, 68, 68, 0.8); /* đỏ */
+}
+
+/* Dark mode */
+.dark .init-review-modal-stars.init-review-criteria-error {
+    border-bottom-color: rgba(248, 113, 113, 0.85);
 }

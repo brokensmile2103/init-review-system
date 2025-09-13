@@ -195,6 +195,98 @@ function init_plugin_suite_review_system_rest_submit_criteria_review( $request )
         return new WP_Error( 'duplicate_ip', __( 'You have already submitted a review from this IP.', 'init-review-system' ), [ 'status' => 409 ] );
     }
 
+    // ===== Moderation: banned words / phrases & simple quality checks =====
+    $content_raw = $review_content;
+
+    // Normalize content (lowercase, unicode-safe)
+    $lc = function($s) {
+        return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
+    };
+    $content_lc = $lc( wp_specialchars_decode( $content_raw ) );
+
+    // Pull settings
+    $banned_words   = isset($options['banned_words']) ? $options['banned_words'] : '';
+    $banned_phrases = isset($options['banned_phrases']) ? $options['banned_phrases'] : '';
+
+    // Parse lists (keep only non-empty trimmed lines)
+    $to_lines = static function($text) use ($lc) {
+        $text = str_replace(["\r\n","\r"], "\n", (string) $text);
+        $lines = array_filter(array_map('trim', explode("\n", $text)), static function($v){ return $v !== ''; });
+        // lower for case-insensitive compare
+        return array_values(array_map($lc, $lines));
+    };
+
+    $bw_list = $to_lines($banned_words);
+    $bp_list = $to_lines($banned_phrases);
+
+    // --- 1) Banned words: exact word match (case-insensitive, Unicode word boundaries)
+    if ( ! empty($bw_list) ) {
+        // Tokenize content to words
+        $tokens = preg_split('/[^\p{L}\p{N}]+/u', $content_lc, -1, PREG_SPLIT_NO_EMPTY);
+        if ( $tokens ) {
+            // Build hash for O(1)
+            $bw_hash = array_fill_keys($bw_list, true);
+            foreach ( $tokens as $tk ) {
+                if ( isset($bw_hash[$tk]) ) {
+                    return new WP_Error(
+                        'banned_word_detected',
+                        __( 'Your review contains banned words.', 'init-review-system' ),
+                        [ 'status' => 400, 'hit' => $tk ]
+                    );
+                }
+            }
+        }
+    }
+
+    // --- 2) Banned phrases: substring (case-insensitive)
+    if ( ! empty($bp_list) ) {
+        foreach ( $bp_list as $ph ) {
+            if ( $ph !== '' && mb_stripos($content_lc, $ph, 0, 'UTF-8') !== false ) {
+                return new WP_Error(
+                    'banned_phrase_detected',
+                    __( 'Your review contains banned phrases.', 'init-review-system' ),
+                    [ 'status' => 400, 'hit' => $ph ]
+                );
+            }
+        }
+    }
+
+    // --- 3) Simple quality checks (backend; JS sẽ thêm sau)
+    // 3a) No whitespace (likely pasted hash/URL soup). Allow short snippets.
+    $min_len_for_ws_check = (int) apply_filters('init_plugin_suite_review_system_min_len_for_ws_check', 20);
+    if ( ( function_exists('mb_strlen') ? mb_strlen($content_raw, 'UTF-8') : strlen($content_raw) ) >= $min_len_for_ws_check ) {
+        if ( ! preg_match('/\s/u', $content_raw) ) {
+            return new WP_Error(
+                'no_whitespace',
+                __( 'Your review appears to contain no whitespace. Please rewrite it more naturally.', 'init-review-system' ),
+                [ 'status' => 400 ]
+            );
+        }
+    }
+
+    // 3b) Excessive repetition of a single word
+    $repeat_threshold = (int) apply_filters('init_plugin_suite_review_system_repetition_threshold', 8); // default: 8
+    $tokens_for_repeat = preg_split('/[^\p{L}\p{N}]+/u', $content_lc, -1, PREG_SPLIT_NO_EMPTY);
+    if ( $tokens_for_repeat ) {
+        $counts = [];
+        $maxWord = '';
+        $maxCnt  = 0;
+        foreach ( $tokens_for_repeat as $tk ) {
+            $counts[$tk] = ($counts[$tk] ?? 0) + 1;
+            if ( $counts[$tk] > $maxCnt ) {
+                $maxCnt  = $counts[$tk];
+                $maxWord = $tk;
+            }
+        }
+        if ( $maxCnt >= $repeat_threshold ) {
+            return new WP_Error(
+                'excessive_repetition',
+                __( 'Your review repeats the same word too many times.', 'init-review-system' ),
+                [ 'status' => 400, 'word' => $maxWord, 'count' => $maxCnt, 'threshold' => $repeat_threshold ]
+            );
+        }
+    }
+
     $insert_id = init_plugin_suite_review_system_add_criteria_review(
         $post_id,
         $user_id,

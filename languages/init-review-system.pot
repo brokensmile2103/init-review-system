@@ -354,3 +354,42 @@ msgid "%s reaction"
 msgid_plural "%s reactions"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "Content Quality Guard"
+msgstr ""
+
+msgid "Pre-submit JS checks and banned words configuration (settings only)."
+msgstr ""
+
+msgid "Enable JS pre-submit checks"
+msgstr ""
+
+msgid "Run basic client-side checks before submit (e.g., excessive repeated words, missing whitespaces)."
+msgstr ""
+
+msgid "Banned words (exact match, one per line)"
+msgstr ""
+
+msgid "One word per line. Exact match (case-insensitive)."
+msgstr ""
+
+msgid "Banned phrases (substring, one per line)"
+msgstr ""
+
+msgid "One phrase per line. Substring contains check (case-insensitive)."
+msgstr ""
+
+msgid "Your review contains banned words."
+msgstr ""
+
+msgid "Your review contains banned phrases."
+msgstr ""
+
+msgid "Your review appears to contain no whitespace. Please rewrite it more naturally."
+msgstr ""
+
+msgid "Your review repeats the same word too many times."
+msgstr ""
+
+msgid "Please rate all required criteria."
+msgstr ""

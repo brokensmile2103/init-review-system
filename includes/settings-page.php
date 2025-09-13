@@ -48,6 +48,10 @@ function init_plugin_suite_review_system_register_settings() {
 			    'criteria_3'                       => '',
 			    'criteria_4'                       => '',
 			    'criteria_5'                       => '',
+			    // ===== NEW: Moderation defaults =====
+			    'js_precheck_enabled'              => false,
+			    'banned_words'                     => '',
+			    'banned_phrases'                   => '',
 			]
 		]
 	);
@@ -63,6 +67,16 @@ function init_plugin_suite_review_system_register_settings() {
 	    'init_plugin_suite_review_system_criteria',
 	    __( 'Multi-Criteria Review', 'init-review-system' ),
 	    '__return_false',
+	    INIT_PLUGIN_SUITE_RS_SLUG
+	);
+
+	// ===== NEW: Moderation section =====
+	add_settings_section(
+	    'init_plugin_suite_review_system_moderation',
+	    __( 'Content Quality Guard', 'init-review-system' ),
+	    function () {
+	        echo '<p class="description">' . esc_html__( 'Pre-submit JS checks and banned words configuration (settings only).', 'init-review-system' ) . '</p>';
+	    },
 	    INIT_PLUGIN_SUITE_RS_SLUG
 	);
 
@@ -117,6 +131,31 @@ function init_plugin_suite_review_system_register_settings() {
 	        [ 'index' => $i ]
 	    );
 	}
+
+	// ===== NEW: Fields in Moderation section =====
+	add_settings_field(
+	    'js_precheck_enabled',
+	    __( 'Enable JS pre-submit checks', 'init-review-system' ),
+	    'init_plugin_suite_review_system_field_js_precheck_enabled',
+	    INIT_PLUGIN_SUITE_RS_SLUG,
+	    'init_plugin_suite_review_system_moderation'
+	);
+
+	add_settings_field(
+	    'banned_words',
+	    __( 'Banned words (exact match, one per line)', 'init-review-system' ),
+	    'init_plugin_suite_review_system_field_banned_words',
+	    INIT_PLUGIN_SUITE_RS_SLUG,
+	    'init_plugin_suite_review_system_moderation'
+	);
+
+	add_settings_field(
+	    'banned_phrases',
+	    __( 'Banned phrases (substring, one per line)', 'init-review-system' ),
+	    'init_plugin_suite_review_system_field_banned_phrases',
+	    INIT_PLUGIN_SUITE_RS_SLUG,
+	    'init_plugin_suite_review_system_moderation'
+	);
 }
 
 // Sanitize logic
@@ -141,6 +180,16 @@ function init_plugin_suite_review_system_sanitize_options( $input ) {
 	    $val = sanitize_text_field( $input[ "criteria_$i" ] ?? '' );
 	    $output[ "criteria_$i" ] = $val;
 	}
+
+	// ===== NEW: sanitize moderation fields (store as string now; parsing will be in implementation step) =====
+	$output['js_precheck_enabled'] = ! empty( $input['js_precheck_enabled'] );
+
+	// Normalize line endings and strip tags; keep as plain text list
+	$banned_words   = isset( $input['banned_words'] ) ? sanitize_textarea_field( $input['banned_words'] ) : '';
+	$banned_phrases = isset( $input['banned_phrases'] ) ? sanitize_textarea_field( $input['banned_phrases'] ) : '';
+
+	$output['banned_words']   = str_replace( ["\r\n", "\r"], "\n", $banned_words );
+	$output['banned_phrases'] = str_replace( ["\r\n", "\r"], "\n", $banned_phrases );
 
 	return $output;
 }
@@ -231,6 +280,38 @@ function init_plugin_suite_review_system_field_criteria( $args ) {
         esc_attr( $i ),
         esc_attr( $value ),
         esc_attr__( 'Leave blank to disable', 'init-review-system' )
+    );
+}
+
+// ===== NEW: renderers for Moderation section =====
+function init_plugin_suite_review_system_field_js_precheck_enabled() {
+    $options = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $current = ! empty( $options['js_precheck_enabled'] );
+
+    echo '<label><input type="checkbox" name="' . esc_attr( INIT_PLUGIN_SUITE_RS_OPTION ) . '[js_precheck_enabled]" value="1" ' . checked( $current, true, false ) . '> ';
+    esc_html_e( 'Run basic client-side checks before submit (e.g., excessive repeated words, missing whitespaces).', 'init-review-system' );
+    echo '</label>';
+}
+
+function init_plugin_suite_review_system_field_banned_words() {
+    $options = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $value = isset( $options['banned_words'] ) ? $options['banned_words'] : '';
+    printf(
+        '<textarea name="%1$s[banned_words]" rows="6" class="large-text code" placeholder="%2$s">%3$s</textarea>',
+        esc_attr( INIT_PLUGIN_SUITE_RS_OPTION ),
+        esc_attr__( "One word per line. Exact match (case-insensitive).", 'init-review-system' ),
+        esc_textarea( $value )
+    );
+}
+
+function init_plugin_suite_review_system_field_banned_phrases() {
+    $options = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $value = isset( $options['banned_phrases'] ) ? $options['banned_phrases'] : '';
+    printf(
+        '<textarea name="%1$s[banned_phrases]" rows="6" class="large-text code" placeholder="%2$s">%3$s</textarea>',
+        esc_attr( INIT_PLUGIN_SUITE_RS_OPTION ),
+        esc_attr__( "One phrase per line. Substring contains check (case-insensitive).", 'init-review-system' ),
+        esc_textarea( $value )
     );
 }
 

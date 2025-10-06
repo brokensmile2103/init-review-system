@@ -110,7 +110,7 @@ add_shortcode( 'init_review_score', function( $atts ) {
 
         $output .= $icon_svg;
     }
-    $output .= esc_html( number_format( $score, 1 ) );
+    $output .= esc_html( number_format( (float) $score, 1, '.', '' ) );
     if ( $sub ) {
         $output .= '<sub>/5</sub>';
     }
@@ -159,7 +159,7 @@ add_shortcode( 'init_review_system', function( $atts ) {
 
     // Info
     $output .= '<div class="init-review-info">';
-    $output .= '<strong>' . esc_html( number_format( $score, 1 ) ) . '</strong><sub>/5</sub>';
+    $output .= '<strong>' . esc_html( number_format( (float) $score, 1, '.', '' ) ) . '</strong><sub>/5</sub>';
     $output .= ' (' . esc_html( number_format_i18n( $total ) ) . ')';
     $output .= '</div>';
 
@@ -203,33 +203,35 @@ add_shortcode( 'init_review_system', function( $atts ) {
 });
 
 // [init_review_criteria]
-add_shortcode('init_review_criteria', function ($atts) {
+add_shortcode( 'init_review_criteria', function ( $atts ) {
     init_plugin_suite_review_system_enqueue_assets();
 
     // Nhận và xử lý các thuộc tính từ shortcode
-    $atts = shortcode_atts([
+    $atts = shortcode_atts( [
         'id'       => get_the_ID(),
         'class'    => '',
         'schema'   => 'false',
         'per_page' => 0, // Không giới hạn
-    ], $atts, 'init_review_criteria');
+        'paged'    => 1, // Trang hiện tại
+    ], $atts, 'init_review_criteria' );
 
-    $post_id        = intval($atts['id']);
-    $class          = sanitize_html_class($atts['class']);
-    $schema         = filter_var($atts['schema'], FILTER_VALIDATE_BOOLEAN);
-    $per_page       = intval($atts['per_page']);
+    $post_id        = intval( $atts['id'] );
+    $class          = sanitize_html_class( $atts['class'] );
+    $schema         = filter_var( $atts['schema'], FILTER_VALIDATE_BOOLEAN );
+    $per_page       = intval( $atts['per_page'] );
+    $paged          = max( 1, intval( $atts['paged'] ) ); // tránh 0 hoặc âm
     $user_logged_in = is_user_logged_in();
     $user_id        = get_current_user_id();
 
     // Lấy dữ liệu thống kê điểm
-    $summary       = init_plugin_suite_review_system_get_score_summary_by_post_id($post_id);
-    $total_reviews = init_plugin_suite_review_system_get_total_reviews_by_post_id($post_id);
+    $summary       = init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id );
+    $total_reviews = init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id );
 
-    $settings       = get_option(INIT_PLUGIN_SUITE_RS_OPTION);
-    $require_login  = apply_filters('init_plugin_suite_review_system_require_login', !empty($settings['require_login']));
-    $has_reviewed   = $user_logged_in ? init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) : false;
+    $settings       = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $require_login  = apply_filters( 'init_plugin_suite_review_system_require_login', ! empty( $settings['require_login'] ) );
+    $has_reviewed   = $user_logged_in ? init_plugin_suite_review_system_has_user_reviewed( $post_id, $user_id ) : false;
 
-    $can_review = ($user_logged_in || ! $require_login) && ! $has_reviewed;
+    $can_review = ( $user_logged_in || ! $require_login ) && ! $has_reviewed;
 
     // Chuẩn bị dữ liệu truyền vào template
     $template_data = [
@@ -239,17 +241,18 @@ add_shortcode('init_review_criteria', function ($atts) {
         'class'         => $class,
         'schema'        => $schema,
         'per_page'      => $per_page,
+        'paged'         => $paged,
         'summary'       => $summary,
         'total_reviews' => $total_reviews,
         'criteria'      => init_plugin_suite_review_system_get_criteria_labels(),
-        'reviews'       => init_plugin_suite_review_system_get_reviews_by_post_id($post_id, 1, $per_page),
+        'reviews'       => init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $paged, $per_page ),
     ];
 
     // Render template
     ob_start();
-    init_plugin_suite_review_system_render_template('review-criteria-display.php', $template_data);
+    init_plugin_suite_review_system_render_template( 'review-criteria-display.php', $template_data );
     return ob_get_clean();
-});
+} );
 
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
     if ( ! current_user_can( 'manage_options' ) ) {

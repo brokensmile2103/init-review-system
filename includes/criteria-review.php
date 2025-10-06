@@ -37,36 +37,46 @@ function init_plugin_suite_review_system_add_criteria_review($post_id, $user_id,
 // Lấy review của bài viết
 function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $paged = 1, $per_page = 0, $status = 'approved' ) {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'init_criteria_reviews';
+    $table_reviews = $wpdb->prefix . 'init_criteria_reviews';
+    $table_posts   = $wpdb->posts;
 
-    // Câu lệnh SQL khởi tạo
-    $sql = "SELECT * FROM {$table_name} WHERE status = %s";
-    $params = [ $status ];
+    // Base SELECT (chọn r.* để tránh đụng cột trùng tên nếu join)
+    $sql    = "SELECT r.* FROM {$table_reviews} r";
+    $params = array();
 
-    // Thêm điều kiện post_id nếu khác 0
-    if ( $post_id > 0 ) {
-        $sql .= " AND post_id = %d";
-        $params[] = $post_id;
+    // Nếu lấy toàn bộ (post_id = 0) thì join với wp_posts để loại review mồ côi
+    if ( (int) $post_id === 0 ) {
+        $sql .= " INNER JOIN {$table_posts} p ON p.ID = r.post_id";
+    }
+
+    // WHERE
+    $sql .= " WHERE r.status = %s";
+    $params[] = $status;
+
+    // Lọc theo post_id nếu có
+    if ( (int) $post_id > 0 ) {
+        $sql .= " AND r.post_id = %d";
+        $params[] = (int) $post_id;
     }
 
     // Sắp xếp
-    $sql .= " ORDER BY created_at DESC";
+    $sql .= " ORDER BY r.created_at DESC";
 
-    // Phân trang nếu có
+    // Phân trang
     if ( $per_page > 0 && $paged > 0 ) {
-        $offset = ( $paged - 1 ) * $per_page;
-        $sql .= " LIMIT %d OFFSET %d";
-        $params[] = $per_page;
-        $params[] = $offset;
+        $offset   = ( $paged - 1 ) * $per_page;
+        $sql     .= " LIMIT %d OFFSET %d";
+        $params[] = (int) $per_page;
+        $params[] = (int) $offset;
     }
 
-    // Chuẩn bị và thực thi
+    // Chuẩn bị & thực thi
     // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
     $prepared_sql = $wpdb->prepare( $sql, ...$params );
-    $results = $wpdb->get_results( $prepared_sql, ARRAY_A );
+    $results      = $wpdb->get_results( $prepared_sql, ARRAY_A );
     // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-    // Giải mã tiêu chí nếu có
+    // Giải mã tiêu chí
     foreach ( $results as &$review ) {
         $review['criteria_scores'] = maybe_unserialize( $review['criteria_scores'] );
     }

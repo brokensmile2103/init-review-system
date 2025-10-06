@@ -21,7 +21,7 @@ $aggregate_json = esc_attr( wp_json_encode( $aggregate ) );
 
     <!-- Total Score -->
     <div class="init-review-score-box">
-        <div class="init-review-score-value"><?php echo esc_html( number_format( $overall_avg, 1 ) ); ?></div>
+        <div class="init-review-score-value"><?php echo esc_html( number_format( (float) $overall_avg, 1, '.', '' ) ); ?></div>
 
         <div class="init-review-stars-line init-review-stars">
             <?php for ($i = 1; $i <= 5; $i++): 
@@ -49,7 +49,7 @@ $aggregate_json = esc_attr( wp_json_encode( $aggregate ) );
                 <div class="bar-bg">
                     <div class="bar-fill" style="width: <?php echo esc_attr( round($percent) ); ?>%"></div>
                 </div>
-                <div class="value"><?php echo esc_html( number_format($avg, 1) ); ?></div>
+                <div class="value"><?php echo esc_html( number_format( (float) $avg, 1, '.', '' ) ); ?></div>
             </div>
         <?php endforeach; ?>
     </div>

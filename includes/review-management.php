@@ -379,7 +379,7 @@ function init_plugin_suite_review_system_render_management_page() {
                                             <div class="criteria-scores" style="margin-bottom: 8px;">
                                                 <?php foreach ( $review['criteria_scores'] as $label => $score ): ?>
                                                     <span style="display: inline-block; margin-right: 10px; font-size: 12px; background: #f1f1f1; padding: 2px 6px; border-radius: 3px;">
-                                                        <?php echo esc_html( $label ); ?>: <?php echo esc_html( number_format( $score, 1 ) ); ?>/5
+                                                        <?php echo esc_html( $label ); ?>: <?php echo esc_html( number_format_i18n( $score, 1 ) ); ?>/5
                                                     </span>
                                                 <?php endforeach; ?>
                                             </div>
@@ -424,7 +424,7 @@ function init_plugin_suite_review_system_render_management_page() {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <strong><?php echo esc_html( number_format( $review['avg_score'], 2 ) ); ?>/5</strong>
+                                    <strong><?php echo esc_html( number_format_i18n( $review['avg_score'], 2 ) ); ?>/5</strong>
                                 </td>
                                 <td>
                                     <?php
@@ -571,7 +571,7 @@ function init_plugin_suite_review_system_render_management_page() {
                 </div>
                 <div>
                     <strong><?php esc_html_e( 'Average Score:', 'init-review-system' ); ?></strong>
-                    <?php echo esc_html( number_format( $avg_score, 2 ) ); ?>/5
+                    <?php echo esc_html( number_format_i18n( $avg_score, 2 ) ); ?>/5
                 </div>
             </div>
         </div>

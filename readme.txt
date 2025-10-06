@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5  
 Tested up to: 6.8  
 Requires PHP: 7.4  
-Stable tag: 1.7
+Stable tag: 1.8
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -76,6 +76,7 @@ Attributes:
 - `class`: Custom CSS class
 - `schema`: `true|false` – Output schema markup (default: false)
 - `per_page`: Number of reviews to show (default: 0 = all)
+- `paged`: Current review page number (default: 1)
 
 === [init_reactions] ===
 Displays emoji reactions bar under a post.
@@ -185,6 +186,13 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.8 – October 6, 2025 =
+- Updated function `init_plugin_suite_review_system_get_reviews_by_post_id()`:
+  - When `$post_id = 0`, orphaned reviews are now automatically excluded (posts that no longer exist across all CPTs).
+- Shortcode `[init_review_criteria]` enhanced:
+  - Added new attribute `paged` to control review pagination.
+  - Internal call now passes `$paged` dynamically to `init_plugin_suite_review_system_get_reviews_by_post_id()`.
 
 = 1.7 – September 13, 2025 =
 - Added content moderation: banned words, banned phrases, no-whitespace, excessive repetition

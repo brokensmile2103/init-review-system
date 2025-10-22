@@ -179,8 +179,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    let isSubmitting = false;
+
     form?.addEventListener('submit', async function (e) {
         e.preventDefault();
+        if (isSubmitting) return;
 
         clearInlineMsg(form);
         clearCriteriaErrors(starsGroup);
@@ -206,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Validate: phải có nội dung + không thiếu tiêu chí bắt buộc
+        // Validate trước, chưa bật isSubmitting
         if (!reviewContent) {
             notifyError((i18n.validation_error || 'Please select scores and write a review.'), form);
             return;
@@ -216,13 +219,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? InitReviewSystemData.i18n.rate_all_criteria
                 : `Please rate all required criteria: ${missingRequired.join(', ')}`;
             notifyError(msg, form);
-            // scroll tới tiêu chí đầu tiên lỗi
             const firstErr = modal?.querySelector('.init-review-criteria-error');
             firstErr?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
 
-        // === JS Prechecks (settings-only, không lộ blacklist) ===
         if (precheckCfg?.enabled) {
             const precheckError = runJsPrechecks(reviewContent, precheckCfg);
             if (precheckError) {
@@ -230,6 +231,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
         }
+
+        // Tới đây mới chặn double submit
+        isSubmitting = true;
 
         const payload = {
             post_id: parseInt(postId, 10),
@@ -251,7 +255,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok && data?.success) {
                 localStorage.setItem(localKey, '1');
-
                 notifySuccess(i18n.success, form);
 
                 setTimeout(() => {
@@ -268,10 +271,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.warn('[Init Review] Submission failed:', data);
                 notifyError(msg, form);
             }
-
         } catch (err) {
             console.error('[Init Review] Network or server error:', err);
             notifyError(i18n.error, form);
+        } finally {
+            isSubmitting = false;
         }
     });
 

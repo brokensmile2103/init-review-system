@@ -36,6 +36,8 @@
     justify-content: flex-start;
 }
 .init-review-stars .star {
+    width: 24px;
+    height: 24px;
     cursor: pointer;
     color: #ddd;
     transition: transform 0.2s ease, color 0.2s ease;

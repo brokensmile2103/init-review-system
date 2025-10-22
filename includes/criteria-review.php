@@ -1,37 +1,72 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
-// Hàm thêm review
-function init_plugin_suite_review_system_add_criteria_review($post_id, $user_id, $criteria_scores = [], $review_content = '', $status = 'approved') {
+/**
+ * Thêm review mới vào hệ thống.
+ *
+ * @param int    $post_id         ID bài viết được review.
+ * @param int    $user_id         ID người dùng tạo review.
+ * @param array  $criteria_scores Mảng điểm tiêu chí (key => value).
+ * @param string $review_content  Nội dung review.
+ * @param string $status          Trạng thái review ('approved', 'pending', ...).
+ * @return int|false ID review nếu thành công, false nếu lỗi.
+ */
+function init_plugin_suite_review_system_add_criteria_review( $post_id, $user_id, $criteria_scores = [], $review_content = '', $status = 'approved' ) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
     // Tính điểm trung bình
-    if (!empty($criteria_scores)) {
-        $avg_score = array_sum($criteria_scores) / count($criteria_scores);
-    } else {
-        $avg_score = 0;
-    }
+    $avg_score = ! empty( $criteria_scores )
+        ? array_sum( $criteria_scores ) / count( $criteria_scores )
+        : 0;
 
     // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-    $result = $wpdb->insert(
+    $inserted = $wpdb->insert(
         $table_name,
         [
-            'post_id'         => $post_id,
-            'user_id'         => $user_id,
-            'criteria_scores' => maybe_serialize($criteria_scores),
-            'avg_score'       => $avg_score,
-            'review_content'  => $review_content,
-            'status'          => $status,
-            'created_at'      => current_time('mysql'),
+            'post_id'         => absint( $post_id ),
+            'user_id'         => absint( $user_id ),
+            'criteria_scores' => maybe_serialize( $criteria_scores ),
+            'avg_score'       => floatval( $avg_score ),
+            'review_content'  => wp_kses_post( $review_content ),
+            'status'          => sanitize_text_field( $status ),
+            'created_at'      => current_time( 'mysql' ),
         ],
-        [
-            '%d', '%d', '%s', '%f', '%s', '%s', '%s',
-        ]
+        [ '%d', '%d', '%s', '%f', '%s', '%s', '%s' ]
     );
-    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+    // phpcs:enable
 
-    return $result !== false ? $wpdb->insert_id : false;
+    if ( false === $inserted ) {
+        return false;
+    }
+
+    $review_id = (int) $wpdb->insert_id;
+
+    /**
+     * Fires after a review has been successfully added.
+     *
+     * @since 1.9
+     *
+     * @param int    $review_id       ID của review mới.
+     * @param int    $post_id         ID bài viết được review.
+     * @param int    $user_id         ID người tạo review.
+     * @param array  $criteria_scores Mảng điểm tiêu chí.
+     * @param float  $avg_score       Điểm trung bình.
+     * @param string $status          Trạng thái review ('approved', ...).
+     * @param string $review_content  Nội dung review.
+     */
+    do_action(
+        'init_plugin_suite_review_system_after_insert',
+        $review_id,
+        $post_id,
+        $user_id,
+        $criteria_scores,
+        $avg_score,
+        $status,
+        $review_content
+    );
+
+    return $review_id;
 }
 
 // Lấy review của bài viết

@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * @param string $status          Trạng thái review ('approved', 'pending', ...).
  * @return int|false ID review nếu thành công, false nếu lỗi.
  */
-function init_plugin_suite_review_system_add_criteria_review( $post_id, $user_id, $criteria_scores = [], $review_content = '', $status = 'approved' ) {
+function init_plugin_suite_review_system_add_criteria_review( $post_id, $user_id, $criteria_scores = [], $review_content = '', $status = 'pending' ) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
@@ -65,6 +65,10 @@ function init_plugin_suite_review_system_add_criteria_review( $post_id, $user_id
         $status,
         $review_content
     );
+
+    if ($status === 'pending') {
+        do_action('init_review_system_new_review_pending', $review_id, $post_id);
+    }
 
     return $review_id;
 }
@@ -137,7 +141,7 @@ function init_plugin_suite_review_system_get_reviews_by_post_ids( $post_ids = []
 
     // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
     $sql = $wpdb->prepare(
-        "SELECT * FROM {$table_name} 
+        "SELECT * FROM {$table_name}
          WHERE status = %s AND post_id IN ({$placeholders})
          ORDER BY created_at DESC
          LIMIT %d OFFSET %d",
@@ -167,13 +171,13 @@ function init_plugin_suite_review_system_count_reviews_by_post_id( $post_ids = [
 
     // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
     $sql = $wpdb->prepare(
-        "SELECT COUNT(*) FROM {$table_name} 
+        "SELECT COUNT(*) FROM {$table_name}
          WHERE status = %s AND post_id IN ({$placeholders})",
         array_merge( [ $status ], $post_ids )
     );
     $result = (int) $wpdb->get_var( $sql );
     // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-    
+
     return $result;
 }
 
@@ -189,10 +193,11 @@ function init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) {
     // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
     $review_id = $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT id FROM {$table_name} WHERE post_id = %d AND user_id = %d AND status = %s LIMIT 1",
+            "SELECT id FROM {$table_name} WHERE post_id = %d AND user_id = %d AND (status = %s OR status = %s) LIMIT 1",
             $post_id,
             $user_id,
-            'approved'
+            'approved',
+            'pending'
         )
     );
     // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared

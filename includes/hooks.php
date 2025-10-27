@@ -109,3 +109,24 @@ add_action( 'comment_form_before', function () {
 
     echo do_shortcode( sprintf( '[init_reactions id="%d"%s css="%s"]', $id, $class, $css ) );
 }, 10 );
+
+add_action('init_review_system_new_review_pending', 'init_review_system_notify_admin_on_pending_review', 10, 2);
+
+function init_review_system_notify_admin_on_pending_review($review_id, $post_id) {
+    $admin_email = get_option('admin_email');
+    $post_title = get_the_title($post_id);
+    $review_url = admin_url('admin.php?page=init-review-management&status=pending');
+
+    $subject = sprintf(__('New Pending Review for %s', 'init-review-system'), $post_title);
+    $message = sprintf(
+        __('A new review has been submitted for "%s" and is awaiting your approval.', 'init-review-system'),
+        $post_title
+    );
+    $message .= "\n\n";
+    $message .= sprintf(
+        __('You can manage this review by visiting the following link: %s', 'init-review-system'),
+        $review_url
+    );
+
+    wp_mail($admin_email, $subject, $message);
+}

@@ -15,24 +15,26 @@ function init_plugin_suite_review_system_enqueue_assets() {
         true
     );
 
-    $options        = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
-    $require_login  = ! empty( $options['require_login'] );
-    $is_logged_in   = is_user_logged_in();
-    $rest_url       = rest_url( INIT_PLUGIN_SUITE_RS_NAMESPACE );
-    $rest_nonce     = wp_create_nonce( 'wp_rest' );
+    $options              = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $require_login        = ! empty( $options['require_login'] );
+    $double_click_to_rate = ! empty( $options['double_click_to_rate'] );
+    $is_logged_in         = is_user_logged_in();
+    $rest_url             = rest_url( INIT_PLUGIN_SUITE_RS_NAMESPACE );
+    $rest_nonce           = wp_create_nonce( 'wp_rest' );
 
-    $current_user_name = $is_logged_in ? wp_get_current_user()->display_name : '';
-    $current_user_avatar = $is_logged_in
+    $current_user_name    = $is_logged_in ? wp_get_current_user()->display_name : '';
+    $current_user_avatar  = $is_logged_in
         ? get_avatar_url( get_current_user_id(), [ 'size' => 80 ] )
         : INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
 
     // NEW: pass enable flag + thresholds to JS (no banned lists exposed)
-    $js_precheck_enabled   = ! empty( $options['js_precheck_enabled'] );
-    $ws_min_len_threshold  = (int) apply_filters( 'init_plugin_suite_review_system_min_len_for_ws_check', 20 );
-    $repeat_threshold      = (int) apply_filters( 'init_plugin_suite_review_system_repetition_threshold', 8 );
+    $js_precheck_enabled  = ! empty( $options['js_precheck_enabled'] );
+    $ws_min_len_threshold = (int) apply_filters( 'init_plugin_suite_review_system_min_len_for_ws_check', 20 );
+    $repeat_threshold     = (int) apply_filters( 'init_plugin_suite_review_system_repetition_threshold', 8 );
 
     wp_localize_script( 'init-review-system-script', 'InitReviewSystemData', [
         'require_login'        => $require_login,
+        'double_click_to_rate' => $double_click_to_rate,
         'is_logged_in'         => $is_logged_in,
         'rest_url'             => $rest_url,
         'nonce'                => $rest_nonce,

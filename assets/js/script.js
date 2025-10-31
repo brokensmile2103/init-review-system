@@ -1,15 +1,22 @@
-// === Review 5 sao ===
+// === Review 5 sao (v2.1: double click + pending .hovering bền vững) ===
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.init-review-system').forEach(initBlock);
 
     function initBlock(block) {
-        const postId = parseInt(block.dataset.postId, 10);
-        const stars = block.querySelectorAll('.star');
-        const info = block.querySelector('.init-review-info');
+        const postId   = parseInt(block.dataset.postId, 10);
+        const stars    = block.querySelectorAll('.star');
+        const info     = block.querySelector('.init-review-info');
         const localKey = `init_review_voted_${postId}`;
+        const needDouble = !!(window.InitReviewSystemData && InitReviewSystemData.double_click_to_rate);
 
-        let voted = !!localStorage.getItem(localKey);
+        let voted    = !!localStorage.getItem(localKey);
         let avgScore = getAverageScore(info);
+
+        // Trạng thái "chờ xác nhận" cho double click
+        let pendingValue = null;
+        let pendingAt    = 0;
+        let pendingTimer = null;
+        const PENDING_MS = 2200;
 
         highlightStars(stars, Math.round(avgScore));
 
@@ -22,19 +29,67 @@ document.addEventListener('DOMContentLoaded', () => {
             const value = parseInt(star.dataset.value, 10);
 
             star.addEventListener('mouseenter', () => {
+                // Khi đang pending thì không cho hover phá .hovering
+                if (pendingValue !== null) return;
                 highlightStars(stars, value, 'hovering');
             });
 
             star.addEventListener('mouseleave', () => {
+                // Khi đang pending thì giữ nguyên .hovering
+                if (pendingValue !== null) return;
+
                 clearStars(stars, 'hovering');
-                highlightStars(stars, Math.round(avgScore), 'active');
+                const base = (pendingValue !== null) ? pendingValue : Math.round(avgScore);
+                highlightStars(stars, base, 'active');
             });
 
             star.addEventListener('click', () => {
                 if (!canVote(voted)) return;
+
+                // Double click mode
+                if (needDouble) {
+                    const now = Date.now();
+
+                    // Lần 1 → pending (hoặc đổi chọn / hết hạn pending trước đó)
+                    if (pendingValue !== value || (now - pendingAt) > PENDING_MS) {
+                        pendingValue = value;
+                        pendingAt = now;
+
+                        // Reset dấu vết cũ
+                        clearStars(stars, 'hovering');
+                        clearStars(stars, 'active');
+
+                        // Đánh dấu pending bằng .hovering
+                        highlightStars(stars, value, 'hovering');
+
+                        // (Re)start auto-timeout cho pending
+                        if (pendingTimer) clearTimeout(pendingTimer);
+                        pendingTimer = setTimeout(() => {
+                            pendingValue = null;
+                            pendingAt = 0;
+                            clearStars(stars, 'hovering');
+                            highlightStars(stars, Math.round(avgScore), 'active');
+                            pendingTimer = null;
+                        }, PENDING_MS);
+
+                        return; // Chưa submit, chờ click lần 2
+                    }
+
+                    // Lần 2 → confirm & submit
+                    pendingValue = null;
+                    pendingAt = 0;
+                    if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
+                    clearStars(stars, 'hovering');
+                }
+
+                // Single click mode HOẶC click xác nhận lần 2
                 submitVote(postId, value, stars, block, info, localKey, newScore => {
                     avgScore = newScore;
                     voted = true;
+                    pendingValue = null;
+                    pendingAt = 0;
+                    if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
+                    clearStars(stars, 'hovering');
                 });
             });
         });
@@ -60,8 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem(localKey, value);
             if (info) {
-                info.innerHTML =
-                    `<strong>${payload.score.toFixed(1)}</strong><sub>/5</sub> (${payload.total_votes})`;
+                info.innerHTML = `<strong>${payload.score.toFixed(1)}</strong><sub>/5</sub> (${payload.total_votes})`;
             }
 
             highlightStars(stars, Math.round(payload.score));

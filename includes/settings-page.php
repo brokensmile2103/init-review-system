@@ -39,6 +39,7 @@ function init_plugin_suite_review_system_register_settings() {
 			'sanitize_callback' => 'init_plugin_suite_review_system_sanitize_options',
 			'default' => [
 			    'require_login'                    => false,
+			    'double_click_to_rate'             => false,
 			    'strict_ip_check'                  => false,
 			    'score_position'                   => 'none',
 			    'vote_position'                    => 'none',
@@ -84,6 +85,14 @@ function init_plugin_suite_review_system_register_settings() {
 	    'require_login',
 	    __( 'Require login to vote', 'init-review-system' ),
 	    'init_plugin_suite_review_system_field_require_login',
+	    INIT_PLUGIN_SUITE_RS_SLUG,
+	    'init_plugin_suite_review_system_general'
+	);
+
+	add_settings_field(
+	    'double_click_to_rate',
+	    __( 'Require double-click to rate', 'init-review-system' ),
+	    'init_plugin_suite_review_system_field_double_click_to_rate',
 	    INIT_PLUGIN_SUITE_RS_SLUG,
 	    'init_plugin_suite_review_system_general'
 	);
@@ -163,6 +172,7 @@ function init_plugin_suite_review_system_sanitize_options( $input ) {
 	$output = [];
 
 	$output['require_login']   				 = ! empty( $input['require_login'] );
+	$output['double_click_to_rate'] 		 = ! empty( $input['double_click_to_rate'] );
 	$output['strict_ip_check'] 				 = ! empty( $input['strict_ip_check'] );
 	$output['auto_reactions_before_comment'] = ! empty( $input['auto_reactions_before_comment'] );
 
@@ -213,6 +223,17 @@ function init_plugin_suite_review_system_field_require_login() {
     echo '<label><input type="checkbox" name="' . esc_attr( INIT_PLUGIN_SUITE_RS_OPTION ) . '[require_login]" value="1" ' . checked( $current, true, false ) . '> ';
     esc_html_e( 'Only allow logged-in users to vote.', 'init-review-system' );
     echo '</label>';
+}
+
+// Field: double_click_to_rate (checkbox)
+function init_plugin_suite_review_system_field_double_click_to_rate() {
+    $options = get_option( INIT_PLUGIN_SUITE_RS_OPTION );
+    $current = ! empty( $options['double_click_to_rate'] );
+
+    echo '<label><input type="checkbox" name="' . esc_attr( INIT_PLUGIN_SUITE_RS_OPTION ) . '[double_click_to_rate]" value="1" ' . checked( $current, true, false ) . '> ';
+    esc_html_e( 'Users must double-click a star to confirm rating.', 'init-review-system' );
+    echo '</label>';
+    echo '<p class="description" style="margin-top:4px;">' . esc_html__( 'Helps prevent accidental ratings/misclicks.', 'init-review-system' ) . '</p>';
 }
 
 // Field: strict_ip_check (checkbox)

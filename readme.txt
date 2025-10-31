@@ -1,12 +1,12 @@
 === Init Review System – Reactions, Multi-Criteria, Guest-Friendly ===
-Contributors: brokensmile.2103  
+Contributors: brokensmile.2103
 Tags: review, rating, vote, reaction, schema
-Requires at least: 5.5  
-Tested up to: 6.8  
-Requires PHP: 7.4  
-Stable tag: 1.8.1
-License: GPLv2 or later  
-License URI: https://www.gnu.org/licenses/gpl-2.0.html  
+Requires at least: 5.5
+Tested up to: 6.9
+Requires PHP: 7.4
+Stable tag: 1.9
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Fast 5-star rating plugin with schema, REST API, shortcode control, localStorage voting. Now with multi-criteria review support.
 
@@ -186,6 +186,19 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.9 – October 31, 2025 =
+- Added **Double-Click Confirmation Rating** (anti-misclick mechanic)
+  - New setting: `Require double-click to rate`
+  - When enabled, users must click the same star **twice** to confirm rating
+  - First click enters **pending state**, visually marked with `.hovering`
+  - Second click submits rating and disables the block as usual
+- JavaScript improvements:
+  - New pending handler with auto-timeout (2.2s) — no accidental lock state
+  - `.hovering` class persists across mouseleave while pending
+  - Clean async state teardown ensures no ghost states
+- No UI popups, no alerts — rating confirmation is **purely action-based**
+- Zero breaking changes — existing rating logic untouched
 
 = 1.8 – October 6, 2025 =
 - Updated function `init_plugin_suite_review_system_get_reviews_by_post_id()`:

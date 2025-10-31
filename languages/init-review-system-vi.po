@@ -393,3 +393,12 @@ msgstr "Bài đánh giá của bạn lặp lại cùng một từ quá nhiều l
 
 msgid "Please rate all required criteria."
 msgstr "Vui lòng chấm điểm tất cả các tiêu chí bắt buộc."
+
+msgid "Require double-click to rate"
+msgstr "Yêu cầu nhấn hai lần để đánh giá"
+
+msgid "Users must double-click a star to confirm rating."
+msgstr "Người dùng phải nhấn hai lần vào ngôi sao để xác nhận đánh giá."
+
+msgid "Helps prevent accidental ratings/misclicks."
+msgstr "Giúp tránh trường hợp bấm nhầm khi đánh giá."

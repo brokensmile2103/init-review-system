@@ -393,3 +393,12 @@ msgstr ""
 
 msgid "Please rate all required criteria."
 msgstr ""
+
+msgid "Require double-click to rate"
+msgstr ""
+
+msgid "Users must double-click a star to confirm rating."
+msgstr ""
+
+msgid "Helps prevent accidental ratings/misclicks."
+msgstr ""

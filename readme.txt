@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.9
+Stable tag: 1.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,69 +90,69 @@ Attributes:
 
 This plugin provides filters and actions to let developers customize auto-insert behavior, schema output, review permissions, and REST API logic.
 
-**`init_plugin_suite_review_system_auto_insert_enabled_score`**  
-Enable or disable automatic score output (before/after content).  
-**Applies to:** Frontend filter  
+**`init_plugin_suite_review_system_auto_insert_enabled_score`**
+Enable or disable automatic score output (before/after content).
+**Applies to:** Frontend filter
 **Params:** `bool $enabled`, `string $position`, `string $post_type`
 
-**`init_plugin_suite_review_system_auto_insert_enabled_vote`**  
-Enable or disable automatic voting block insertion.  
-**Applies to:** Frontend filter  
+**`init_plugin_suite_review_system_auto_insert_enabled_vote`**
+Enable or disable automatic voting block insertion.
+**Applies to:** Frontend filter
 **Params:** `bool $enabled`, `string $position`, `string $post_type`
 
-**`init_plugin_suite_review_system_default_score_shortcode`**  
-Change the default shortcode used for score auto-insertion.  
-**Applies to:** Frontend  
+**`init_plugin_suite_review_system_default_score_shortcode`**
+Change the default shortcode used for score auto-insertion.
+**Applies to:** Frontend
 **Params:** `string $shortcode`
 
-**`init_plugin_suite_review_system_default_vote_shortcode`**  
-Change the default shortcode used for voting block auto-insertion.  
-**Applies to:** Frontend  
+**`init_plugin_suite_review_system_default_vote_shortcode`**
+Change the default shortcode used for voting block auto-insertion.
+**Applies to:** Frontend
 **Params:** `string $shortcode`
 
-**`init_plugin_suite_review_system_require_login`**  
-Force login for submitting reviews, even if disabled in settings.  
-**Applies to:** REST `/submit-criteria-review`  
+**`init_plugin_suite_review_system_require_login`**
+Force login for submitting reviews, even if disabled in settings.
+**Applies to:** REST `/submit-criteria-review`
 **Params:** `bool $require_login`
 
-**`init_plugin_suite_review_system_min_len_for_ws_check`**  
-Adjust minimum length threshold for triggering no-whitespace check.  
-**Applies to:** Backend + JS precheck  
+**`init_plugin_suite_review_system_min_len_for_ws_check`**
+Adjust minimum length threshold for triggering no-whitespace check.
+**Applies to:** Backend + JS precheck
 **Params:** `int $threshold` (default `20`)
 
-**`init_plugin_suite_review_system_repetition_threshold`**  
-Adjust repetition threshold for detecting excessive word repetition.  
-**Applies to:** Backend + JS precheck  
+**`init_plugin_suite_review_system_repetition_threshold`**
+Adjust repetition threshold for detecting excessive word repetition.
+**Applies to:** Backend + JS precheck
 **Params:** `int $threshold` (default `8`)
 
-**`init_plugin_suite_review_system_schema_type`**  
-Customize schema.org type (e.g., `Book`, `Product`, `Course`).  
-**Applies to:** Shortcode output  
+**`init_plugin_suite_review_system_schema_type`**
+Customize schema.org type (e.g., `Book`, `Product`, `Course`).
+**Applies to:** Shortcode output
 **Params:** `string $type`, `string $post_type`
 
-**`init_plugin_suite_review_system_schema_data`**  
-Modify JSON-LD schema output array.  
-**Applies to:** Shortcode output  
+**`init_plugin_suite_review_system_schema_data`**
+Modify JSON-LD schema output array.
+**Applies to:** Shortcode output
 **Params:** `array $data`, `int $post_id`, `string $schema_type`
 
-**`init_plugin_suite_review_system_after_vote`**  
-Run custom logic after a single-star vote is submitted.  
-**Applies to:** REST `/vote`  
+**`init_plugin_suite_review_system_after_vote`**
+Run custom logic after a single-star vote is submitted.
+**Applies to:** REST `/vote`
 **Params:** `int $post_id`, `float $score`, `float $avg_score`, `int $total_votes`
 
-**`init_plugin_suite_review_system_after_criteria_review`**  
-Trigger custom logic after a multi-criteria review is submitted.  
-**Applies to:** REST `/submit-criteria-review`  
+**`init_plugin_suite_review_system_after_criteria_review`**
+Trigger custom logic after a multi-criteria review is submitted.
+**Applies to:** REST `/submit-criteria-review`
 **Params:** `int $post_id`, `int $user_id`, `float $avg_score`, `string $review_content`, `array $scores`
 
-**`init_plugin_suite_review_system_get_reaction_types`**  
-Customize available reaction types (labels + emojis).  
-**Applies to:** Reactions system  
+**`init_plugin_suite_review_system_get_reaction_types`**
+Customize available reaction types (labels + emojis).
+**Applies to:** Reactions system
 **Params:** `array $types`
 
-**`init_plugin_suite_review_system_reaction_meta_key`**  
-Customize the meta key used for storing reaction counts.  
-**Applies to:** Reaction counts storage  
+**`init_plugin_suite_review_system_reaction_meta_key`**
+Customize the meta key used for storing reaction counts.
+**Applies to:** Reaction counts storage
 **Params:** `string $meta_key`, `string $rx_key`
 
 == Screenshots ==
@@ -164,28 +164,44 @@ Customize the meta key used for storing reaction counts.
 
 == Installation ==
 
-1. Upload plugin to `/wp-content/plugins/`  
-2. Activate via Plugins menu  
-3. Go to **Settings > Init Review System** to configure options  
+1. Upload plugin to `/wp-content/plugins/`
+2. Activate via Plugins menu
+3. Go to **Settings > Init Review System** to configure options
 
 == FAQ ==
 
-= Is login required to vote? =  
+= Is login required to vote? =
 Not by default. You can enable it in plugin settings.
 
-= Does it support IP protection? =  
+= Does it support IP protection? =
 Yes. You can enable strict IP check to prevent duplicate votes.
 
-= Can I use this with custom post types? =  
+= Can I use this with custom post types? =
 Yes, it works with any post type that uses `the_content()` or `comment_form()`.
 
-= Does it support multi-criteria reviews? =  
+= Does it support multi-criteria reviews? =
 Yes. You can define up to 5 custom criteria and show them using the provided shortcode.
 
-= Does it support 10-star ratings? =  
+= Does it support 10-star ratings? =
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.10 – November 3, 2025 =
+- Added **Admin Reset & Manual Score Adjustment Metabox**
+  - Visible **only when a post already has rating data**
+  - New UI: compact **stat chips** showing Avg / Votes / Total (premium-style mini cards)
+  - Supports manual override: admin can set **Average (0–5)** and **Vote Count**
+  - Internal logic auto-calculates `Total = Avg × Count` (rounded to 2 decimals)
+  - All displayed values are fully escaped (`esc_html() / esc_attr()`) following PHPCS
+  - Metabox is registered **per-post**, not globally — zero UI clutter
+- Security and permissions:
+  - Only users with capability `edit_others_posts` (**Editor+**) can view or interact with the metabox
+  - `save_post` handler validates **nonce + capability**, protects against unauthorized POST submissions
+  - Input sanitized: `sanitize_text_field( wp_unslash() )` before casting to float/int
+- UX improvements:
+  - No inline `<style>` tags — every style moved to inline attribute (WordPress admin standard)
+  - Metabox does **not appear at all** until the first vote exists (no "empty" box)
 
 = 1.9 – October 31, 2025 =
 - Added **Double-Click Confirmation Rating** (anti-misclick mechanic)
@@ -265,27 +281,27 @@ No. The plugin currently supports only a 5-star scale.
 - Improved shortcode documentation and attributes in `readme.txt`
 - Enhanced multi-criteria input layout for better clarity
 
-= 1.1 – July 11, 2025 =  
-- Added support for multi-criteria reviews  
-- New shortcode for criteria-based score display  
-- Separate logic and schema handling for criteria reviews  
-- Improved review interface and modal UX  
-- Refactored code to support both single and multi-criteria review paths  
+= 1.1 – July 11, 2025 =
+- Added support for multi-criteria reviews
+- New shortcode for criteria-based score display
+- Separate logic and schema handling for criteria reviews
+- Improved review interface and modal UX
+- Refactored code to support both single and multi-criteria review paths
 
-= 1.0 – June 28, 2025 =  
-- Initial release  
-- Shortcode `[init_review_system]` for 5-star voting block  
-- Shortcode `[init_review_score]` for average score display  
-- REST API endpoint `/wp-json/initrsys/v1/vote` with conditional login and nonce check  
-- Vote tracking via `localStorage` for guest users  
-- Optional login restriction + strict IP check using hashed IP + transient  
-- JSON-LD schema output using `AggregateRating`  
-- Auto-insert system: before/after post content or comment form  
-- Admin settings page with shortcode builder and control toggles  
-- Minimal, responsive, theme-inheriting design  
-- Developer-friendly: filters, actions, and reusable helpers  
+= 1.0 – June 28, 2025 =
+- Initial release
+- Shortcode `[init_review_system]` for 5-star voting block
+- Shortcode `[init_review_score]` for average score display
+- REST API endpoint `/wp-json/initrsys/v1/vote` with conditional login and nonce check
+- Vote tracking via `localStorage` for guest users
+- Optional login restriction + strict IP check using hashed IP + transient
+- JSON-LD schema output using `AggregateRating`
+- Auto-insert system: before/after post content or comment form
+- Admin settings page with shortcode builder and control toggles
+- Minimal, responsive, theme-inheriting design
+- Developer-friendly: filters, actions, and reusable helpers
 
 == License ==
 
-This plugin is licensed under the GPLv2 or later.  
+This plugin is licensed under the GPLv2 or later.
 You are free to use, modify, and distribute it under the same license.

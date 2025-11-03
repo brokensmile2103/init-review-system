@@ -402,3 +402,33 @@ msgstr "Người dùng phải nhấn hai lần vào ngôi sao để xác nhận 
 
 msgid "Helps prevent accidental ratings/misclicks."
 msgstr "Giúp tránh trường hợp bấm nhầm khi đánh giá."
+
+msgid "Review Score"
+msgstr "Điểm đánh giá"
+
+msgid "Avg"
+msgstr "TB"
+
+msgid "Votes"
+msgstr "Lượt"
+
+msgid "Total"
+msgstr "Tổng"
+
+msgid "Set Average (0–5)"
+msgstr "Đặt điểm trung bình (0–5)"
+
+msgid "Set Count (>= 0)"
+msgstr "Đặt số lượt đánh giá (>= 0)"
+
+msgid "Total auto = Avg × Count (rounded)"
+msgstr "Tổng điểm tự động = Trung bình × Số lượt (được làm tròn)"
+
+msgid "Reset all review data"
+msgstr "Xóa toàn bộ dữ liệu đánh giá"
+
+msgid "Save / Update the post to apply changes."
+msgstr "Lưu / Cập nhật bài viết để áp dụng thay đổi."
+
+msgid "No votes yet. This box appears after the first vote."
+msgstr "Chưa có đánh giá. Metabox sẽ hiển thị sau khi có lượt đánh giá đầu tiên."

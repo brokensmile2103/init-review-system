@@ -402,3 +402,33 @@ msgstr ""
 
 msgid "Helps prevent accidental ratings/misclicks."
 msgstr ""
+
+msgid "Review Score"
+msgstr ""
+
+msgid "Avg"
+msgstr ""
+
+msgid "Votes"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Set Average (0–5)"
+msgstr ""
+
+msgid "Set Count (>= 0)"
+msgstr ""
+
+msgid "Total auto = Avg × Count (rounded)"
+msgstr ""
+
+msgid "Reset all review data"
+msgstr ""
+
+msgid "Save / Update the post to apply changes."
+msgstr ""
+
+msgid "No votes yet. This box appears after the first vote."
+msgstr ""

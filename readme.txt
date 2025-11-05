@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.10
+Stable tag: 1.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -186,6 +186,21 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.11 – November 5, 2025 =
+- Added **User Review Fetching API**
+  - New function `init_plugin_suite_review_system_get_reviews_by_user_id()`
+    - Supports pagination (`paged`, `per_page`) just like the post-based fetcher
+    - Automatically joins with `wp_posts` to **exclude orphaned reviews**
+    - Returns unserialized `criteria_scores` for direct UI rendering
+- Added **Total Pages Counter for User Reviews**
+  - New function `init_plugin_suite_review_system_get_total_pages_by_user_id()`
+    - Counts reviews belonging to a specific user (filtered by `status`)
+    - Returns the total number of pages (minimum value: `1` for UX consistency)
+- Performance and internal improvements:
+  - Consistent sanitization and safety (`absint()`, `max()`, typed values)
+  - All SQL queries use `$wpdb->prepare()` — no unbound parameters
+  - PHPCS/WPCS compliant and follows plugin prefix standard
 
 = 1.10 – November 3, 2025 =
 - Added **Admin Reset & Manual Score Adjustment Metabox**

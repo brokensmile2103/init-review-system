@@ -3,7 +3,7 @@
  * Plugin Name: Init Review System
  * Plugin URI: https://inithtml.com/plugin/init-review-system/
  * Description: Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, and rich schema support for WordPress sites.
- * Version: 1.10
+ * Version: 1.11
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-review-system
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'INIT_PLUGIN_SUITE_RS_VERSION',        '1.10' );
+define( 'INIT_PLUGIN_SUITE_RS_VERSION',        '1.11' );
 define( 'INIT_PLUGIN_SUITE_RS_SLUG',           'init-review-system' );
 define( 'INIT_PLUGIN_SUITE_RS_OPTION',         'init_plugin_suite_review_system_settings' );
 define( 'INIT_PLUGIN_SUITE_RS_NAMESPACE',      'initrsys/v1' );

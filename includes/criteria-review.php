@@ -293,3 +293,103 @@ function init_plugin_suite_review_system_get_total_pages( $per, $status = 'appro
 
     return (int) ceil( $total_reviews / $per );
 }
+
+/**
+ * Lấy danh sách review theo user_id.
+ *
+ * @param int    $user_id   ID người dùng cần lấy review.
+ * @param int    $paged     Trang hiện tại (>=1). Nếu $per_page = 0 thì bỏ qua phân trang.
+ * @param int    $per_page  Số review mỗi trang. 0 để lấy toàn bộ.
+ * @param string $status    Trạng thái review ('approved', 'pending', ...).
+ *
+ * @return array Danh sách review (ARRAY_A), đã unserialize 'criteria_scores'.
+ */
+function init_plugin_suite_review_system_get_reviews_by_user_id( $user_id, $paged = 1, $per_page = 0, $status = 'approved' ) {
+    $user_id  = absint( $user_id );
+    $paged    = max( 1, (int) $paged );
+    $per_page = (int) $per_page;
+
+    if ( $user_id <= 0 ) {
+        return array();
+    }
+
+    global $wpdb;
+    $table_reviews = $wpdb->prefix . 'init_criteria_reviews';
+    $table_posts   = $wpdb->posts;
+
+    // Base SELECT: join với wp_posts để loại review mồ côi.
+    $sql    = "SELECT r.* FROM {$table_reviews} r INNER JOIN {$table_posts} p ON p.ID = r.post_id";
+    $params = array();
+
+    // WHERE
+    $sql      .= " WHERE r.user_id = %d AND r.status = %s";
+    $params[]  = $user_id;
+    $params[]  = $status;
+
+    // Sắp xếp mới nhất trước
+    $sql .= " ORDER BY r.created_at DESC";
+
+    // Phân trang (nếu có)
+    if ( $per_page > 0 ) {
+        $offset    = ( $paged - 1 ) * $per_page;
+        $sql      .= " LIMIT %d OFFSET %d";
+        $params[]  = $per_page;
+        $params[]  = $offset;
+    }
+
+    // Chuẩn bị & thực thi
+    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    $prepared_sql = $wpdb->prepare( $sql, ...$params );
+    $results      = $wpdb->get_results( $prepared_sql, ARRAY_A );
+    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+    if ( empty( $results ) ) {
+        return array();
+    }
+
+    // Giải mã tiêu chí
+    foreach ( $results as &$review ) {
+        $review['criteria_scores'] = maybe_unserialize( $review['criteria_scores'] );
+    }
+
+    return $results;
+}
+
+/**
+ * Tính tổng số trang review dựa trên user_id.
+ *
+ * @param int    $user_id   ID người dùng cần lấy tổng số trang.
+ * @param int    $per_page  Số review mỗi trang (>=1).
+ * @param string $status    Trạng thái review ('approved', 'pending', ...).
+ *
+ * @return int Tổng số trang (>=1).
+ */
+function init_plugin_suite_review_system_get_total_pages_by_user_id( $user_id, $per_page = 10, $status = 'approved' ) {
+    $user_id  = absint( $user_id );
+    $per_page = max( 1, (int) $per_page );
+
+    if ( $user_id <= 0 ) {
+        return 1;
+    }
+
+    global $wpdb;
+    $table_reviews = $wpdb->prefix . 'init_criteria_reviews';
+    $table_posts   = $wpdb->posts;
+
+    // Đếm review còn tồn tại post (không tính review mồ côi)
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    $total_reviews = (int) $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT COUNT(*) 
+             FROM {$table_reviews} r
+             INNER JOIN {$table_posts} p ON p.ID = r.post_id
+             WHERE r.user_id = %d
+               AND r.status = %s",
+            $user_id,
+            $status
+        )
+    );
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+    return (int) ceil( $total_reviews / $per_page );
+}

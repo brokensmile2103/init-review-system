@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.11
+Stable tag: 1.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -186,6 +186,16 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.12 – November 14, 2025 =
+- Added **anti–double-submit protection** to the front-end rating widget
+  - New `isSubmitting` state prevents rapid multi-clicks from firing multiple requests
+  - Fully compatible with both **single-click** and **double-click confirmation** modes
+  - Pending hover logic (`.hovering`) remains intact with zero behavior changes
+- Improved client-side stability:
+  - Ensures only **one** vote request is sent at a time
+  - Allows retrying when the API returns an error (non-blocking UX)
+- No changes to REST API, server logic, or existing rating flow — fully backward compatible
 
 = 1.11 – November 5, 2025 =
 - Added **User Review Fetching API**

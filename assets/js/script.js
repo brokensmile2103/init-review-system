@@ -1,4 +1,4 @@
-// === Review 5 sao (v2.1: double click + pending .hovering bền vững) ===
+// === Review 5 sao (v2.2: chống spam click + double click + pending .hovering bền vững) ===
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.init-review-system').forEach(initBlock);
 
@@ -9,8 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const localKey = `init_review_voted_${postId}`;
         const needDouble = !!(window.InitReviewSystemData && InitReviewSystemData.double_click_to_rate);
 
-        let voted    = !!localStorage.getItem(localKey);
-        let avgScore = getAverageScore(info);
+        let voted       = !!localStorage.getItem(localKey);
+        let avgScore    = getAverageScore(info);
+        let isSubmitting = false; // chống spam submit
 
         // Trạng thái "chờ xác nhận" cho double click
         let pendingValue = null;
@@ -44,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             star.addEventListener('click', () => {
-                if (!canVote(voted)) return;
+                // Đã vote rồi hoặc đang gửi request thì thôi
+                if (!canVote(voted) || isSubmitting) return;
 
                 // Double click mode
                 if (needDouble) {
@@ -78,24 +80,49 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Lần 2 → confirm & submit
                     pendingValue = null;
                     pendingAt = 0;
-                    if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
+                    if (pendingTimer) {
+                        clearTimeout(pendingTimer);
+                        pendingTimer = null;
+                    }
                     clearStars(stars, 'hovering');
                 }
 
                 // Single click mode HOẶC click xác nhận lần 2
-                submitVote(postId, value, stars, block, info, localKey, newScore => {
-                    avgScore = newScore;
-                    voted = true;
-                    pendingValue = null;
-                    pendingAt = 0;
-                    if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
-                    clearStars(stars, 'hovering');
-                });
+                isSubmitting = true; // khóa mọi click tiếp theo
+
+                submitVote(
+                    postId,
+                    value,
+                    stars,
+                    block,
+                    info,
+                    localKey,
+                    {
+                        onSuccess: newScore => {
+                            avgScore = newScore;
+                            voted = true;
+                            pendingValue = null;
+                            pendingAt = 0;
+                            if (pendingTimer) {
+                                clearTimeout(pendingTimer);
+                                pendingTimer = null;
+                            }
+                            clearStars(stars, 'hovering');
+                        },
+                        onFinally: () => {
+                            // Nếu thành công thì canVote() sẽ trả false + block đã disable
+                            // Nếu fail thì cho user bấm lại
+                            isSubmitting = false;
+                        }
+                    }
+                );
             });
         });
     }
 
-    function submitVote(postId, value, stars, block, info, localKey, onSuccess) {
+    function submitVote(postId, value, stars, block, info, localKey, callbacks = {}) {
+        const { onSuccess, onError, onFinally } = callbacks;
+
         fetch(`${InitReviewSystemData.rest_url}/vote`, {
             method: 'POST',
             credentials: 'same-origin',
@@ -107,9 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(async res => {
             const payload = await res.json().catch(() => ({}));
+
             if (!res.ok || !payload.success) {
                 console.warn('[InitReviewSystem] Vote failed:', payload);
                 notifyError(payload.message || (InitReviewSystemData?.i18n?.error || 'Submission failed. Please try again later.'));
+                if (typeof onError === 'function') {
+                    onError(payload);
+                }
                 return;
             }
 
@@ -129,6 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => {
             console.error('[InitReviewSystem] API error:', err);
             notifyError(InitReviewSystemData?.i18n?.error || 'Submission failed. Please try again later.');
+            if (typeof onError === 'function') {
+                onError(err);
+            }
+        })
+        .finally(() => {
+            if (typeof onFinally === 'function') {
+                onFinally();
+            }
         });
     }
 

@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.12
+Stable tag: 1.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -186,6 +186,12 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.13 – January 19, 2026 =
+- Added `.dark` modifier for `.init-reaction-bar` to support Dark Mode
+- Improved visual contrast for reactions in dark environments
+- Polished hover, active and disabled states in Dark Mode
+- Pure CSS enhancement, no JS or logic changes
 
 = 1.12 – November 14, 2025 =
 - Added **anti–double-submit protection** to the front-end rating widget

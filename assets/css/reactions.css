@@ -105,3 +105,64 @@
     text-decoration: underline;
     font-weight: 500;
 }
+
+/* ===== Reaction Bar Dark Mode ===== */
+.init-reaction-bar.dark {
+    background: rgba(255,255,255,.1);
+}
+
+/* text chung */
+.init-reaction-bar.dark .init-reaction-title {
+    color: #eee;
+}
+.init-reaction-bar.dark .init-reaction-total {
+    color: #aaa;
+}
+.init-reaction-bar.dark .init-reaction-total span {
+    color: #fff;
+}
+
+/* nút reaction */
+.init-reaction-bar.dark .init-rx {
+    background: #1e1e1e;
+    border: 1px solid rgba(255,255,255,.08);
+    color: #ddd;
+}
+
+/* hover */
+.init-reaction-bar.dark .init-rx:hover {
+    background: #242424;
+    box-shadow: 0 3px 12px rgba(0,0,0,.6);
+}
+
+/* active */
+.init-reaction-bar.dark .init-rx.is-active {
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px rgba(243,156,18,.35);
+}
+
+/* disabled */
+.init-reaction-bar.dark .init-rx.is-disabled {
+    background: #181818;
+    border: 1px dashed rgba(255,255,255,.2);
+    color: #888;
+}
+.init-reaction-bar.dark .init-rx.is-disabled:hover {
+    background: #181818;
+}
+
+/* label + count */
+.init-reaction-bar.dark .rx-label {
+    opacity: .75;
+}
+.init-reaction-bar.dark .rx-count {
+    color: #fff;
+}
+
+/* login hint */
+.init-reaction-bar.dark .init-reaction-login-hint {
+    color: #aaa;
+}
+.init-reaction-bar.dark .init-reaction-login-hint a {
+    color: #f39c12;
+}

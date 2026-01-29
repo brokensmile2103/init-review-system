@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.13
+Stable tag: 1.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -186,6 +186,28 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.14 – January 29, 2026 =
+- Introduced **Bayesian Weighted Rating** for reliable ranking calculations
+  - New derived meta key `_init_review_weighted` generated **on vote submission**
+  - Prevents low-sample bias (e.g. 1×5★ no longer outranks 1000×4.9★)
+  - Uses configurable minimum vote threshold via filter  
+    `init_plugin_suite_review_system_min_votes_threshold`
+- Rating architecture improvements:
+  - Weighted score is calculated **on-write** (at REST endpoint), not at query time
+  - Establishes clear separation between **raw data** and **ranking data**
+  - Plugin now acts as the single source of truth for rating-based sorting
+- Performance & stability:
+  - Global average rating is cached using **transients** for cross-environment reliability
+  - Automatic transient invalidation on new vote to prevent stale calculations
+- Developer experience:
+  - Enhanced `init_plugin_suite_review_system_after_vote` hook now passes:
+    - New average score
+    - Total vote count
+    - Weighted ranking score
+  - Fully backward compatible — no changes required for existing consumers
+- No UI or frontend behavior changes
+- No breaking changes to REST API responses
 
 = 1.13 – January 19, 2026 =
 - Added `.dark` modifier for `.init-reaction-bar` to support Dark Mode

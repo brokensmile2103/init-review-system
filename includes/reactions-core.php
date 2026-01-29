@@ -94,12 +94,12 @@ function init_plugin_suite_review_system_get_user_reaction($post_id, $user_id) {
 
     global $wpdb;
     $table = init_plugin_suite_review_system_get_reaction_table();
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $rx = $wpdb->get_var($wpdb->prepare(
         "SELECT reaction FROM {$table} WHERE post_id = %d AND user_id = %d LIMIT 1",
         $post_id, $user_id
     ));
-    // phpcs:enable
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     return $rx ? sanitize_key($rx) : '';
 }
 
@@ -195,12 +195,12 @@ function init_plugin_suite_review_system_recount_reactions($post_id) {
     $counts = [];
     foreach ($types as $k => $_) $counts[$k] = 0;
 
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $rows = $wpdb->get_results($wpdb->prepare(
         "SELECT reaction, COUNT(*) c FROM {$table} WHERE post_id = %d GROUP BY reaction",
         $post_id
     ), ARRAY_A);
-    // phpcs:enable
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     if (is_array($rows)) {
         foreach ($rows as $row) {

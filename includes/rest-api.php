@@ -132,8 +132,16 @@ function init_plugin_suite_review_system_rest_submit_vote( $request ) {
     update_post_meta( $post_id, '_init_review_count', $new_total_count );
     update_post_meta( $post_id, '_init_review_avg', $new_avg );
 
+    // Tính weighted
+    $global_avg = init_plugin_suite_review_system_get_global_avg();
+    $min_votes = apply_filters( 'init_plugin_suite_review_system_min_votes_threshold', 50, $post_id );
+    $weighted_score = init_plugin_suite_review_system_calculate_weighted_score( $new_avg, $new_total_count, $global_avg, $min_votes );
+    update_post_meta( $post_id, '_init_review_weighted', round( $weighted_score, 4 ) );
+
     // Hook mở rộng
-    do_action( 'init_plugin_suite_review_system_after_vote', $post_id, $score, $new_avg, $new_total_count );
+    do_action( 'init_plugin_suite_review_system_after_vote', $post_id, $score, $new_avg, $new_total_count, $weighted_score );
+
+    delete_transient( 'init_plugin_suite_rs_global_avg' );
 
     return rest_ensure_response([
         'success'     => true,

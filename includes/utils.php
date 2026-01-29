@@ -123,3 +123,40 @@ function init_plugin_suite_review_system_get_criteria_labels() {
     }
     return $labels;
 }
+
+// Helper: tính weighted score
+function init_plugin_suite_review_system_calculate_weighted_score( $avg, $count, $global_avg, $min_votes = 50 ) {
+    if ( $count <= 0 ) {
+        return 0;
+    }
+
+    $v = (int) $count;
+    $R = (float) $avg;
+    $m = (int) $min_votes;
+    $C = (float) $global_avg;
+
+    return ( ( $v / ( $v + $m ) ) * $R ) + ( ( $m / ( $v + $m ) ) * $C );
+}
+
+// Global average
+function init_plugin_suite_review_system_get_global_avg() {
+    $transient_key = 'init_plugin_suite_rs_global_avg';
+
+    $cached = get_transient( $transient_key );
+    if ( $cached !== false ) {
+        return (float) $cached;
+    }
+
+    global $wpdb;
+
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $avg = (float) $wpdb->get_var("
+        SELECT AVG(meta_value)
+        FROM {$wpdb->postmeta}
+        WHERE meta_key = '_init_review_avg'
+          AND meta_value > 0
+    ");
+
+    set_transient( $transient_key, $avg, HOUR_IN_SECONDS );
+    return $avg;
+}

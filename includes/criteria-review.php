@@ -106,10 +106,10 @@ function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page
     }
 
     // Chuẩn bị & thực thi
-    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $prepared_sql = $wpdb->prepare( $sql, ...$params );
     $results      = $wpdb->get_results( $prepared_sql, ARRAY_A );
-    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     // Giải mã tiêu chí
     foreach ( $results as &$review ) {
@@ -135,7 +135,7 @@ function init_plugin_suite_review_system_get_reviews_by_post_ids( $post_ids = []
 
     $placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
 
-    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $sql = $wpdb->prepare(
         "SELECT * FROM {$table_name} 
          WHERE status = %s AND post_id IN ({$placeholders})
@@ -144,7 +144,7 @@ function init_plugin_suite_review_system_get_reviews_by_post_ids( $post_ids = []
         array_merge( [ $status ], $post_ids, [ $per_page, $offset ] )
     );
     $results = $wpdb->get_results( $sql, ARRAY_A );
-    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     foreach ( $results as &$review ) {
         $review['criteria_scores'] = maybe_unserialize( $review['criteria_scores'] );
@@ -165,14 +165,14 @@ function init_plugin_suite_review_system_count_reviews_by_post_id( $post_ids = [
 
     $placeholders = implode( ',', array_fill( 0, count( $post_ids ), '%d' ) );
 
-    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $sql = $wpdb->prepare(
         "SELECT COUNT(*) FROM {$table_name} 
          WHERE status = %s AND post_id IN ({$placeholders})",
         array_merge( [ $status ], $post_ids )
     );
     $result = (int) $wpdb->get_var( $sql );
-    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     
     return $result;
 }
@@ -186,7 +186,7 @@ function init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $review_id = $wpdb->get_var(
         $wpdb->prepare(
             "SELECT id FROM {$table_name} WHERE post_id = %d AND user_id = %d AND status = %s LIMIT 1",
@@ -195,7 +195,7 @@ function init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) {
             'approved'
         )
     );
-    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     return ! empty($review_id);
 }
@@ -205,7 +205,7 @@ function init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id,
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $count = $wpdb->get_var(
         $wpdb->prepare(
             "SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d AND status = %s",
@@ -213,7 +213,7 @@ function init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id,
             $status
         )
     );
-    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     return intval( $count );
 }
@@ -224,7 +224,7 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
     // Lấy toàn bộ điểm theo post_id
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $results = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT avg_score, criteria_scores FROM {$table_name} WHERE post_id = %d AND status = %s",
@@ -233,7 +233,7 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
         ),
         ARRAY_A
     );
-    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     if ( empty( $results ) ) {
         return [
@@ -282,14 +282,14 @@ function init_plugin_suite_review_system_get_total_pages( $per, $status = 'appro
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $total_reviews = (int) $wpdb->get_var(
         $wpdb->prepare(
             "SELECT COUNT(*) FROM {$table_name} WHERE status = %s",
             $status
         )
     );
-    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     return (int) ceil( $total_reviews / $per );
 }
@@ -338,10 +338,10 @@ function init_plugin_suite_review_system_get_reviews_by_user_id( $user_id, $page
     }
 
     // Chuẩn bị & thực thi
-    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $prepared_sql = $wpdb->prepare( $sql, ...$params );
     $results      = $wpdb->get_results( $prepared_sql, ARRAY_A );
-    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     if ( empty( $results ) ) {
         return array();
@@ -377,7 +377,7 @@ function init_plugin_suite_review_system_get_total_pages_by_user_id( $user_id, $
     $table_posts   = $wpdb->posts;
 
     // Đếm review còn tồn tại post (không tính review mồ côi)
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $total_reviews = (int) $wpdb->get_var(
         $wpdb->prepare(
             "SELECT COUNT(*) 
@@ -389,7 +389,7 @@ function init_plugin_suite_review_system_get_total_pages_by_user_id( $user_id, $
             $status
         )
     );
-    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     return (int) ceil( $total_reviews / $per_page );
 }

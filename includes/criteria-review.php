@@ -72,32 +72,37 @@ function init_plugin_suite_review_system_add_criteria_review( $post_id, $user_id
 // Lấy review của bài viết
 function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $paged = 1, $per_page = 0, $status = 'approved' ) {
     global $wpdb;
+
+    $ttl = (int) apply_filters( 'init_plugin_suite_review_system_ttl', 0 );
+
+    $cache_key = "reviews_{$post_id}_{$paged}_{$per_page}_{$status}";
+    if ( $ttl > 0 ) {
+        $cached = wp_cache_get( $cache_key, 'init_review_system' );
+        if ( false !== $cached ) {
+            return $cached;
+        }
+    }
+
     $table_reviews = $wpdb->prefix . 'init_criteria_reviews';
     $table_posts   = $wpdb->posts;
 
-    // Base SELECT (chọn r.* để tránh đụng cột trùng tên nếu join)
     $sql    = "SELECT r.* FROM {$table_reviews} r";
     $params = array();
 
-    // Nếu lấy toàn bộ (post_id = 0) thì join với wp_posts để loại review mồ côi
     if ( (int) $post_id === 0 ) {
         $sql .= " INNER JOIN {$table_posts} p ON p.ID = r.post_id";
     }
 
-    // WHERE
     $sql .= " WHERE r.status = %s";
     $params[] = $status;
 
-    // Lọc theo post_id nếu có
     if ( (int) $post_id > 0 ) {
         $sql .= " AND r.post_id = %d";
         $params[] = (int) $post_id;
     }
 
-    // Sắp xếp
     $sql .= " ORDER BY r.created_at DESC";
 
-    // Phân trang
     if ( $per_page > 0 && $paged > 0 ) {
         $offset   = ( $paged - 1 ) * $per_page;
         $sql     .= " LIMIT %d OFFSET %d";
@@ -105,15 +110,17 @@ function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page
         $params[] = (int) $offset;
     }
 
-    // Chuẩn bị & thực thi
     // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $prepared_sql = $wpdb->prepare( $sql, ...$params );
     $results      = $wpdb->get_results( $prepared_sql, ARRAY_A );
     // phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-    // Giải mã tiêu chí
     foreach ( $results as &$review ) {
         $review['criteria_scores'] = maybe_unserialize( $review['criteria_scores'] );
+    }
+
+    if ( $ttl > 0 ) {
+        wp_cache_set( $cache_key, $results, 'init_review_system', $ttl );
     }
 
     return $results;
@@ -203,6 +210,17 @@ function init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) {
 // Lấy tổng review của bài viết
 function init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id, $status = 'approved' ) {
     global $wpdb;
+
+    $ttl = (int) apply_filters( 'init_plugin_suite_review_system_ttl', 0 );
+
+    $cache_key = "total_reviews_{$post_id}_{$status}";
+    if ( $ttl > 0 ) {
+        $cached = wp_cache_get( $cache_key, 'init_review_system' );
+        if ( false !== $cached ) {
+            return (int) $cached;
+        }
+    }
+
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
     // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
@@ -215,7 +233,13 @@ function init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id,
     );
     // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-    return intval( $count );
+    $total = intval( $count );
+
+    if ( $ttl > 0 ) {
+        wp_cache_set( $cache_key, $total, 'init_review_system', $ttl );
+    }
+
+    return $total;
 }
 
 // Lấy điểm trung bình tổng và từng tiêu chí

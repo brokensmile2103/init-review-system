@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.14
+Stable tag: 1.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,6 +155,11 @@ Customize the meta key used for storing reaction counts.
 **Applies to:** Reaction counts storage
 **Params:** `string $meta_key`, `string $rx_key`
 
+**`init_plugin_suite_review_system_ttl`**
+Set TTL (in seconds) for object cache on review queries. Defaults to `0` (cache disabled). Set a value greater than `0` to enable caching via `wp_cache_set` with group `init_review_system`.
+**Applies to:** REST get reviews, get total reviews
+**Params:** `int $ttl` (default `0`)
+
 == Screenshots ==
 
 1. **Plugin Settings Page** – Configure general options like login requirement, IP restriction, auto-display position, and up to 5 custom criteria fields.
@@ -186,6 +191,12 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.15 – February 25, 2026 =
+- Added `$per_page` cap (max 100) in REST endpoint to prevent excessive data queries
+- Added `init_plugin_suite_review_system_ttl` filter (default `0`) to opt-in object cache for review queries
+- When TTL > 0, query results are cached via `wp_cache_set` with group `init_review_system`
+- Cache invalidation can be handled via `init_plugin_suite_review_system_after_insert` action hook
 
 = 1.14 – January 29, 2026 =
 - Introduced **Bayesian Weighted Rating** for reliable ranking calculations

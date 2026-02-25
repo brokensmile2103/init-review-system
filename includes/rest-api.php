@@ -322,7 +322,7 @@ function init_plugin_suite_review_system_rest_submit_criteria_review( $request )
 function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Request $request ) {
     $post_id   = absint( $request->get_param( 'post_id' ) );
     $page      = max( 1, absint( $request->get_param( 'page' ) ) );
-    $per_page  = max( 1, absint( $request->get_param( 'per_page' ) ) );
+    $per_page  = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
 
     if ( ! get_post( $post_id ) ) {
         return new WP_Error( 'invalid_post', __( 'Invalid post ID.', 'init-review-system' ), [ 'status' => 400 ] );

@@ -149,7 +149,7 @@ function init_plugin_suite_review_system_get_global_avg() {
 
     global $wpdb;
 
-    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $avg = (float) $wpdb->get_var("
         SELECT AVG(meta_value)
         FROM {$wpdb->postmeta}

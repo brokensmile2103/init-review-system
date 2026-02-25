@@ -136,8 +136,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = await res.json().catch(() => ({}));
 
             if (!res.ok || !payload.success) {
+                // === DUPLICATE IP → coi như đã vote ===
+                if (payload?.code === 'duplicate_ip' || res.status === 429) {
+                    // Lưu local để khóa UI
+                    localStorage.setItem(localKey, value);
+
+                    // Disable UI
+                    highlightStars(stars, value);
+                    disableStars(stars);
+                    block.classList.add('init-review-disabled');
+
+                    if (typeof onSuccess === 'function') {
+                        // Không có score mới → giữ avg cũ
+                        onSuccess(getAverageScore(info));
+                    }
+
+                    return;
+                }
+
+                // === Lỗi khác → vẫn cho vote lại ===
                 console.warn('[InitReviewSystem] Vote failed:', payload);
-                notifyError(payload.message || (InitReviewSystemData?.i18n?.error || 'Submission failed. Please try again later.'));
+
                 if (typeof onError === 'function') {
                     onError(payload);
                 }
@@ -159,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
             console.error('[InitReviewSystem] API error:', err);
-            notifyError(InitReviewSystemData?.i18n?.error || 'Submission failed. Please try again later.');
             if (typeof onError === 'function') {
                 onError(err);
             }

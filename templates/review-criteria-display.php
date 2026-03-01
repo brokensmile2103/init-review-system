@@ -63,63 +63,23 @@ $aggregate_json = esc_attr( wp_json_encode( $aggregate ) );
     <!-- Review list -->
     <div class="init-review-feedback-list">
         <?php if ($reviews): ?>
-            <?php foreach ($reviews as $review): 
-                $user_id = intval($review['user_id']);
-                $user    = $user_id > 0 ? get_userdata($user_id) : null;
-                $scores  = $review['criteria_scores'];
-
-                $author_name = $user ? $user->display_name : __('Anonymous', 'init-review-system');
-                ?>
-                <div class="init-review-item">
-                    <div class="init-review-top">
-                        <div class="init-review-avatar">
-                            <?php
-                            echo $user
-                                ? get_avatar($user_id, 48)
-                                // phpcs:disable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                                : '<img src="' . esc_url(INIT_PLUGIN_SUITE_RS_ASSETS_URL) . '/img/default-avatar.svg" width="48" height="48" alt="Default avatar">';
-                                // phpcs:enable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                            ?>
-                        </div>
-                        <div class="init-review-header">
-                            <div class="author-and-stars">
-                                <h3 class="author"><?php echo esc_html($author_name); ?></h3>
-                                <div class="init-review-stars">
-                                    <?php
-                                    $avg = floatval($review['avg_score']);
-                                    for ($i = 1; $i <= 5; $i++):
-                                        $active = $i <= round($avg); ?>
-                                        <svg class="star <?php echo $active ? 'active' : ''; ?>" width="20" height="20" viewBox="0 0 64 64">
-                                            <path fill="currentColor" d="M63.9 24.28a2 2 0 0 0-1.6-1.35l-19.68-3-8.81-18.78a2 2 0 0 0-3.62 0l-8.82 18.78-19.67 3a2 2 0 0 0-1.13 3.38l14.3 14.66-3.39 20.7a2 2 0 0 0 2.94 2.07L32 54.02l17.57 9.72a2 2 0 0 0 2.12-.11 2 2 0 0 0 .82-1.96l-3.38-20.7 14.3-14.66a2 2 0 0 0 .46-2.03"></path>
-                                        </svg>
-                                    <?php endfor; ?>
-                                </div>
-                            </div>
-                            <div class="review-date">
-                                <?php
-                                $timestamp = strtotime($review['created_at']);
-                                echo esc_html(date_i18n(get_option('date_format'), $timestamp));
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="init-review-body">
-                        <div class="init-review-text">
-                            <?php echo esc_html($review['review_content']); ?>
-                        </div>
-                        <div class="init-review-criteria-breakdown">
-                            <?php foreach ($criteria as $label): ?>
-                                <?php if (isset($scores[$label])): ?>
-                                    <span class="criteria-score">
-                                        <strong><?php echo esc_html($label); ?></strong>: <?php echo esc_html( floatval($scores[$label]) ); ?> / 5
-                                    </span><br class="visible-mobile">
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+            <?php
+            $item_template  = locate_template( 'init-review-system/review-item.php' );
+            if ( ! $item_template ) {
+                $item_template = INIT_PLUGIN_SUITE_RS_PATH . '/templates/review-item.php';
+            }
+            $default_avatar = INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
+            foreach ($reviews as $review):
+                // Enrich nếu chưa có (initial render không đi qua REST)
+                if ( ! isset( $review['display_name'] ) ) {
+                    $uid = intval( $review['user_id'] ?? 0 );
+                    $u   = $uid > 0 ? get_userdata( $uid ) : null;
+                    $review['display_name'] = $u ? $u->display_name : __( 'Anonymous', 'init-review-system' );
+                    $review['avatar_url']   = $uid > 0 ? ( get_avatar_url( $uid, [ 'size' => 48 ] ) ?: $default_avatar ) : $default_avatar;
+                }
+                include $item_template;
+            endforeach;
+            ?>
         <?php else: ?>
             <p class="init-review-no-feedback"><?php esc_html_e('No reviews yet.', 'init-review-system'); ?></p>
         <?php endif; ?>

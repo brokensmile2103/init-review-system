@@ -417,3 +417,61 @@ function init_plugin_suite_review_system_get_total_pages_by_user_id( $user_id, $
 
     return (int) ceil( $total_reviews / $per_page );
 }
+
+/**
+ * Lấy danh sách tiêu chí (criteria) theo post_id.
+ *
+ * @param int $post_id ID bài viết.
+ * @return array Danh sách label tiêu chí (string[]).
+ */
+function init_plugin_suite_review_system_get_criteria_by_post_id( $post_id ) {
+    $post_id = absint( $post_id );
+
+    // Hook cho phép override criteria theo từng post
+    $override = apply_filters( 'init_plugin_suite_review_system_criteria', null, $post_id );
+    if ( is_array( $override ) && ! empty( $override ) ) {
+        return array_values( array_filter( array_map( 'sanitize_text_field', $override ) ) );
+    }
+
+    // Đọc đúng cấu trúc option: criteria_1 → criteria_5
+    $options  = get_option( INIT_PLUGIN_SUITE_RS_OPTION, [] );
+    $criteria = [];
+
+    for ( $i = 1; $i <= 5; $i++ ) {
+        $val = trim( $options[ "criteria_$i" ] ?? '' );
+        if ( $val !== '' ) {
+            $criteria[] = sanitize_text_field( $val );
+        }
+    }
+
+    return $criteria;
+}
+
+/**
+ * Lấy một review theo ID.
+ *
+ * @param int $review_id ID của review.
+ * @return array|null Review data hoặc null nếu không tìm thấy.
+ */
+function init_plugin_suite_review_system_get_review_by_id( $review_id ) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'init_criteria_reviews';
+
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
+    $review = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$table_name} WHERE id = %d LIMIT 1",
+            absint( $review_id )
+        ),
+        ARRAY_A
+    );
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
+
+    if ( ! $review ) {
+        return null;
+    }
+
+    $review['criteria_scores'] = maybe_unserialize( $review['criteria_scores'] );
+
+    return $review;
+}

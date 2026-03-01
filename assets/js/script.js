@@ -375,7 +375,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 openBtn?.classList.add('is-disabled');
                 openBtn?.setAttribute('disabled', 'disabled');
 
-                insertNewReview(reviewContent, scores);
+                if (data.html) {
+                    const wrapper = document.querySelector('.init-review-feedback-list');
+                    if (wrapper) {
+                        document.querySelector('.init-review-no-feedback')?.remove();
+                        wrapper.insertAdjacentHTML('afterbegin', data.html);
+                    }
+                }
                 updateReviewSummaryAfterSubmit(scores);
             } else {
                 const msg = mapBackendErrorToMessage(data) || i18n.error;
@@ -507,73 +513,6 @@ function mapBackendErrorToMessage(payload) {
     }
 }
 
-// Thêm nhanh bài review vừa gửi
-function insertNewReview(reviewContent, scores) {
-    const wrapper = document.querySelector('.init-review-feedback-list');
-    if (!wrapper) return;
-
-    const cls = window.InitReviewSystemCustomClass || {};
-    const cx = (...arr) => arr.filter(Boolean).join(' '); // combine class helper
-
-    const avg = (
-        Object.values(scores).reduce((a, b) => a + b, 0) / Object.values(scores).length
-    ).toFixed(1);
-
-    let starsHtml = '';
-    for (let i = 1; i <= 5; i++) {
-        starsHtml += `
-            <svg class="star ${i <= Math.round(avg) ? 'active' : ''}" width="20" height="20" viewBox="0 0 64 64">
-                <path fill="currentColor" d="M63.9 24.28a2 2 0 0 0-1.6-1.35l-19.68-3-8.81-18.78a2 2 0 0 0-3.62 0l-8.82 18.78-19.67 3a2 2 0 0 0-1.13 3.38l14.3 14.66-3.39 20.7a2 2 0 0 0 2.94 2.07L32 54.02l17.57 9.72a2 2 0 0 0 2.12-.11 2 2 0 0 0 .82-1.96l-3.38-20.7 14.3-14.66a2 2 0 0 0 .46-2.03"></path>
-            </svg>`;
-    }
-
-    let breakdownHtml = '';
-    for (const [label, score] of Object.entries(scores)) {
-        breakdownHtml += `
-            <span class="criteria-score ${cx(...(cls.scoreItem || []))}">
-                <strong>${escapeHtml(label)}</strong>: ${score} / 5
-            </span>
-            <br class="${cx(...(cls.scoreBreak || []))}">`;
-    }
-
-    const author = InitReviewSystemData?.current_user_name || 'Anonymous';
-    const avatarUrl = InitReviewSystemData?.current_user_avatar || `${InitReviewSystemData.assets_url}/img/default-avatar.svg`;
-
-    const today = new Date().toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-
-    const html = `
-        <div class="init-review-item ${cx(...(cls.item || []))}">
-            <div class="init-review-top ${cx(...(cls.top || []))}">
-                <div class="init-review-avatar ${cx(...(cls.avatar || []))}">
-                    <img src="${avatarUrl}" width="80" height="80" alt="Avatar" class="${cx(...(cls.avatarImg || []))}">
-                </div>
-                <div class="init-review-header ${cx(...(cls.header || []))}">
-                    <div class="author-and-stars ${cx(...(cls.authorAndStars || []))}">
-                        <h3 class="author ${cx(...(cls.author || []))}">${escapeHtml(author)}</h3>
-                        <div class="init-review-stars ${cx(...(cls.stars || []))}">
-                            ${starsHtml}
-                        </div>
-                    </div>
-                    <div class="review-date ${cx(...(cls.date || []))}">${today}</div>
-                </div>
-            </div>
-
-            <div class="init-review-body ${cx(...(cls.body || []))}">
-                <div class="init-review-text ${cx(...(cls.text || []))}">${escapeHtml(reviewContent)}</div>
-                <div class="init-review-criteria-breakdown ${cx(...(cls.breakdown || []))}">
-                    ${breakdownHtml}
-                </div>
-            </div>
-        </div>`;
-
-    document.querySelector('.init-review-no-feedback')?.remove();
-    wrapper.insertAdjacentHTML('afterbegin', html);
-}
-
 // Loại bỏ các kí tự HTML
 function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, m => ({
@@ -677,47 +616,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Render mỗi review vào listContainer
             data.reviews.forEach(review => {
-                const item = document.createElement('div');
-                item.className = 'init-review-item';
-
-                const avatarUrl = review.user_id > 0
-                    ? InitReviewSystemData.current_user_avatar
-                    : InitReviewSystemData.assets_url + '/img/default-avatar.svg';
-
-                const author = review.user_id > 0
-                    ? (review.display_name || InitReviewSystemData.current_user_name || 'Anonymous')
-                    : 'Anonymous';
-
-                const stars = Math.round(parseFloat(review.avg_score || 0));
-                const scores = review.criteria_scores || {};
-                const date = new Date(review.created_at);
-
-                item.innerHTML = `
-                    <div class="init-review-avatar">
-                        <img src="${avatarUrl}" width="48" height="48" alt="Avatar">
-                    </div>
-                    <div class="init-review-content">
-                        <div class="init-review-header">
-                            <strong class="author">${escapeHtml(author)}</strong>
-                            <div class="init-review-stars">
-                                ${[1,2,3,4,5].map(i => `
-                                    <svg class="star ${i <= stars ? 'active' : ''}" width="20" height="20" viewBox="0 0 64 64">
-                                        <path fill="currentColor" d="M63.9 24.28a2 2 0 0 0-1.6-1.35l-19.68-3-8.81-18.78a2 2 0 0 0-3.62 0l-8.82 18.78-19.67 3a2 2 0 0 0-1.13 3.38l14.3 14.66-3.39 20.7a2 2 0 0 0 2.94 2.07L32 54.02l17.57 9.72a2 2 0 0 0 2.12-.11 2 2 0 0 0 .82-1.96l-3.38-20.7 14.3-14.66a2 2 0 0 0 .46-2.03"></path>
-                                    </svg>
-                                `).join('')}
-                            </div>
-                        </div>
-                        <div class="review-date">${date.toLocaleDateString()}</div>
-                        <div class="init-review-text">${escapeHtml(review.review_content || '')}</div>
-                        <div class="init-review-criteria-breakdown">
-                            ${Object.entries(scores).map(([label, val]) => `
-                                <span class="criteria-score"><strong>${escapeHtml(label)}</strong>: ${val} / 5</span>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-                listContainer.appendChild(item);
+                if (review.html) {
+                    listContainer.insertAdjacentHTML('beforeend', review.html);
+                }
             });
 
             // Tăng trang + kiểm tra trang cuối

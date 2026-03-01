@@ -1,5 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
+
 /**
  * Lấy dữ liệu đánh giá của một bài viết.
  *

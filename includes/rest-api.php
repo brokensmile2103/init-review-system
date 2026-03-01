@@ -311,35 +311,87 @@ function init_plugin_suite_review_system_rest_submit_criteria_review( $request )
 
     do_action( 'init_plugin_suite_review_system_after_criteria_review', $post_id, $user_id, $avg_score, $review_content, $valid_scores );
 
+    $review = init_plugin_suite_review_system_get_review_by_id( $insert_id );
+    $criteria = init_plugin_suite_review_system_get_criteria_by_post_id( $post_id );
+
+    $default_avatar = INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
+    if ( $user_id > 0 ) {
+        $u = get_userdata( $user_id );
+        $review['display_name'] = $u ? $u->display_name : __( 'Anonymous', 'init-review-system' );
+        $review['avatar_url']   = get_avatar_url( $user_id, [ 'size' => 80 ] ) ?: $default_avatar;
+    } else {
+        $review['display_name'] = __( 'Anonymous', 'init-review-system' );
+        $review['avatar_url']   = $default_avatar;
+    }
+
+    $template = locate_template( 'init-review-system/review-item.php' );
+    if ( ! $template ) {
+        $template = INIT_PLUGIN_SUITE_RS_PATH . '/templates/review-item.php';
+    }
+
+    ob_start();
+    include $template;
+    $html = ob_get_clean();
+
     return rest_ensure_response([
-        'success' => true,
-        'message' => __( 'Review submitted successfully.', 'init-review-system' ),
-        'avg'     => $avg_score,
+        'success'   => true,
+        'message'   => __( 'Review submitted successfully.', 'init-review-system' ),
+        'avg'       => $avg_score,
+        'review_id' => $insert_id,
+        'html'      => $html,
     ]);
 }
 
 // Lấy các bài review
 function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Request $request ) {
-    $post_id   = absint( $request->get_param( 'post_id' ) );
-    $page      = max( 1, absint( $request->get_param( 'page' ) ) );
-    $per_page  = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
+    $post_id  = absint( $request->get_param( 'post_id' ) );
+    $page     = max( 1, absint( $request->get_param( 'page' ) ) );
+    $per_page = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
 
     if ( ! get_post( $post_id ) ) {
         return new WP_Error( 'invalid_post', __( 'Invalid post ID.', 'init-review-system' ), [ 'status' => 400 ] );
     }
 
-    $total     = init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id );
-    $max_page  = ceil( $total / $per_page );
-    $reviews   = init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page, $per_page );
+    $total    = init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id );
+    $max_page = ceil( $total / $per_page );
+    $reviews  = init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page, $per_page );
+
+    $default_avatar = INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
+    $criteria       = init_plugin_suite_review_system_get_criteria_by_post_id( $post_id );
+
+    // Tìm template (cho phép override)
+    $template = locate_template( 'init-review-system/review-item.php' );
+    if ( ! $template ) {
+        $template = INIT_PLUGIN_SUITE_RS_PATH . '/templates/review-item.php';
+    }
+
+    foreach ( $reviews as &$review ) {
+        $user_id = intval( $review['user_id'] ?? 0 );
+
+        if ( $user_id > 0 ) {
+            $user = get_userdata( $user_id );
+            $review['display_name'] = $user ? $user->display_name : __( 'Anonymous', 'init-review-system' );
+            $review['avatar_url']   = get_avatar_url( $user_id, [ 'size' => 48 ] ) ?: $default_avatar;
+        } else {
+            $review['display_name'] = __( 'Anonymous', 'init-review-system' );
+            $review['avatar_url']   = $default_avatar;
+        }
+
+        // Server render HTML từng review — flexible với mọi template
+        ob_start();
+        include $template; // $review + $criteria available trong scope
+        $review['html'] = ob_get_clean();
+    }
+    unset( $review );
 
     return rest_ensure_response([
-        'success'   => true,
-        'post_id'   => $post_id,
-        'page'      => $page,
-        'per_page'  => $per_page,
-        'total'     => $total,
-        'max_page'  => $max_page,
-        'reviews'   => $reviews,
+        'success'  => true,
+        'post_id'  => $post_id,
+        'page'     => $page,
+        'per_page' => $per_page,
+        'total'    => $total,
+        'max_page' => $max_page,
+        'reviews'  => $reviews,
     ]);
 }
 

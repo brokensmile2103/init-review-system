@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.15
+Stable tag: 1.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -191,6 +191,15 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.16 – March 1, 2026 =
+- Fixed Load More showing wrong user avatar and display name
+- Fixed post-submit review rendering hardcoded HTML incompatible with custom templates
+- Added `review-item.php` as standalone overridable template
+- Added `init_plugin_suite_review_system_get_criteria_by_post_id()` helper
+- Added `init_plugin_suite_review_system_get_review_by_id()` helper
+- REST endpoints now server-render review HTML; JS only injects, no longer builds DOM
+- Removed unused `insertNewReview()` JS function
 
 = 1.15 – February 25, 2026 =
 - Added `$per_page` cap (max 100) in REST endpoint to prevent excessive data queries

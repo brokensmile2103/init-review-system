@@ -87,20 +87,35 @@ function init_plugin_suite_review_system_set_reaction_counts($post_id, array $co
 }
 
 /** Lấy reaction hiện tại của 1 user trên 1 post ('' nếu chưa có) */
-function init_plugin_suite_review_system_get_user_reaction($post_id, $user_id) {
-    $post_id = init_plugin_suite_review_system_assert_post($post_id);
-    $user_id = absint($user_id);
-    if (!$post_id || !$user_id) return '';
+function init_plugin_suite_review_system_get_user_reaction( $post_id, $user_id ) {
+    $post_id = init_plugin_suite_review_system_assert_post( $post_id );
+    $user_id = absint( $user_id );
+    if ( ! $post_id || ! $user_id ) return '';
+
+    // --- Cache ---
+    $ttl       = HOUR_IN_SECONDS;
+    $cache_key = "user_reaction_{$post_id}_{$user_id}";
+    $cached    = wp_cache_get( $cache_key, 'init_review_system' );
+    if ( false !== $cached ) {
+        // Lưu dạng string: reaction slug hoặc '__none__' nếu chưa có
+        return $cached === '__none__' ? '' : (string) $cached;
+    }
 
     global $wpdb;
     $table = init_plugin_suite_review_system_get_reaction_table();
     // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
-    $rx = $wpdb->get_var($wpdb->prepare(
+    $rx = $wpdb->get_var( $wpdb->prepare(
         "SELECT reaction FROM {$table} WHERE post_id = %d AND user_id = %d LIMIT 1",
         $post_id, $user_id
-    ));
+    ) );
     // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
-    return $rx ? sanitize_key($rx) : '';
+
+    $result = $rx ? sanitize_key( $rx ) : '';
+
+    // Lưu '__none__' thay vì '' để phân biệt với false (cache miss)
+    wp_cache_set( $cache_key, $result !== '' ? $result : '__none__', 'init_review_system', $ttl );
+
+    return $result;
 }
 
 /**
@@ -138,6 +153,10 @@ function init_plugin_suite_review_system_apply_user_reaction($post_id, $user_id,
             if (isset($counts[$prev])) $counts[$prev] = max(0, (int)$counts[$prev] - 1);
             init_plugin_suite_review_system_set_reaction_counts($post_id, $counts);
         }
+
+        // Xóa cache user reaction
+        wp_cache_delete( "user_reaction_{$post_id}_{$user_id}", 'init_review_system' );
+
         return [
             'success' => true,
             'prev'    => $prev,
@@ -171,6 +190,9 @@ function init_plugin_suite_review_system_apply_user_reaction($post_id, $user_id,
     }
 
     init_plugin_suite_review_system_set_reaction_counts($post_id, $counts);
+
+    // Xóa cache user reaction
+    wp_cache_delete( "user_reaction_{$post_id}_{$user_id}", 'init_review_system' );
 
     return [
         'success' => true,

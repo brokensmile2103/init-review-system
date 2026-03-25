@@ -185,9 +185,18 @@ function init_plugin_suite_review_system_count_reviews_by_post_id( $post_ids = [
 }
 
 // Kiểm tra user đã review chưa
-function init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) {
-    if (! $post_id || ! $user_id) {
+function init_plugin_suite_review_system_has_user_reviewed( $post_id, $user_id ) {
+    if ( ! $post_id || ! $user_id ) {
         return false;
+    }
+
+    // --- Cache ---
+    $ttl       = HOUR_IN_SECONDS;
+    $cache_key = "has_reviewed_{$post_id}_{$user_id}";
+    $cached    = wp_cache_get( $cache_key, 'init_review_system' );
+    if ( false !== $cached ) {
+        // Lưu ý: cache lưu 1 hoặc 0, không dùng false !== check trực tiếp cho bool
+        return (bool) $cached;
     }
 
     global $wpdb;
@@ -204,7 +213,12 @@ function init_plugin_suite_review_system_has_user_reviewed($post_id, $user_id) {
     );
     // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-    return ! empty($review_id);
+    $result = ! empty( $review_id );
+
+    // Lưu 1/0 thay vì true/false để tránh false === wp_cache_get() false-miss
+    wp_cache_set( $cache_key, (int) $result, 'init_review_system', $ttl );
+
+    return $result;
 }
 
 // Lấy tổng review của bài viết
@@ -247,7 +261,14 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
-    // Lấy toàn bộ điểm theo post_id
+    // --- Cache ---
+    $ttl       = HOUR_IN_SECONDS;
+    $cache_key = "score_summary_{$post_id}_{$status}";
+    $cached    = wp_cache_get( $cache_key, 'init_review_system' );
+    if ( false !== $cached ) {
+        return $cached;
+    }
+
     // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
     $results = $wpdb->get_results(
         $wpdb->prepare(
@@ -260,15 +281,17 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
     // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     if ( empty( $results ) ) {
-        return [
+        $summary = [
             'overall_avg' => 0,
             'breakdown'   => [],
         ];
+        wp_cache_set( $cache_key, $summary, 'init_review_system', $ttl );
+        return $summary;
     }
 
     $criteria_aggregate = [];
-    $overall_sum = 0;
-    $overall_count = 0;
+    $overall_sum        = 0;
+    $overall_count      = 0;
 
     foreach ( $results as $row ) {
         $scores = maybe_unserialize( $row['criteria_scores'] );
@@ -291,10 +314,14 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
         $breakdown[ $label ] = round( array_sum( $values ) / count( $values ), 2 );
     }
 
-    return [
+    $summary = [
         'overall_avg' => $overall_count ? round( $overall_sum / $overall_count, 2 ) : 0,
         'breakdown'   => $breakdown,
     ];
+
+    wp_cache_set( $cache_key, $summary, 'init_review_system', $ttl );
+
+    return $summary;
 }
 
 // Tính tổng số trang review dựa trên số review mỗi trang
@@ -475,3 +502,21 @@ function init_plugin_suite_review_system_get_review_by_id( $review_id ) {
 
     return $review;
 }
+
+// ============================================================
+// CACHE INVALIDATION — gắn vào action after_insert có sẵn
+// ============================================================
+
+/**
+ * Xóa cache liên quan khi có review mới được thêm vào.
+ * Hook vào: init_plugin_suite_review_system_after_insert
+ */
+add_action(
+    'init_plugin_suite_review_system_after_insert',
+    function( $review_id, $post_id, $user_id ) {
+        wp_cache_delete( "score_summary_{$post_id}_approved", 'init_review_system' );
+        wp_cache_delete( "has_reviewed_{$post_id}_{$user_id}", 'init_review_system' );
+    },
+    10,
+    3
+);

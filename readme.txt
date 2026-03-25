@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.16
+Stable tag: 1.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -191,6 +191,14 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.17 – March 25, 2026 =
+- Added object cache (1 hour TTL) to `init_plugin_suite_review_system_get_score_summary_by_post_id()`
+- Added object cache (1 hour TTL) to `init_plugin_suite_review_system_has_user_reviewed()`
+- Added object cache (1 hour TTL) to `init_plugin_suite_review_system_get_user_reaction()`
+- Cache for `has_user_reviewed` and `get_user_reaction` stores sentinel values to distinguish cache miss from negative results
+- Cache invalidation for score summary and has-reviewed fires on `init_plugin_suite_review_system_after_insert` action hook
+- Cache invalidation for user reaction fires inside `init_plugin_suite_review_system_apply_user_reaction()` after each write
 
 = 1.16 – March 1, 2026 =
 - Fixed Load More showing wrong user avatar and display name

@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.17
+Stable tag: 1.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -191,6 +191,14 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.18 – April 21, 2026 =
+- Fixed `admin_init` running database table checks on every admin page load
+- Introduced `irs_plugin_db_version` option flag to gate table checks behind a version comparison
+- Table creation now only runs when stored DB version is lower than current plugin version
+- Added `register_activation_hook` to handle fresh installs and multisite network activation
+- Added `wpmu_new_blog` hook to provision tables automatically on new multisite subsite creation
+- Added `upgrader_process_complete` hook to reset version flag after plugin update, triggering re-check on next admin load
 
 = 1.17 – March 25, 2026 =
 - Added object cache (1 hour TTL) to `init_plugin_suite_review_system_get_score_summary_by_post_id()`

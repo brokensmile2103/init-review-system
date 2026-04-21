@@ -1,15 +1,106 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
-// Tạo table review nhiều tiêu chí
-function init_plugin_suite_review_system_maybe_create_criteria_review_table() {
+// ==========================
+// Activation hook
+// ==========================
+register_activation_hook( __FILE__, 'init_plugin_suite_review_system_on_activation' );
+
+function init_plugin_suite_review_system_on_activation() {
+    if ( is_multisite() ) {
+        $sites = get_sites( [ 'number' => 0 ] );
+        foreach ( $sites as $site ) {
+            switch_to_blog( $site->blog_id );
+            init_plugin_suite_review_system_create_criteria_review_table();
+            init_plugin_suite_review_system_create_reactions_table();
+            restore_current_blog();
+        }
+    } else {
+        init_plugin_suite_review_system_create_criteria_review_table();
+        init_plugin_suite_review_system_create_reactions_table();
+    }
+
+    update_option( 'irs_plugin_db_version', INIT_PLUGIN_SUITE_RS_VERSION );
+}
+
+// ==========================
+// New blog (multisite)
+// ==========================
+add_action( 'wpmu_new_blog', 'init_plugin_suite_review_system_on_new_blog', 10, 6 );
+
+function init_plugin_suite_review_system_on_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+    switch_to_blog( $blog_id );
+    init_plugin_suite_review_system_create_criteria_review_table();
+    init_plugin_suite_review_system_create_reactions_table();
+    restore_current_blog();
+}
+
+// ==========================
+// admin_init — chỉ chạy khi version thay đổi
+// ==========================
+add_action( 'admin_init', 'init_plugin_suite_review_system_maybe_check_tables' );
+
+function init_plugin_suite_review_system_maybe_check_tables() {
+    $db_version = get_option( 'irs_plugin_db_version', '0.0.0' );
+
+    if ( version_compare( $db_version, INIT_PLUGIN_SUITE_RS_VERSION, '>=' ) ) {
+        return; // Đã đúng version, không làm gì cả
+    }
+
+    if ( ! current_user_can( 'administrator' ) ) {
+        return;
+    }
+
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'init_criteria_reviews';
+    $criteria_table = $wpdb->prefix . 'init_criteria_reviews';
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+    if ( $wpdb->get_var( "SHOW TABLES LIKE '$criteria_table'" ) !== $criteria_table ) {
+        init_plugin_suite_review_system_create_criteria_review_table();
+    }
 
+    $reactions_table = $wpdb->prefix . 'init_reactions';
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+    if ( $wpdb->get_var( "SHOW TABLES LIKE '$reactions_table'" ) !== $reactions_table ) {
+        init_plugin_suite_review_system_create_reactions_table();
+    }
+
+    update_option( 'irs_plugin_db_version', INIT_PLUGIN_SUITE_RS_VERSION );
+}
+
+// ==========================
+// upgrader_process_complete — chạy sau khi update plugin
+// ==========================
+add_action( 'upgrader_process_complete', 'init_plugin_suite_review_system_on_update', 10, 2 );
+
+function init_plugin_suite_review_system_on_update( $upgrader_object, $options ) {
+    if (
+        isset( $options['action'], $options['type'] ) &&
+        $options['action'] === 'update' &&
+        $options['type'] === 'plugin' &&
+        isset( $options['plugins'] ) && is_array( $options['plugins'] )
+    ) {
+        foreach ( $options['plugins'] as $plugin_path ) {
+            if ( strpos( $plugin_path, INIT_PLUGIN_SUITE_RS_SLUG ) !== false ) {
+                // Reset version flag để admin_init chạy lại check
+                delete_option( 'irs_plugin_db_version' );
+                break;
+            }
+        }
+    }
+}
+
+// ==========================
+// Tạo bảng criteria reviews
+// ==========================
+function init_plugin_suite_review_system_create_criteria_review_table() {
+    global $wpdb;
+    $table_name      = $wpdb->prefix . 'init_criteria_reviews';
     $charset_collate = $wpdb->get_charset_collate();
 
-    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+    $sql = "CREATE TABLE $table_name (
         id INT NOT NULL AUTO_INCREMENT,
         post_id BIGINT UNSIGNED NOT NULL,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -23,33 +114,20 @@ function init_plugin_suite_review_system_maybe_create_criteria_review_table() {
         KEY user_id (user_id)
     ) $charset_collate;";
 
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-    dbDelta($sql);
+    dbDelta( $sql );
 }
 
-// Hook vào admin page load
-add_action('admin_init', 'init_plugin_suite_review_system_maybe_create_criteria_review_table');
-
-/**
- * Tạo table reactions (gọn nhẹ, silent)
- */
-add_action('admin_init', function () {
+// ==========================
+// Tạo bảng reactions
+// ==========================
+function init_plugin_suite_review_system_create_reactions_table() {
     global $wpdb;
+    $table_name      = $wpdb->prefix . 'init_reactions';
+    $charset_collate = $wpdb->get_charset_collate();
 
-    $table   = $wpdb->prefix . 'init_reactions';
-    $charset = $wpdb->get_charset_collate();
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-    // Nếu table đã tồn tại thì thôi
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-    $exists = $wpdb->get_var( $wpdb->prepare(
-        "SHOW TABLES LIKE %s", $wpdb->esc_like($table)
-    ) );
-    if ( $exists === $table ) {
-        return;
-    }
-
-    // Schema chuẩn
-    $schema = "CREATE TABLE {$table} (
+    $sql = "CREATE TABLE $table_name (
         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
         post_id BIGINT UNSIGNED NOT NULL,
         user_id BIGINT UNSIGNED NOT NULL,
@@ -59,8 +137,7 @@ add_action('admin_init', function () {
         UNIQUE KEY post_user (post_id, user_id),
         KEY post_reaction (post_id, reaction),
         KEY user_id (user_id)
-    ) {$charset};";
+    ) $charset_collate;";
 
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-    dbDelta($schema);
-});
+    dbDelta( $sql );
+}

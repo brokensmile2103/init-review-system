@@ -2,9 +2,9 @@
 Contributors: brokensmile.2103
 Tags: review, rating, vote, reaction, schema
 Requires at least: 5.5
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.18
+Stable tag: 1.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -156,9 +156,9 @@ Customize the meta key used for storing reaction counts.
 **Params:** `string $meta_key`, `string $rx_key`
 
 **`init_plugin_suite_review_system_ttl`**
-Set TTL (in seconds) for object cache on review queries. Defaults to `0` (cache disabled). Set a value greater than `0` to enable caching via `wp_cache_set` with group `init_review_system`.
+Set TTL (in seconds) for object cache on review queries. Defaults to `300` (5 minutes) since 1.19. Return `0` to disable caching entirely, or any other value to change the duration. Cache is stored via `wp_cache_set` with group `init_review_system` and is automatically invalidated on new review submission and on admin approve/reject/delete.
 **Applies to:** REST get reviews, get total reviews
-**Params:** `int $ttl` (default `0`)
+**Params:** `int $ttl` (default `300`, i.e. `5 * MINUTE_IN_SECONDS`)
 
 == Screenshots ==
 
@@ -191,6 +191,16 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 1.19 – August 2, 2026 =
+- **Fixed:** vote totals (`_init_review_total` / `_init_review_count`) were updated with a read-then-write pattern that could silently drop a vote when two requests landed at nearly the same time on a busy post. Now uses an atomic SQL increment so concurrent votes are never lost.
+- **Fixed:** reaction counters could drift from real data for the same read-then-write reason. Reaction counts are now computed directly (COUNT) from the `init_reactions` table — the table is the single source of truth — with a 1 hour object cache. Post meta `_irs_rx_*` is kept in sync for backward compatibility (e.g. sites using it in `orderby`/`meta_query`) but is no longer authoritative.
+- **Fixed:** the DB upgrade routine only ran table creation when a table was *missing*, so schema changes in new versions (like the indexes below) never reached sites that already had the plugin installed. It now always re-runs `dbDelta()`, which is additive/safe by design.
+- **Fixed:** after submitting a multi-criteria review, the frontend re-computed the new overall average/breakdown with a client-side moving-average formula based on numbers snapshotted at page load — if another visitor submitted a review in the meantime, the displayed score could be briefly wrong until the page was reloaded. `/submit-criteria-review` now returns the real, freshly-queried `summary` (overall_avg/breakdown/total) and the frontend just renders it directly.
+- **Changed:** `init_plugin_suite_review_system_get_reviews_by_post_id()` / `..._get_total_reviews_by_post_id()` are now cached for 5 minutes by default (was disabled by default). Still fully overridable via the `init_plugin_suite_review_system_ttl` filter (return `0` to disable). Cache is versioned per post and correctly invalidated on new review submission **and** on admin approve/reject/delete (single or bulk) — previously those admin actions modified the DB directly without clearing any cache.
+- **Added:** composite indexes `(post_id, status)` and `(user_id, status)` on `init_criteria_reviews` to speed up the most common lookups on large sites.
+- **Improved:** `init_plugin_suite_review_system_get_score_summary_by_post_id()` now computes the overall average with SQL `AVG()` instead of summing every row in PHP.
+- **Improved:** admin review list and the `/get-criteria-reviews` REST endpoint now prime post/user object caches in bulk instead of calling `get_post()` / `get_userdata()` once per row.
 
 = 1.18 – April 21, 2026 =
 - Fixed `admin_init` running database table checks on every admin page load

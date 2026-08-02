@@ -139,6 +139,56 @@ function init_plugin_suite_review_system_calculate_weighted_score( $avg, $count,
     return ( ( $v / ( $v + $m ) ) * $R ) + ( ( $m / ( $v + $m ) ) * $C );
 }
 
+/**
+ * Cộng dồn (increment) một giá trị số vào post meta MỘT CÁCH ATOMIC.
+ *
+ * Vấn đề với cách làm cũ (get_post_meta rồi cộng trong PHP rồi update_post_meta):
+ * nếu 2 request xảy ra gần như đồng thời (ví dụ 2 lượt vote cùng lúc trên 1 bài
+ * viết đông traffic), cả hai đều đọc cùng giá trị cũ, cộng riêng rồi ghi đè lên
+ * nhau → một lượt vote bị "biến mất" khỏi tổng (lost update). Đây là lỗi thật,
+ * không phải lý thuyết, và không tự sửa được vì dữ liệu đã sai ngay từ đầu.
+ *
+ * Hàm này dùng UPDATE trực tiếp dạng `meta_value = meta_value + x`: MySQL khoá
+ * đúng dòng đó trong lúc cộng, nên nhiều request chạy song song vẫn cộng dồn
+ * đúng và tuần tự, không mất lượt nào.
+ *
+ * @param int    $post_id  ID bài viết.
+ * @param string $meta_key Meta key cần cộng dồn.
+ * @param float  $increment Giá trị cần cộng (có thể âm để trừ).
+ * @return float Giá trị mới nhất sau khi cộng.
+ */
+function init_plugin_suite_review_system_atomic_increment_meta( $post_id, $meta_key, $increment ) {
+    global $wpdb;
+
+    $post_id   = absint( $post_id );
+    $meta_key  = sanitize_key( $meta_key );
+    $increment = (float) $increment;
+
+    // Đảm bảo đã có dòng meta để UPDATE atomic phía dưới có thể chạm vào.
+    // add_post_meta() với $unique = true chỉ ghi nếu chưa tồn tại, nên gọi
+    // nhiều lần vẫn an toàn; chỉ thực sự tạo dòng đúng 1 lần cho mỗi post.
+    if ( '' === get_post_meta( $post_id, $meta_key, true ) ) {
+        add_post_meta( $post_id, $meta_key, 0, true );
+    }
+
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+    $wpdb->query(
+        $wpdb->prepare(
+            "UPDATE {$wpdb->postmeta} SET meta_value = meta_value + %f WHERE post_id = %d AND meta_key = %s",
+            $increment,
+            $post_id,
+            $meta_key
+        )
+    );
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+
+    // Vừa sửa DB bằng SQL trực tiếp nên object cache của WP cho post meta
+    // không tự biết — phải xoá để lần get_post_meta() kế tiếp lấy giá trị mới.
+    wp_cache_delete( $post_id, 'post_meta' );
+
+    return (float) get_post_meta( $post_id, $meta_key, true );
+}
+
 // Global average
 function init_plugin_suite_review_system_get_global_avg() {
     $transient_key = 'init_plugin_suite_rs_global_avg';

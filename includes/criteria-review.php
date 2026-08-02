@@ -69,15 +69,73 @@ function init_plugin_suite_review_system_add_criteria_review( $post_id, $user_id
     return $review_id;
 }
 
+/**
+ * Cache của get_reviews_by_post_id()/get_total_reviews_by_post_id() có nhiều
+ * biến thể key khác nhau (theo $paged, $per_page, $status...) nên không thể
+ * wp_cache_delete() từng key cụ thể khi có thay đổi. Thay vào đó dùng một số
+ * "version" theo từng post_id: mỗi khi cần invalidate, chỉ cần tăng version
+ * lên 1 — mọi cache key cũ (có version thấp hơn) coi như miss và tự bị bỏ qua.
+ *
+ * @param int $post_id ID bài viết (0 = phạm vi toàn site, dùng chung 1 version).
+ * @return int Version hiện tại.
+ */
+function init_plugin_suite_review_system_get_reviews_cache_version( $post_id ) {
+    $key     = 'reviews_cache_version_' . absint( $post_id );
+    $version = wp_cache_get( $key, 'init_review_system' );
+
+    if ( false === $version ) {
+        $version = 1;
+        wp_cache_set( $key, $version, 'init_review_system', 0 ); // 0 = không tự hết hạn
+    }
+
+    return (int) $version;
+}
+
+/** Tăng version cache reviews của 1 post_id — coi như invalidate toàn bộ biến thể cache cũ. */
+function init_plugin_suite_review_system_bump_reviews_cache_version( $post_id ) {
+    $key = 'reviews_cache_version_' . absint( $post_id );
+    wp_cache_set( $key, init_plugin_suite_review_system_get_reviews_cache_version( $post_id ) + 1, 'init_review_system', 0 );
+}
+
+/**
+ * Xoá/làm mới toàn bộ cache liên quan tới review của một bài viết. Dùng ở bất
+ * cứ đâu sửa DB review NGOÀI luồng insert bình thường (ví dụ admin duyệt/từ
+ * chối/xoá review) — những chỗ đó sửa DB trực tiếp bằng $wpdb nên phải tự gọi
+ * hàm này, không có action hook nào tự động lo việc đó cho chúng.
+ *
+ * @param int $post_id ID bài viết.
+ * @param int $user_id (tuỳ chọn) ID người review, để xoá đúng cache has_user_reviewed của người đó.
+ */
+function init_plugin_suite_review_system_invalidate_review_cache( $post_id, $user_id = 0 ) {
+    $post_id = absint( $post_id );
+    if ( ! $post_id ) {
+        return;
+    }
+
+    foreach ( [ 'approved', 'pending', 'rejected' ] as $status ) {
+        wp_cache_delete( "score_summary_{$post_id}_{$status}", 'init_review_system' );
+    }
+
+    if ( $user_id > 0 ) {
+        wp_cache_delete( "has_reviewed_{$post_id}_{$user_id}", 'init_review_system' );
+    }
+
+    init_plugin_suite_review_system_bump_reviews_cache_version( $post_id );
+}
+
 // Lấy review của bài viết
 function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $paged = 1, $per_page = 0, $status = 'approved' ) {
     global $wpdb;
 
-    $ttl = (int) apply_filters( 'init_plugin_suite_review_system_ttl', 0 );
+    // Mặc định bật cache 5 phút — vẫn cho phép site override qua filter này,
+    // ví dụ tăng lên nếu traffic cao hoặc trả về 0 để tắt hẳn.
+    $ttl = (int) apply_filters( 'init_plugin_suite_review_system_ttl', 5 * MINUTE_IN_SECONDS );
 
-    $cache_key = "reviews_{$post_id}_{$paged}_{$per_page}_{$status}";
+    $cache_key = null;
     if ( $ttl > 0 ) {
-        $cached = wp_cache_get( $cache_key, 'init_review_system' );
+        $version   = init_plugin_suite_review_system_get_reviews_cache_version( $post_id );
+        $cache_key = "reviews_{$post_id}_v{$version}_{$paged}_{$per_page}_{$status}";
+        $cached    = wp_cache_get( $cache_key, 'init_review_system' );
         if ( false !== $cached ) {
             return $cached;
         }
@@ -225,11 +283,13 @@ function init_plugin_suite_review_system_has_user_reviewed( $post_id, $user_id )
 function init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id, $status = 'approved' ) {
     global $wpdb;
 
-    $ttl = (int) apply_filters( 'init_plugin_suite_review_system_ttl', 0 );
+    $ttl = (int) apply_filters( 'init_plugin_suite_review_system_ttl', 5 * MINUTE_IN_SECONDS );
 
-    $cache_key = "total_reviews_{$post_id}_{$status}";
+    $cache_key = null;
     if ( $ttl > 0 ) {
-        $cached = wp_cache_get( $cache_key, 'init_review_system' );
+        $version   = init_plugin_suite_review_system_get_reviews_cache_version( $post_id );
+        $cache_key = "total_reviews_{$post_id}_v{$version}_{$status}";
+        $cached    = wp_cache_get( $cache_key, 'init_review_system' );
         if ( false !== $cached ) {
             return (int) $cached;
         }
@@ -269,18 +329,20 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
         return $cached;
     }
 
+    // overall_avg: để MySQL tính AVG() trực tiếp (dùng được index post_id+status),
+    // thay vì kéo hết avg_score về PHP rồi cộng tay như trước — nhẹ hơn đáng kể
+    // với bài viết có nhiều review vì không phải duyệt qua từng dòng chỉ để cộng.
     // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
-    $results = $wpdb->get_results(
+    $overall_avg = $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT avg_score, criteria_scores FROM {$table_name} WHERE post_id = %d AND status = %s",
+            "SELECT AVG(avg_score) FROM {$table_name} WHERE post_id = %d AND status = %s",
             $post_id,
             $status
-        ),
-        ARRAY_A
+        )
     );
     // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-    if ( empty( $results ) ) {
+    if ( null === $overall_avg ) {
         $summary = [
             'overall_avg' => 0,
             'breakdown'   => [],
@@ -289,12 +351,25 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
         return $summary;
     }
 
-    $criteria_aggregate = [];
-    $overall_sum        = 0;
-    $overall_count      = 0;
+    // Breakdown theo từng tiêu chí: bắt buộc phải duyệt PHP vì criteria_scores
+    // lưu dạng serialize (không tính AVG theo từng key ở tầng SQL được). Đây là
+    // giới hạn của cấu trúc lưu trữ hiện tại — nếu cần tối ưu hơn nữa cho các
+    // bài viết cực nhiều review, hướng lâu dài là tách criteria ra bảng riêng
+    // (roadmap, không nằm trong đợt cập nhật này vì cần migrate schema).
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
+    $rows = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT criteria_scores FROM {$table_name} WHERE post_id = %d AND status = %s",
+            $post_id,
+            $status
+        )
+    );
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 
-    foreach ( $results as $row ) {
-        $scores = maybe_unserialize( $row['criteria_scores'] );
+    $criteria_aggregate = [];
+
+    foreach ( $rows as $raw ) {
+        $scores = maybe_unserialize( $raw );
         if ( ! is_array( $scores ) ) continue;
 
         foreach ( $scores as $label => $score ) {
@@ -304,9 +379,6 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
             }
             $criteria_aggregate[ $label ][] = floatval( $score );
         }
-
-        $overall_sum += floatval( $row['avg_score'] );
-        $overall_count++;
     }
 
     $breakdown = [];
@@ -315,7 +387,7 @@ function init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id,
     }
 
     $summary = [
-        'overall_avg' => $overall_count ? round( $overall_sum / $overall_count, 2 ) : 0,
+        'overall_avg' => round( (float) $overall_avg, 2 ),
         'breakdown'   => $breakdown,
     ];
 
@@ -514,8 +586,7 @@ function init_plugin_suite_review_system_get_review_by_id( $review_id ) {
 add_action(
     'init_plugin_suite_review_system_after_insert',
     function( $review_id, $post_id, $user_id ) {
-        wp_cache_delete( "score_summary_{$post_id}_approved", 'init_review_system' );
-        wp_cache_delete( "has_reviewed_{$post_id}_{$user_id}", 'init_review_system' );
+        init_plugin_suite_review_system_invalidate_review_cache( $post_id, $user_id );
     },
     10,
     3

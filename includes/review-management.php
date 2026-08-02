@@ -43,13 +43,27 @@ function init_plugin_suite_review_system_handle_management_actions() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
 
+    // Cache (score_summary, reviews list, total...) được key theo post_id, nên
+    // cần biết review này thuộc bài viết nào TRƯỚC KHI sửa/xoá, để invalidate
+    // đúng chỗ ngay sau đó — các thao tác dưới đây sửa DB trực tiếp bằng
+    // $wpdb nên không tự động chạy qua hook after_insert như luồng submit thường.
+    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
+    $affected_review = $wpdb->get_row(
+        $wpdb->prepare( "SELECT post_id, user_id FROM {$table_name} WHERE id = %d", $review_id ),
+        ARRAY_A
+    );
+    // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
+
     switch ( $action ) {
         case 'delete':
             // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
             $result = $wpdb->delete( $table_name, [ 'id' => $review_id ], [ '%d' ] );
             // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            
+
             if ( $result ) {
+                if ( $affected_review ) {
+                    init_plugin_suite_review_system_invalidate_review_cache( $affected_review['post_id'], $affected_review['user_id'] );
+                }
                 add_action( 'admin_notices', function() {
                     echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Review deleted successfully.', 'init-review-system' ) . '</p></div>';
                 });
@@ -64,8 +78,11 @@ function init_plugin_suite_review_system_handle_management_actions() {
             // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
             $result = $wpdb->update( $table_name, [ 'status' => 'approved' ], [ 'id' => $review_id ], [ '%s' ], [ '%d' ] );
             // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            
+
             if ( $result !== false ) {
+                if ( $affected_review ) {
+                    init_plugin_suite_review_system_invalidate_review_cache( $affected_review['post_id'], $affected_review['user_id'] );
+                }
                 add_action( 'admin_notices', function() {
                     echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Review approved.', 'init-review-system' ) . '</p></div>';
                 });
@@ -76,8 +93,11 @@ function init_plugin_suite_review_system_handle_management_actions() {
             // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
             $result = $wpdb->update( $table_name, [ 'status' => 'rejected' ], [ 'id' => $review_id ], [ '%s' ], [ '%d' ] );
             // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            
+
             if ( $result !== false ) {
+                if ( $affected_review ) {
+                    init_plugin_suite_review_system_invalidate_review_cache( $affected_review['post_id'], $affected_review['user_id'] );
+                }
                 add_action( 'admin_notices', function() {
                     echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Review rejected.', 'init-review-system' ) . '</p></div>';
                 });
@@ -129,6 +149,22 @@ function init_plugin_suite_review_system_handle_bulk_actions() {
     $table_name = $wpdb->prefix . 'init_criteria_reviews';
     $placeholders = implode( ',', array_fill( 0, count( $review_ids ), '%d' ) );
 
+    // Lấy trước danh sách post_id/user_id bị ảnh hưởng (giống lý do ở hàm xử
+    // lý action đơn lẻ phía trên) để invalidate cache đúng chỗ sau khi chạy
+    // xong UPDATE/DELETE hàng loạt.
+    // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,PluginCheck.Security.DirectDB.UnescapedDBParameter
+    $affected_reviews = $wpdb->get_results(
+        $wpdb->prepare( "SELECT post_id, user_id FROM {$table_name} WHERE id IN ($placeholders)", ...$review_ids ),
+        ARRAY_A
+    );
+    // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,PluginCheck.Security.DirectDB.UnescapedDBParameter
+
+    $invalidate_affected = function () use ( $affected_reviews ) {
+        foreach ( (array) $affected_reviews as $row ) {
+            init_plugin_suite_review_system_invalidate_review_cache( $row['post_id'], $row['user_id'] );
+        }
+    };
+
     switch ( $action ) {
         case 'delete':
             $placeholders = implode( ',', array_fill( 0, count( $review_ids ), '%d' ) );
@@ -142,6 +178,7 @@ function init_plugin_suite_review_system_handle_bulk_actions() {
             // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,PluginCheck.Security.DirectDB.UnescapedDBParameter
             
             if ( $result ) {
+                $invalidate_affected();
                 add_action( 'admin_notices', function() use ( $result ) {
                     printf(
                         '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
@@ -164,6 +201,7 @@ function init_plugin_suite_review_system_handle_bulk_actions() {
             // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,PluginCheck.Security.DirectDB.UnescapedDBParameter
             
             if ( $result ) {
+                $invalidate_affected();
                 add_action( 'admin_notices', function() use ( $result ) {
                     printf(
                         '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
@@ -186,6 +224,7 @@ function init_plugin_suite_review_system_handle_bulk_actions() {
             // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,PluginCheck.Security.DirectDB.UnescapedDBParameter
             
             if ( $result ) {
+                $invalidate_affected();
                 add_action( 'admin_notices', function() use ( $result ) {
                     printf(
                         '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
@@ -271,6 +310,23 @@ function init_plugin_suite_review_system_get_reviews_for_admin( $filters = [] ) 
     // Unserialize criteria scores
     foreach ( $results as &$review ) {
         $review['criteria_scores'] = maybe_unserialize( $review['criteria_scores'] );
+    }
+    unset( $review );
+
+    // Trang hiển thị bên dưới gọi get_post() và get_user_by() riêng cho từng
+    // dòng để lấy tiêu đề bài viết / thông tin người review. Với 20 dòng/trang,
+    // đó là tối đa 40 query rời rạc. Prime cache hàng loạt tại đây để WP dùng
+    // lại object cache thay vì query riêng cho mỗi dòng.
+    if ( ! empty( $results ) ) {
+        $post_ids = array_unique( array_filter( array_map( 'absint', wp_list_pluck( $results, 'post_id' ) ) ) );
+        $user_ids = array_unique( array_filter( array_map( 'absint', wp_list_pluck( $results, 'user_id' ) ) ) );
+
+        if ( $post_ids && function_exists( '_prime_post_caches' ) ) {
+            _prime_post_caches( $post_ids, false, false );
+        }
+        if ( $user_ids ) {
+            cache_users( $user_ids );
+        }
     }
 
     return [

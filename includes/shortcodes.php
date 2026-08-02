@@ -77,6 +77,7 @@ add_shortcode( 'init_review_score', function( $atts ) {
         'id'            => get_the_ID(),
         'icon'          => 'false',
         'sub'           => 'true',
+        'show_count'    => 'false',
         'class'         => '',
         'hide_if_empty' => 'false',
     ], $atts, 'init_review_score' );
@@ -84,6 +85,7 @@ add_shortcode( 'init_review_score', function( $atts ) {
     $post_id       = intval( $atts['id'] );
     $icon          = filter_var( $atts['icon'], FILTER_VALIDATE_BOOLEAN );
     $sub           = filter_var( $atts['sub'], FILTER_VALIDATE_BOOLEAN );
+    $show_count    = filter_var( $atts['show_count'], FILTER_VALIDATE_BOOLEAN );
     $hide_if_empty = filter_var( $atts['hide_if_empty'], FILTER_VALIDATE_BOOLEAN );
     $class         = sanitize_html_class( $atts['class'] );
 
@@ -92,8 +94,6 @@ add_shortcode( 'init_review_score', function( $atts ) {
     if ( $total === 0 && $hide_if_empty ) {
         return '';
     }
-
-    init_plugin_suite_review_system_enqueue_assets();
 
     $score = floatval( get_post_meta( $post_id, '_init_review_avg', true ) );
     $score = min( 5, $score ); // Ngăn ghi sai điểm > 5
@@ -115,6 +115,16 @@ add_shortcode( 'init_review_score', function( $atts ) {
     $output .= esc_html( number_format( (float) $score, 1, '.', '' ) );
     if ( $sub ) {
         $output .= '<sub>/5</sub>';
+    }
+    if ( $show_count ) {
+        $count_html = apply_filters(
+            'init_plugin_suite_review_system_score_count_html',
+            ' (' . number_format_i18n( $total ) . ')',
+            $total,
+            $post_id
+        );
+
+        $output .= $count_html;
     }
     $output .= '</span>';
 

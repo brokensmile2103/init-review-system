@@ -51,19 +51,15 @@ function init_plugin_suite_review_system_maybe_check_tables() {
         return;
     }
 
-    global $wpdb;
-
-    $criteria_table = $wpdb->prefix . 'init_criteria_reviews';
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
-    if ( $wpdb->get_var( "SHOW TABLES LIKE '$criteria_table'" ) !== $criteria_table ) {
-        init_plugin_suite_review_system_create_criteria_review_table();
-    }
-
-    $reactions_table = $wpdb->prefix . 'init_reactions';
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
-    if ( $wpdb->get_var( "SHOW TABLES LIKE '$reactions_table'" ) !== $reactions_table ) {
-        init_plugin_suite_review_system_create_reactions_table();
-    }
+    // dbDelta() vốn được thiết kế để chạy lại an toàn nhiều lần: nó tự so
+    // sánh cấu trúc bảng hiện tại với SQL khai báo rồi chỉ ADD COLUMN/ADD KEY
+    // còn thiếu, không đụng tới dữ liệu sẵn có. Vì vậy gọi thẳng 2 hàm tạo
+    // bảng ở đây (bỏ điều kiện "chỉ tạo khi chưa tồn tại" trước đó) để các
+    // thay đổi schema ở bản mới (ví dụ composite index) thực sự được áp dụng
+    // cho những site đã cài plugin từ trước — trước đây điều kiện SHOW TABLES
+    // khiến việc này không bao giờ xảy ra trên site đã có bảng.
+    init_plugin_suite_review_system_create_criteria_review_table();
+    init_plugin_suite_review_system_create_reactions_table();
 
     update_option( 'irs_plugin_db_version', INIT_PLUGIN_SUITE_RS_VERSION );
 }
@@ -111,7 +107,9 @@ function init_plugin_suite_review_system_create_criteria_review_table() {
         status VARCHAR(20) DEFAULT 'approved',
         PRIMARY KEY  (id),
         KEY post_id (post_id),
-        KEY user_id (user_id)
+        KEY user_id (user_id),
+        KEY post_status (post_id, status),
+        KEY user_status (user_id, status)
     ) $charset_collate;";
 
     dbDelta( $sql );

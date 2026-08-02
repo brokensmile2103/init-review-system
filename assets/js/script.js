@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         wrapper.insertAdjacentHTML('afterbegin', data.html);
                     }
                 }
-                updateReviewSummaryAfterSubmit(scores);
+                updateReviewSummaryAfterSubmit(data.summary);
             } else {
                 const msg = mapBackendErrorToMessage(data) || i18n.error;
                 console.warn('[Init Review] Submission failed:', data);
@@ -524,52 +524,39 @@ function escapeHtml(str) {
     })[m]);
 }
 
-// Cập nhật điểm số nhanh sau khi gửi
-function updateReviewSummaryAfterSubmit(scores) {
+// Cập nhật điểm số sau khi gửi — dùng summary THẬT trả về từ server
+// (overall_avg/breakdown/total tính trực tiếp từ DB ngay sau khi insert),
+// không tự tính gần đúng ở client nữa. Trước đây hàm này dùng công thức
+// moving-average dựa trên totalReviews/aggregate đã snapshot lúc load
+// trang, nên nếu có người khác cũng gửi review trong lúc đó, số hiển thị
+// cho user này sẽ bị sai cho tới khi họ F5 lại trang.
+function updateReviewSummaryAfterSubmit(summary) {
     const wrapper = document.querySelector('.init-review-criteria-summary');
-    if (!wrapper || typeof scores !== 'object') return;
+    if (!wrapper || !summary) return;
 
     const i18n = window.InitReviewSystemData?.i18n || {
         review_label: 'reviews',
     };
 
-    let totalReviews = parseInt(wrapper.dataset.totalReviews || '0', 10);
-    const aggregateRaw = wrapper.dataset.aggregate || '{}';
-    const aggregate = JSON.parse(aggregateRaw);
+    const overallAvg = parseFloat(summary.overall_avg || 0);
+    const breakdown = summary.breakdown || {};
+    const totalReviews = parseInt(summary.total || 0, 10);
 
-    let new_avg_score = 0;
-    let num_criteria = 0;
+    wrapper.dataset.totalReviews = totalReviews.toString();
+    wrapper.dataset.aggregate = JSON.stringify(breakdown);
+    wrapper.dataset.overallAvg = overallAvg.toString();
 
     // Cập nhật từng tiêu chí (breakdown)
-    Object.entries(scores).forEach(([label, val]) => {
-        val = parseFloat(val);
-        const key = String(label);
-        const oldAvg = parseFloat(aggregate[key] || 0);
-        const newAvg = ((oldAvg * totalReviews) + val) / (totalReviews + 1);
-        aggregate[key] = parseFloat(newAvg.toFixed(2));
+    Object.entries(breakdown).forEach(([label, val]) => {
+        const avg = parseFloat(val);
+        const row = wrapper.querySelector(`.init-review-criteria-breakdown-row[data-label="${CSS.escape(label)}"]`);
+        if (!row) return;
 
-        // Update UI tiêu chí
-        const row = wrapper.querySelector(`.init-review-criteria-breakdown-row[data-label="${CSS.escape(key)}"]`);
-        if (row) {
-            const bar = row.querySelector('.bar-fill');
-            const value = row.querySelector('.value');
-            if (bar) bar.style.width = `${newAvg * 20}%`;
-            if (value) value.textContent = newAvg.toFixed(1);
-        }
-
-        new_avg_score += val;
-        num_criteria++;
+        const bar = row.querySelector('.bar-fill');
+        const value = row.querySelector('.value');
+        if (bar) bar.style.width = `${avg * 20}%`;
+        if (value) value.textContent = avg.toFixed(1);
     });
-
-    totalReviews += 1;
-    wrapper.dataset.totalReviews = totalReviews.toString();
-    wrapper.dataset.aggregate = JSON.stringify(aggregate);
-
-    // Tính lại overall_avg chuẩn
-    const oldOverallAvg = parseFloat(wrapper.dataset.overallAvg || '0');
-    const user_avg_score = num_criteria ? new_avg_score / num_criteria : 0;
-    const newOverallAvg = ((oldOverallAvg * (totalReviews - 1)) + user_avg_score) / totalReviews;
-    wrapper.dataset.overallAvg = newOverallAvg.toFixed(2);
 
     // Cập nhật UI tổng
     const scoreBox = wrapper.querySelector('.init-review-score-box');
@@ -578,12 +565,12 @@ function updateReviewSummaryAfterSubmit(scores) {
         const stars = scoreBox.querySelectorAll('.init-review-stars-line .star');
         const count = scoreBox.querySelector('.init-review-score-count');
 
-        if (avgEl) avgEl.textContent = newOverallAvg.toFixed(1);
+        if (avgEl) avgEl.textContent = overallAvg.toFixed(1);
         if (count) count.textContent = `${totalReviews} ${i18n.review_label}`;
 
         stars.forEach((star, index) => {
             const i = index + 1;
-            star.classList.toggle('active', i <= Math.round(newOverallAvg));
+            star.classList.toggle('active', i <= Math.round(overallAvg));
         });
     }
 }

@@ -118,18 +118,14 @@ function init_plugin_suite_review_system_rest_submit_vote( $request ) {
         return new WP_Error( 'duplicate_ip', __( 'You have already voted recently.', 'init-review-system' ), [ 'status' => 429 ] );
     }
 
-    // Lấy dữ liệu cũ
-    $total_score = floatval( get_post_meta( $post_id, '_init_review_total', true ) );
-    $total_count = intval( get_post_meta( $post_id, '_init_review_count', true ) );
+    // Cộng dồn atomic (tránh lost update khi nhiều vote xảy ra cùng lúc).
+    $new_total_score = init_plugin_suite_review_system_atomic_increment_meta( $post_id, '_init_review_total', $score );
+    $new_total_count = (int) init_plugin_suite_review_system_atomic_increment_meta( $post_id, '_init_review_count', 1 );
+    $new_avg         = $new_total_count > 0 ? round( $new_total_score / $new_total_count, 2 ) : 0;
 
-    // Tính điểm mới
-    $new_total_score = $total_score + $score;
-    $new_total_count = $total_count + 1;
-    $new_avg         = round( $new_total_score / $new_total_count, 2 );
-
-    // Cập nhật meta
-    update_post_meta( $post_id, '_init_review_total', $new_total_score );
-    update_post_meta( $post_id, '_init_review_count', $new_total_count );
+    // avg/weighted chỉ là giá trị hiển thị được tính lại từ total/count (nguồn
+    // sự thật) mỗi lần vote, nên vẫn tự "chữa lành" ngay ở lượt vote kế tiếp
+    // cho dù 2 request ghi đè nhau ở đúng bước này.
     update_post_meta( $post_id, '_init_review_avg', $new_avg );
 
     // Tính weighted
@@ -333,12 +329,24 @@ function init_plugin_suite_review_system_rest_submit_criteria_review( $request )
     include $template;
     $html = ob_get_clean();
 
+    // Cache score_summary đã được invalidate bên trong add_criteria_review() (hook
+    // after_insert) ngay phía trên, nên gọi lại đây sẽ lấy được số liệu THẬT mới nhất
+    // từ DB — trả về cho FE dùng trực tiếp, thay vì để FE tự đoán bằng công thức
+    // moving-average (dễ sai nếu có review khác được gửi cùng lúc bởi người khác).
+    $summary = init_plugin_suite_review_system_get_score_summary_by_post_id( $post_id );
+    $total   = init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id );
+
     return rest_ensure_response([
         'success'   => true,
         'message'   => __( 'Review submitted successfully.', 'init-review-system' ),
         'avg'       => $avg_score,
         'review_id' => $insert_id,
         'html'      => $html,
+        'summary'   => [
+            'overall_avg' => $summary['overall_avg'],
+            'breakdown'   => $summary['breakdown'],
+            'total'       => $total,
+        ],
     ]);
 }
 
@@ -358,6 +366,13 @@ function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Requ
 
     $default_avatar = INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
     $criteria       = init_plugin_suite_review_system_get_criteria_by_post_id( $post_id );
+
+    // Prime cache user hàng loạt thay vì get_userdata() riêng từng dòng bên
+    // dưới — với per_page tối đa 100, tránh được tới 100 query rời rạc.
+    $review_user_ids = array_unique( array_filter( array_map( 'absint', wp_list_pluck( $reviews, 'user_id' ) ) ) );
+    if ( $review_user_ids ) {
+        cache_users( $review_user_ids );
+    }
 
     // Tìm template (cho phép override)
     $template = locate_template( 'init-review-system/review-item.php' );

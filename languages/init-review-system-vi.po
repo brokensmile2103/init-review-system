@@ -3,12 +3,17 @@ msgstr ""
 "Project-Id-Version: Init Review System\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-27\n"
+"PO-Revision-Date: 2026-08-04\n"
+"Last-Translator: \n"
+"Language-Team: Vietnamese\n"
+"Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, and rich schema support for WordPress sites."
-msgstr "Hệ thống đánh giá đa tiêu chí với bảng điều khiển quản trị, công cụ quản lý hàng loạt, API endpoints và hỗ trợ schema phong phú cho WordPress."
+msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, Block Editor blocks, Abilities API support, and rich schema support for WordPress sites."
+msgstr "Hệ thống đánh giá đa tiêu chí với bảng điều khiển quản trị, công cụ quản lý hàng loạt, API endpoints, block cho Block Editor, hỗ trợ Abilities API và schema phong phú cho WordPress."
 
 msgid "General Settings"
 msgstr "Cài đặt chung"
@@ -311,14 +316,8 @@ msgstr "Đăng nhập"
 msgid "to join the reactions."
 msgstr "để tham gia reaction."
 
-msgid "Invalid post ID."
-msgstr "ID bài viết không hợp lệ."
-
 msgid "Login required."
 msgstr "Yêu cầu đăng nhập."
-
-msgid "Invalid nonce."
-msgstr "Nonce không hợp lệ."
 
 msgid "Could not update reaction."
 msgstr "Không thể cập nhật reaction."
@@ -353,7 +352,6 @@ msgstr "Dùng tuỳ chọn này nếu bạn muốn chèn tự động mà không
 msgid "%s reaction"
 msgid_plural "%s reactions"
 msgstr[0] "%s phản ứng"
-msgstr[1] "%s phản ứng"
 
 msgid "Content Quality Guard"
 msgstr "Bộ lọc chất lượng nội dung"
@@ -403,9 +401,6 @@ msgstr "Người dùng phải nhấn hai lần vào ngôi sao để xác nhận 
 msgid "Helps prevent accidental ratings/misclicks."
 msgstr "Giúp tránh trường hợp bấm nhầm khi đánh giá."
 
-msgid "Review Score"
-msgstr "Điểm đánh giá"
-
 msgid "Avg"
 msgstr "TB"
 
@@ -432,3 +427,178 @@ msgstr "Lưu / Cập nhật bài viết để áp dụng thay đổi."
 
 msgid "No votes yet. This box appears after the first vote."
 msgstr "Chưa có đánh giá. Metabox sẽ hiển thị sau khi có lượt đánh giá đầu tiên."
+
+msgid "Abilities exposed by the Init Review System plugin."
+msgstr "Các ability được plugin Init Review System cung cấp."
+
+msgid "Get Review Score"
+msgstr "Lấy điểm đánh giá"
+
+msgid "Returns the average 5-star score and vote count for a post, the same data shown by the [init_review_score] shortcode."
+msgstr "Trả về điểm trung bình (thang 5 sao) và số lượt đánh giá của một bài viết — cùng dữ liệu hiển thị bởi shortcode [init_review_score]."
+
+msgid "The post ID to get the review score for."
+msgstr "ID bài viết cần lấy điểm đánh giá."
+
+msgid "A valid post ID is required."
+msgstr "Cần một ID bài viết hợp lệ."
+
+msgid "Get Criteria Reviews"
+msgstr "Lấy đánh giá theo tiêu chí"
+
+msgid "Returns the multi-criteria score breakdown and a page of written reviews for a post, the same data used by the [init_review_criteria] shortcode."
+msgstr "Trả về điểm số chi tiết theo từng tiêu chí và một trang review bằng văn bản của một bài viết — cùng dữ liệu được shortcode [init_review_criteria] sử dụng."
+
+msgid "The post ID to get reviews for."
+msgstr "ID bài viết cần lấy danh sách đánh giá."
+
+msgid "Page number of reviews to return."
+msgstr "Số trang review cần trả về."
+
+msgid "Number of reviews per page (max 100)."
+msgstr "Số review mỗi trang (tối đa 100)."
+
+msgid "Get Reactions Summary"
+msgstr "Lấy tổng hợp reactions"
+
+msgid "Returns emoji reaction counts for a post, the same data used by the [init_reactions] shortcode."
+msgstr "Trả về số lượt reaction emoji của một bài viết — cùng dữ liệu được shortcode [init_reactions] sử dụng."
+
+msgid "The post ID to get reactions for."
+msgstr "ID bài viết cần lấy reactions."
+
+# --- Block metadata (block.json) — translated server-side via translate_settings_using_i18n_schema() ---
+#: blocks/review-score/block.json
+msgctxt "block title"
+msgid "Review Score"
+msgstr "Điểm đánh giá"
+
+#: blocks/review-score/block.json
+msgctxt "block description"
+msgid "Insert the average review score (read-only) for a post."
+msgstr "Chèn điểm đánh giá trung bình (chỉ đọc) của một bài viết."
+
+#: blocks/review-score/block.json blocks/review-system/block.json
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "review"
+msgstr "đánh giá"
+
+#: blocks/review-score/block.json blocks/review-system/block.json
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "rating"
+msgstr "xếp hạng"
+
+#: blocks/review-score/block.json
+msgctxt "block keyword"
+msgid "score"
+msgstr "điểm"
+
+#: blocks/review-score/block.json blocks/review-system/block.json
+#: blocks/review-criteria/block.json blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "init"
+msgstr "init"
+
+#: blocks/review-system/block.json
+msgctxt "block title"
+msgid "Review Widget"
+msgstr "Review Widget"
+
+#: blocks/review-system/block.json
+msgctxt "block description"
+msgid "Insert the interactive 5-star voting widget, with optional Schema.org markup."
+msgstr "Chèn widget đánh giá 5 sao tương tác, có thể kèm markup Schema.org."
+
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "vote"
+msgstr "bình chọn"
+
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "stars"
+msgstr "sao"
+
+#: blocks/review-criteria/block.json
+msgctxt "block title"
+msgid "Review Criteria"
+msgstr "Đánh giá theo tiêu chí"
+
+#: blocks/review-criteria/block.json
+msgctxt "block description"
+msgid "Insert the multi-criteria review breakdown, written reviews list, and submission form."
+msgstr "Chèn bảng điểm chi tiết theo tiêu chí, danh sách review bằng văn bản, và form gửi đánh giá."
+
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "criteria"
+msgstr "tiêu chí"
+
+#: blocks/reactions/block.json
+msgctxt "block title"
+msgid "Reactions Bar"
+msgstr "Thanh Reactions"
+
+#: blocks/reactions/block.json
+msgctxt "block description"
+msgid "Insert the emoji reactions bar for a post. Reacting requires login."
+msgstr "Chèn thanh reaction emoji cho một bài viết. Cần đăng nhập để react."
+
+#: blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "reactions"
+msgstr "phản ứng"
+
+#: blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "emoji"
+msgstr "emoji"
+
+#: blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "like"
+msgstr "thích"
+
+msgid "Post ID (0 = current post)"
+msgstr "ID bài viết (0 = bài viết hiện tại)"
+
+msgid "Custom CSS class"
+msgstr "Class CSS tùy chỉnh"
+
+msgid "Review Score Settings"
+msgstr "Cài đặt Điểm đánh giá"
+
+msgid "Show Star Icon"
+msgstr "Hiện biểu tượng ngôi sao"
+
+msgid "Show \"/5\" Suffix"
+msgstr "Hiện hậu tố \"/5\""
+
+msgid "Show Review Count"
+msgstr "Hiện số lượt đánh giá"
+
+msgid "Hide If No Reviews"
+msgstr "Ẩn nếu chưa có đánh giá"
+
+msgid "Review Widget Settings"
+msgstr "Cài đặt Review Widget"
+
+msgid "Output Schema.org Markup"
+msgstr "Xuất markup Schema.org"
+
+msgid "Review Criteria Settings"
+msgstr "Cài đặt Đánh giá theo tiêu chí"
+
+msgid "Reviews Per Page (0 = all)"
+msgstr "Số review mỗi trang (0 = tất cả)"
+
+msgid "Page Number"
+msgstr "Số trang"
+
+msgid "Reactions Settings"
+msgstr "Cài đặt Reactions"
+
+msgid "Load CSS"
+msgstr "Tải CSS"

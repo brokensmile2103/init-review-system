@@ -353,25 +353,13 @@ function init_plugin_suite_review_system_rest_submit_criteria_review( $request )
 // Lấy các bài review
 function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Request $request ) {
     $post_id  = absint( $request->get_param( 'post_id' ) );
-    $page     = max( 1, absint( $request->get_param( 'page' ) ) );
-    $per_page = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ) ) );
+    $page     = absint( $request->get_param( 'page' ) );
+    $per_page = absint( $request->get_param( 'per_page' ) );
 
-    if ( ! get_post( $post_id ) ) {
-        return new WP_Error( 'invalid_post', __( 'Invalid post ID.', 'init-review-system' ), [ 'status' => 400 ] );
-    }
+    $data = init_plugin_suite_review_system_get_criteria_reviews_data( $post_id, $page, $per_page );
 
-    $total    = init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id );
-    $max_page = ceil( $total / $per_page );
-    $reviews  = init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page, $per_page );
-
-    $default_avatar = INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
-    $criteria       = init_plugin_suite_review_system_get_criteria_by_post_id( $post_id );
-
-    // Prime cache user hàng loạt thay vì get_userdata() riêng từng dòng bên
-    // dưới — với per_page tối đa 100, tránh được tới 100 query rời rạc.
-    $review_user_ids = array_unique( array_filter( array_map( 'absint', wp_list_pluck( $reviews, 'user_id' ) ) ) );
-    if ( $review_user_ids ) {
-        cache_users( $review_user_ids );
+    if ( is_wp_error( $data ) ) {
+        return $data;
     }
 
     // Tìm template (cho phép override)
@@ -380,18 +368,9 @@ function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Requ
         $template = INIT_PLUGIN_SUITE_RS_PATH . '/templates/review-item.php';
     }
 
-    foreach ( $reviews as &$review ) {
-        $user_id = intval( $review['user_id'] ?? 0 );
+    $criteria = $data['criteria'];
 
-        if ( $user_id > 0 ) {
-            $user = get_userdata( $user_id );
-            $review['display_name'] = $user ? $user->display_name : __( 'Anonymous', 'init-review-system' );
-            $review['avatar_url']   = get_avatar_url( $user_id, [ 'size' => 48 ] ) ?: $default_avatar;
-        } else {
-            $review['display_name'] = __( 'Anonymous', 'init-review-system' );
-            $review['avatar_url']   = $default_avatar;
-        }
-
+    foreach ( $data['reviews'] as &$review ) {
         // Server render HTML từng review — flexible với mọi template
         ob_start();
         include $template; // $review + $criteria available trong scope
@@ -401,37 +380,53 @@ function init_plugin_suite_review_system_rest_get_criteria_reviews( WP_REST_Requ
 
     return rest_ensure_response([
         'success'  => true,
-        'post_id'  => $post_id,
-        'page'     => $page,
-        'per_page' => $per_page,
-        'total'    => $total,
-        'max_page' => $max_page,
-        'reviews'  => $reviews,
+        'post_id'  => $data['post_id'],
+        'page'     => $data['page'],
+        'per_page' => $data['per_page'],
+        'total'    => $data['total'],
+        'max_page' => $data['max_page'],
+        'reviews'  => $data['reviews'],
     ]);
+}
+
+/**
+ * Chuẩn bị dữ liệu tổng hợp reactions của một bài viết — tái sử dụng chung
+ * bởi REST endpoint /reactions/summary và ability
+ * init-review-system/get-reactions-summary.
+ *
+ * @param int $post_id ID bài viết.
+ * @return array|WP_Error Dữ liệu tổng hợp, hoặc WP_Error nếu post_id không hợp lệ.
+ */
+function init_plugin_suite_review_system_get_reactions_summary_data( $post_id ) {
+    $post_id = init_plugin_suite_review_system_assert_post( absint( $post_id ) );
+    if ( ! $post_id ) {
+        return new WP_Error( 'invalid_post', __( 'Invalid post ID.', 'init-review-system' ), [ 'status' => 400 ] );
+    }
+
+    $counts  = init_plugin_suite_review_system_get_reaction_counts( $post_id );
+    $user_rx = is_user_logged_in()
+        ? init_plugin_suite_review_system_get_user_reaction( $post_id, get_current_user_id() )
+        : '';
+
+    return [
+        'post_id'       => $post_id,
+        'counts'        => $counts,
+        'user_reaction' => $user_rx,
+        'types'         => init_plugin_suite_review_system_get_reaction_types(),
+    ];
 }
 
 /**
  * GET /reactions/summary
  */
 function init_plugin_suite_review_system_rest_get_reactions_summary( WP_REST_Request $req ) {
-    $post_id = absint( $req->get_param('post_id') );
-    $post_id = init_plugin_suite_review_system_assert_post($post_id);
-    if ( ! $post_id ) {
-        return new WP_Error('invalid_post', __('Invalid post ID.', 'init-review-system'), ['status'=>400]);
+    $data = init_plugin_suite_review_system_get_reactions_summary_data( $req->get_param( 'post_id' ) );
+
+    if ( is_wp_error( $data ) ) {
+        return $data;
     }
 
-    $counts = init_plugin_suite_review_system_get_reaction_counts($post_id);
-    $user_rx = is_user_logged_in()
-        ? init_plugin_suite_review_system_get_user_reaction($post_id, get_current_user_id())
-        : '';
-
-    return rest_ensure_response([
-        'success'       => true,
-        'post_id'       => $post_id,
-        'counts'        => $counts,
-        'user_reaction' => $user_rx,
-        'types'         => init_plugin_suite_review_system_get_reaction_types(),
-    ]);
+    return rest_ensure_response( array_merge( [ 'success' => true ], $data ) );
 }
 
 /**

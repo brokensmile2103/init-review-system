@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "init-review-system/review-criteria",
+    "title": "Review Criteria",
+    "category": "init-review-system",
+    "icon": "list-view",
+    "description": "Insert the multi-criteria review breakdown, written reviews list, and submission form.",
+    "keywords": ["review", "criteria", "rating", "init"],
+    "textdomain": "init-review-system",
+    "attributes": {
+        "postId": {
+            "type": "number",
+            "default": 0
+        },
+        "htmlClass": {
+            "type": "string",
+            "default": ""
+        },
+        "showSchema": {
+            "type": "boolean",
+            "default": false
+        },
+        "perPage": {
+            "type": "number",
+            "default": 0
+        },
+        "paged": {
+            "type": "number",
+            "default": 1
+        }
+    },
+    "supports": {
+        "html": false,
+        "className": false,
+        "customClassName": false
+    },
+    "editorScript": "init-review-system-blocks-editor",
+    "style": "init-review-system-style",
+    "render": "file:./render.php"
+}

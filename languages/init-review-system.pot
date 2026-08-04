@@ -6,8 +6,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, and rich schema support for WordPress sites."
+msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, Block Editor blocks, Abilities API support, and rich schema support for WordPress sites."
 msgstr ""
 
 msgid "General Settings"
@@ -311,13 +312,7 @@ msgstr ""
 msgid "to join the reactions."
 msgstr ""
 
-msgid "Invalid post ID."
-msgstr ""
-
 msgid "Login required."
-msgstr ""
-
-msgid "Invalid nonce."
 msgstr ""
 
 msgid "Could not update reaction."
@@ -403,9 +398,6 @@ msgstr ""
 msgid "Helps prevent accidental ratings/misclicks."
 msgstr ""
 
-msgid "Review Score"
-msgstr ""
-
 msgid "Avg"
 msgstr ""
 
@@ -431,4 +423,179 @@ msgid "Save / Update the post to apply changes."
 msgstr ""
 
 msgid "No votes yet. This box appears after the first vote."
+msgstr ""
+
+msgid "Abilities exposed by the Init Review System plugin."
+msgstr ""
+
+msgid "Get Review Score"
+msgstr ""
+
+msgid "Returns the average 5-star score and vote count for a post, the same data shown by the [init_review_score] shortcode."
+msgstr ""
+
+msgid "The post ID to get the review score for."
+msgstr ""
+
+msgid "A valid post ID is required."
+msgstr ""
+
+msgid "Get Criteria Reviews"
+msgstr ""
+
+msgid "Returns the multi-criteria score breakdown and a page of written reviews for a post, the same data used by the [init_review_criteria] shortcode."
+msgstr ""
+
+msgid "The post ID to get reviews for."
+msgstr ""
+
+msgid "Page number of reviews to return."
+msgstr ""
+
+msgid "Number of reviews per page (max 100)."
+msgstr ""
+
+msgid "Get Reactions Summary"
+msgstr ""
+
+msgid "Returns emoji reaction counts for a post, the same data used by the [init_reactions] shortcode."
+msgstr ""
+
+msgid "The post ID to get reactions for."
+msgstr ""
+
+# --- Block metadata (block.json) — translated server-side via translate_settings_using_i18n_schema() ---
+#: blocks/review-score/block.json
+msgctxt "block title"
+msgid "Review Score"
+msgstr ""
+
+#: blocks/review-score/block.json
+msgctxt "block description"
+msgid "Insert the average review score (read-only) for a post."
+msgstr ""
+
+#: blocks/review-score/block.json blocks/review-system/block.json
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "review"
+msgstr ""
+
+#: blocks/review-score/block.json blocks/review-system/block.json
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "rating"
+msgstr ""
+
+#: blocks/review-score/block.json
+msgctxt "block keyword"
+msgid "score"
+msgstr ""
+
+#: blocks/review-score/block.json blocks/review-system/block.json
+#: blocks/review-criteria/block.json blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "init"
+msgstr ""
+
+#: blocks/review-system/block.json
+msgctxt "block title"
+msgid "Review Widget"
+msgstr ""
+
+#: blocks/review-system/block.json
+msgctxt "block description"
+msgid "Insert the interactive 5-star voting widget, with optional Schema.org markup."
+msgstr ""
+
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "vote"
+msgstr ""
+
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "stars"
+msgstr ""
+
+#: blocks/review-criteria/block.json
+msgctxt "block title"
+msgid "Review Criteria"
+msgstr ""
+
+#: blocks/review-criteria/block.json
+msgctxt "block description"
+msgid "Insert the multi-criteria review breakdown, written reviews list, and submission form."
+msgstr ""
+
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "criteria"
+msgstr ""
+
+#: blocks/reactions/block.json
+msgctxt "block title"
+msgid "Reactions Bar"
+msgstr ""
+
+#: blocks/reactions/block.json
+msgctxt "block description"
+msgid "Insert the emoji reactions bar for a post. Reacting requires login."
+msgstr ""
+
+#: blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "reactions"
+msgstr ""
+
+#: blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "emoji"
+msgstr ""
+
+#: blocks/reactions/block.json
+msgctxt "block keyword"
+msgid "like"
+msgstr ""
+
+msgid "Post ID (0 = current post)"
+msgstr ""
+
+msgid "Custom CSS class"
+msgstr ""
+
+msgid "Review Score Settings"
+msgstr ""
+
+msgid "Show Star Icon"
+msgstr ""
+
+msgid "Show \"/5\" Suffix"
+msgstr ""
+
+msgid "Show Review Count"
+msgstr ""
+
+msgid "Hide If No Reviews"
+msgstr ""
+
+msgid "Review Widget Settings"
+msgstr ""
+
+msgid "Output Schema.org Markup"
+msgstr ""
+
+msgid "Review Criteria Settings"
+msgstr ""
+
+msgid "Reviews Per Page (0 = all)"
+msgstr ""
+
+msgid "Page Number"
+msgstr ""
+
+msgid "Reactions Settings"
+msgstr ""
+
+msgid "Load CSS"
 msgstr ""

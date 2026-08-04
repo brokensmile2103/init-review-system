@@ -184,6 +184,71 @@ function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page
     return $results;
 }
 
+/**
+ * Chuẩn bị dữ liệu review đầy đủ (kèm display_name/avatar_url) cho một bài
+ * viết — tái sử dụng chung bởi REST endpoint /get-criteria-reviews và
+ * ability init-review-system/get-criteria-reviews, tránh lặp lại logic ráp
+ * dữ liệu ở 2 nơi.
+ *
+ * Không kèm HTML render sẵn (khác REST response) — nơi gọi tự quyết định có
+ * cần render template hay không (REST endpoint vẫn render như trước để
+ * tương thích ngược, ability thì trả dữ liệu thô cho máy đọc).
+ *
+ * @param int    $post_id  ID bài viết.
+ * @param int    $page     Trang hiện tại (bắt đầu từ 1).
+ * @param int    $per_page Số review mỗi trang (tối đa 100).
+ * @param string $status   Trạng thái review.
+ * @return array|WP_Error Dữ liệu tổng hợp, hoặc WP_Error nếu post_id không hợp lệ.
+ */
+function init_plugin_suite_review_system_get_criteria_reviews_data( $post_id, $page = 1, $per_page = 10, $status = 'approved' ) {
+    $post_id = absint( $post_id );
+
+    if ( ! get_post( $post_id ) ) {
+        return new WP_Error( 'invalid_post', __( 'Invalid post ID.', 'init-review-system' ), [ 'status' => 400 ] );
+    }
+
+    $page     = max( 1, absint( $page ) );
+    $per_page = min( 100, max( 1, absint( $per_page ) ) );
+
+    $total    = init_plugin_suite_review_system_get_total_reviews_by_post_id( $post_id, $status );
+    $max_page = (int) ceil( $total / $per_page );
+    $reviews  = init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page, $per_page, $status );
+    $criteria = init_plugin_suite_review_system_get_criteria_by_post_id( $post_id );
+
+    $default_avatar = INIT_PLUGIN_SUITE_RS_ASSETS_URL . '/img/default-avatar.svg';
+
+    // Prime cache user hàng loạt thay vì get_userdata() riêng từng dòng bên
+    // dưới — với per_page tối đa 100, tránh được tới 100 query rời rạc.
+    $review_user_ids = array_unique( array_filter( array_map( 'absint', wp_list_pluck( $reviews, 'user_id' ) ) ) );
+    if ( $review_user_ids ) {
+        cache_users( $review_user_ids );
+    }
+
+    foreach ( $reviews as &$review ) {
+        $user_id = intval( $review['user_id'] ?? 0 );
+
+        if ( $user_id > 0 ) {
+            $user = get_userdata( $user_id );
+            $review['display_name'] = $user ? $user->display_name : __( 'Anonymous', 'init-review-system' );
+            $review['avatar_url']   = get_avatar_url( $user_id, [ 'size' => 48 ] ) ?: $default_avatar;
+        } else {
+            $review['display_name'] = __( 'Anonymous', 'init-review-system' );
+            $review['avatar_url']   = $default_avatar;
+        }
+    }
+    unset( $review );
+
+    return [
+        'post_id'  => $post_id,
+        'page'     => $page,
+        'per_page' => $per_page,
+        'total'    => $total,
+        'max_page' => $max_page,
+        'criteria' => $criteria,
+        'reviews'  => $reviews,
+    ];
+}
+
 // Lấy danh sách review theo nhiều bài viết
 function init_plugin_suite_review_system_get_reviews_by_post_ids( $post_ids = [], $paged = 1, $per_page = 10, $status = 'approved' ) {
     global $wpdb;

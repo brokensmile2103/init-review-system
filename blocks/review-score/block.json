@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "init-review-system/review-score",
+    "title": "Review Score",
+    "category": "init-review-system",
+    "icon": "star-filled",
+    "description": "Insert the average review score (read-only) for a post.",
+    "keywords": ["review", "rating", "score", "init"],
+    "textdomain": "init-review-system",
+    "attributes": {
+        "postId": {
+            "type": "number",
+            "default": 0
+        },
+        "showIcon": {
+            "type": "boolean",
+            "default": false
+        },
+        "showSub": {
+            "type": "boolean",
+            "default": true
+        },
+        "showCount": {
+            "type": "boolean",
+            "default": false
+        },
+        "htmlClass": {
+            "type": "string",
+            "default": ""
+        },
+        "hideIfEmpty": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "supports": {
+        "html": false,
+        "className": false,
+        "customClassName": false
+    },
+    "editorScript": "init-review-system-blocks-editor",
+    "style": "init-review-system-style",
+    "render": "file:./render.php"
+}

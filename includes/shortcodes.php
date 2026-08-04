@@ -72,7 +72,10 @@ function init_plugin_suite_review_system_enqueue_assets() {
 }
 
 // [init_review_score]
-add_shortcode( 'init_review_score', function( $atts ) {
+add_shortcode( 'init_review_score', 'init_plugin_suite_review_system_shortcode_score' );
+
+// [init_review_score] handler
+function init_plugin_suite_review_system_shortcode_score( $atts ) {
     $atts = shortcode_atts([
         'id'            => get_the_ID(),
         'icon'          => 'false',
@@ -129,10 +132,13 @@ add_shortcode( 'init_review_score', function( $atts ) {
     $output .= '</span>';
 
     return $output;
-});
+}
 
 // [init_review_system]
-add_shortcode( 'init_review_system', function( $atts ) {
+add_shortcode( 'init_review_system', 'init_plugin_suite_review_system_shortcode_system' );
+
+// [init_review_system] handler
+function init_plugin_suite_review_system_shortcode_system( $atts ) {
     init_plugin_suite_review_system_enqueue_assets();
 
     $atts = shortcode_atts([
@@ -212,10 +218,13 @@ add_shortcode( 'init_review_system', function( $atts ) {
     $output .= '</div>'; // .init-review-system
 
     return $output;
-});
+}
 
 // [init_review_criteria]
-add_shortcode( 'init_review_criteria', function ( $atts ) {
+add_shortcode( 'init_review_criteria', 'init_plugin_suite_review_system_shortcode_criteria' );
+
+// [init_review_criteria] handler
+function init_plugin_suite_review_system_shortcode_criteria( $atts ) {
     init_plugin_suite_review_system_enqueue_assets();
 
     // Nhận và xử lý các thuộc tính từ shortcode
@@ -264,7 +273,7 @@ add_shortcode( 'init_review_criteria', function ( $atts ) {
     ob_start();
     init_plugin_suite_review_system_render_template( 'review-criteria-display.php', $template_data );
     return ob_get_clean();
-} );
+}
 
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
     if ( ! current_user_can( 'manage_options' ) ) {
@@ -321,7 +330,10 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
  * - class: thêm class ngoài
  * - css: "true" | "false"  (mặc định true) → auto enqueue assets/css/reactions.css
  */
-add_shortcode('init_reactions', function ($atts) {
+add_shortcode( 'init_reactions', 'init_plugin_suite_review_system_shortcode_reactions' );
+
+// [init_reactions] handler
+function init_plugin_suite_review_system_shortcode_reactions( $atts ) {
     $atts = shortcode_atts([
         'id'    => get_the_ID(),
         'class' => '',
@@ -385,4 +397,4 @@ add_shortcode('init_reactions', function ($atts) {
     ob_start();
     init_plugin_suite_review_system_render_template('reactions-bar.php', $data);
     return ob_get_clean();
-});
+}

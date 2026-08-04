@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "init-review-system/review-system",
+    "title": "Review Widget",
+    "category": "init-review-system",
+    "icon": "star-half",
+    "description": "Insert the interactive 5-star voting widget, with optional Schema.org markup.",
+    "keywords": ["review", "rating", "vote", "stars", "init"],
+    "textdomain": "init-review-system",
+    "attributes": {
+        "postId": {
+            "type": "number",
+            "default": 0
+        },
+        "htmlClass": {
+            "type": "string",
+            "default": ""
+        },
+        "showSchema": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "supports": {
+        "html": false,
+        "className": false,
+        "customClassName": false
+    },
+    "editorScript": "init-review-system-blocks-editor",
+    "style": "init-review-system-style",
+    "render": "file:./render.php"
+}

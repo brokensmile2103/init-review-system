@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "init-review-system/reactions",
+    "title": "Reactions Bar",
+    "category": "init-review-system",
+    "icon": "heart",
+    "description": "Insert the emoji reactions bar for a post. Reacting requires login.",
+    "keywords": ["reactions", "emoji", "like", "init"],
+    "textdomain": "init-review-system",
+    "attributes": {
+        "postId": {
+            "type": "number",
+            "default": 0
+        },
+        "htmlClass": {
+            "type": "string",
+            "default": ""
+        },
+        "loadCss": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "supports": {
+        "html": false,
+        "className": false,
+        "customClassName": false
+    },
+    "editorScript": "init-review-system-blocks-editor",
+    "style": "init-review-system-reactions",
+    "render": "file:./render.php"
+}

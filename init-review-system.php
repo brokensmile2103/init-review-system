@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Init Review System
  * Plugin URI: https://inithtml.com/plugin/init-review-system/
- * Description: Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, and rich schema support for WordPress sites.
- * Version: 1.19
+ * Description: Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, Block Editor blocks, Abilities API support, and rich schema support for WordPress sites.
+ * Version: 2.0.0
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-review-system
  * Domain Path: /languages
- * Requires at least: 5.5
- * Tested up to: 7.0
+ * Requires at least: 6.9
+ * Tested up to: 7.1
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'INIT_PLUGIN_SUITE_RS_VERSION',        '1.19' );
+define( 'INIT_PLUGIN_SUITE_RS_VERSION',        '2.0.0' );
 define( 'INIT_PLUGIN_SUITE_RS_SLUG',           'init-review-system' );
 define( 'INIT_PLUGIN_SUITE_RS_OPTION',         'init_plugin_suite_review_system_settings' );
 define( 'INIT_PLUGIN_SUITE_RS_NAMESPACE',      'initrsys/v1' );
@@ -39,6 +39,8 @@ require_once INIT_PLUGIN_SUITE_RS_INCLUDES_PATH . 'review-management.php';
 require_once INIT_PLUGIN_SUITE_RS_INCLUDES_PATH . 'reset-metabox.php';
 require_once INIT_PLUGIN_SUITE_RS_INCLUDES_PATH . 'settings-page.php';
 require_once INIT_PLUGIN_SUITE_RS_INCLUDES_PATH . 'hooks.php';
+require_once INIT_PLUGIN_SUITE_RS_INCLUDES_PATH . 'blocks.php';
+require_once INIT_PLUGIN_SUITE_RS_INCLUDES_PATH . 'abilities-api.php';
 
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style(

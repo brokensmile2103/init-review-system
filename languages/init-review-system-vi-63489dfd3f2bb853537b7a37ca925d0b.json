@@ -1,0 +1,57 @@
+{
+  "translation-revision-date": "2026-08-04 00:00+0000",
+  "generator": "manual/claude",
+  "source": "assets/js/blocks-editor.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "vi",
+        "plural-forms": "nplurals=1; plural=0;"
+      },
+      "Custom CSS class": [
+        "Class CSS tÃ¹y chá»nh"
+      ],
+      "Hide If No Reviews": [
+        "áº¨n náº¿u chÆ°a cÃ³ ÄÃ¡nh giÃ¡"
+      ],
+      "Load CSS": [
+        "Táº£i CSS"
+      ],
+      "Output Schema.org Markup": [
+        "Xuáº¥t markup Schema.org"
+      ],
+      "Page Number": [
+        "Sá» trang"
+      ],
+      "Post ID (0 = current post)": [
+        "ID bÃ i viáº¿t (0 = bÃ i viáº¿t hiá»n táº¡i)"
+      ],
+      "Reactions Settings": [
+        "CÃ i Äáº·t Reactions"
+      ],
+      "Review Criteria Settings": [
+        "CÃ i Äáº·t ÄÃ¡nh giÃ¡ theo tiÃªu chÃ­"
+      ],
+      "Review Score Settings": [
+        "CÃ i Äáº·t Äiá»m ÄÃ¡nh giÃ¡"
+      ],
+      "Review Widget Settings": [
+        "CÃ i Äáº·t Review Widget"
+      ],
+      "Reviews Per Page (0 = all)": [
+        "Sá» review má»i trang (0 = táº¥t cáº£)"
+      ],
+      "Show \"/5\" Suffix": [
+        "Hiá»n háº­u tá» \"/5\""
+      ],
+      "Show Review Count": [
+        "Hiá»n sá» lÆ°á»£t ÄÃ¡nh giÃ¡"
+      ],
+      "Show Star Icon": [
+        "Hiá»n biá»u tÆ°á»£ng ngÃ´i sao"
+      ]
+    }
+  }
+}

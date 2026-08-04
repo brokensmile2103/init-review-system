@@ -1,20 +1,20 @@
 === Init Review System – Reactions, Multi-Criteria, Guest-Friendly ===
 Contributors: brokensmile.2103
 Tags: review, rating, vote, reaction, schema
-Requires at least: 5.5
-Tested up to: 7.0
+Requires at least: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.19
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Fast 5-star rating plugin with schema, REST API, shortcode control, localStorage voting. Now with multi-criteria review support.
+Fast 5-star + multi-criteria reviews with schema, REST API, Block Editor & Abilities API support, emoji reactions, and localStorage voting.
 
 == Description ==
 
 **Init Review System** adds a clean and customizable 5-star rating system to your WordPress site. Votes are stored via REST API, tracked with `localStorage`, and the average score is auto-calculated and optionally displayed with schema markup.
 
-Built to be lightweight, developer-friendly, and easy to integrate into any theme or custom UI. Now with **multi-criteria reviews** and an **emoji reactions system** for richer user interaction.
+Built to be lightweight, developer-friendly, and easy to integrate into any theme or custom UI. Now with **multi-criteria reviews**, an **emoji reactions system** for richer user interaction, native **Block Editor** support, and read-only **Abilities API** integration for WordPress 6.9+.
 
 This plugin is part of the [Init Plugin Suite](https://en.inithtml.com/init-plugin-suite-minimalist-powerful-and-free-wordpress-plugins/) — a collection of minimalist, fast, and developer-focused tools for WordPress.
 
@@ -22,9 +22,11 @@ GitHub repository: [https://github.com/brokensmile2103/init-review-system](https
 
 **Highlights:**
 
+- **NEW: Block Editor (Gutenberg) support** — 4 blocks, one per shortcode
+- **NEW: Abilities API support (WordPress 6.9+)** — 3 read-only abilities
 - 5-star voting via frontend
-- **NEW: Multi-criteria review support**
-- **NEW: Emoji Reactions with Login Enforcement**
+- Multi-criteria review support
+- Emoji Reactions with Login Enforcement
 - Average score display
 - Optional login requirement
 - Optional strict IP checking
@@ -35,6 +37,8 @@ GitHub repository: [https://github.com/brokensmile2103/init-review-system](https
 
 == Features ==
 
+- Block Editor (Gutenberg) blocks: Review Score, Review Widget, Review Criteria, Reactions Bar — each with a live server-side preview in the editor
+- Abilities API (WordPress 6.9+): review score, criteria reviews, and reactions summary exposed as discoverable, executable abilities via `wp_get_abilities()` and the `wp-abilities/v1` REST namespace
 - 5-star rating system
 - Multi-criteria review scoring (up to 5 custom criteria)
 - Emoji-based reactions bar with live counts (requires login)
@@ -47,6 +51,27 @@ GitHub repository: [https://github.com/brokensmile2103/init-review-system](https
 - REST API endpoint: `/wp-json/initrsys/v1/vote`
 - Developer filters and extensible architecture
 - No jQuery, only minimal assets loaded when needed
+
+== Block Editor (Gutenberg) ==
+
+Four dynamic blocks are available under their own **Init Review System** category in the block inserter — no shortcodes needed if you prefer working entirely in the editor:
+
+- **Review Score** — equivalent to `[init_review_score]`
+- **Review Widget** — equivalent to `[init_review_system]`
+- **Review Criteria** — equivalent to `[init_review_criteria]`
+- **Reactions Bar** — equivalent to `[init_reactions]`
+
+Each block shares the exact same rendering code as its shortcode, so switching between the Block Editor and shortcodes never changes the output. Block settings map directly to shortcode attributes, and a live preview (via `wp.serverSideRender`) is shown right in the editor as you configure it.
+
+== Abilities API (WordPress 6.9+) ==
+
+On WordPress 6.9 and above, Init Review System registers three read-only abilities under the `init-review-system` category:
+
+- `init-review-system/get-review-score` — average score and vote count for a post
+- `init-review-system/get-criteria-reviews` — criteria breakdown and a page of written reviews for a post
+- `init-review-system/get-reactions-summary` — emoji reaction counts for a post
+
+These are discoverable and executable via PHP (`wp_get_abilities()`), and — for sites that opt into exposing it — the `wp-abilities/v1` REST namespace. Actions that write data (voting, submitting a review, toggling a reaction) are intentionally **not** exposed as abilities, since an ability can be discovered and invoked directly by an AI agent or automation tool — voting/reviewing/reacting on a visitor's behalf should never happen without the visitor's own, in-context action. This integration is fully optional: on WordPress versions older than 6.9, it silently does nothing and the rest of the plugin is unaffected.
 
 == Usage ==
 
@@ -191,6 +216,14 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 2.0.0 – August 4, 2026 =
+- **New: Abilities API support (WordPress 6.9+)**: registers three read-only abilities under the `init-review-system` category — `init-review-system/get-review-score` (average score + vote count), `init-review-system/get-criteria-reviews` (criteria breakdown + a page of written reviews), and `init-review-system/get-reactions-summary` (emoji reaction counts). All three are discoverable and executable via PHP, `wp_get_abilities()`, and — when a site opts in — the `wp-abilities/v1` REST namespace. Actions that write data (vote, submit review, toggle reaction) are intentionally not exposed as abilities. Fully optional and backward-compatible: on WordPress versions older than 6.9, the integration silently does nothing
+- **New: Block Editor (Gutenberg) support**: four dynamic blocks, grouped under their own **Init Review System** block category (instead of the generic "Widgets" category) — **Review Score**, **Review Widget**, **Review Criteria**, and **Reactions Bar**, matching `[init_review_score]`, `[init_review_system]`, `[init_review_criteria]`, and `[init_reactions]` respectively. Each block is registered via `block.json` (with a PHP `render.php` file wired through the `"render"` field, WP 6.1+) that calls the exact same shortcode function as its shortcode counterpart — no duplicated display logic, output always matches. The editor integration is a single, no-build-step vanilla JavaScript file using `wp.serverSideRender` for a live preview directly in the editor
+- **Changed**: the four shortcode handlers were converted from anonymous closures to named functions (`init_plugin_suite_review_system_shortcode_*`) so the new blocks' `render.php` files can call them directly instead of duplicating logic. No change in shortcode behavior or output
+- **Changed**: `Requires at least` raised from 5.5 to 6.9 to support the Abilities API integration. `Requires PHP` remains 7.4
+- **Improved**: `/get-criteria-reviews` (REST) and `/reactions/summary` (REST) now share their core data-assembly logic with the new abilities via two internal helper functions, instead of the same query/formatting logic existing twice
+- `Tested up to: 7.1`
 
 = 1.19 – August 2, 2026 =
 - **Fixed:** vote totals (`_init_review_total` / `_init_review_count`) were updated with a read-then-write pattern that could silently drop a vote when two requests landed at nearly the same time on a busy post. Now uses an atomic SQL increment so concurrent votes are never lost.

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Block Editor integration.
+ *
+ * @package InitReviewSystem
+ */
+
 defined( 'ABSPATH' ) || exit;
 
 // ============================================================================
@@ -28,18 +34,17 @@ add_filter( 'block_categories_all', 'init_plugin_suite_review_system_block_categ
  *                                                mà hook 'block_categories_all' truyền vào).
  * @return array
  */
-// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-function init_plugin_suite_review_system_block_category( $categories, $editor_context ) {
-    return array_merge(
-        [
-            [
-                'slug'  => 'init-review-system',
-                'title' => __( 'Init Review System', 'init-review-system' ),
-                'icon'  => 'star-filled',
-            ],
-        ],
-        $categories
-    );
+function init_plugin_suite_review_system_block_category( $categories, $editor_context ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	return array_merge(
+		array(
+			array(
+				'slug'  => 'init-review-system',
+				'title' => __( 'Init Review System', 'init-review-system' ),
+				'icon'  => 'star-filled',
+			),
+		),
+		$categories
+	);
 }
 
 add_action( 'init', 'init_plugin_suite_review_system_register_style_handles', 5 );
@@ -61,19 +66,19 @@ add_action( 'init', 'init_plugin_suite_review_system_register_style_handles', 5 
  * @return void
  */
 function init_plugin_suite_review_system_register_style_handles() {
-    wp_register_style(
-        'init-review-system-style',
-        INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'css/style.css',
-        [],
-        INIT_PLUGIN_SUITE_RS_VERSION
-    );
+	wp_register_style(
+		'init-review-system-style',
+		INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'css/style.css',
+		array(),
+		INIT_PLUGIN_SUITE_RS_VERSION
+	);
 
-    wp_register_style(
-        'init-review-system-reactions',
-        INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'css/reactions.css',
-        [],
-        INIT_PLUGIN_SUITE_RS_VERSION
-    );
+	wp_register_style(
+		'init-review-system-reactions',
+		INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'css/reactions.css',
+		array(),
+		INIT_PLUGIN_SUITE_RS_VERSION
+	);
 }
 
 add_action( 'init', 'init_plugin_suite_review_system_register_blocks', 10 );
@@ -83,35 +88,35 @@ add_action( 'init', 'init_plugin_suite_review_system_register_blocks', 10 );
  * @return void
  */
 function init_plugin_suite_review_system_register_blocks() {
-    if ( ! function_exists( 'register_block_type' ) ) {
-        return;
-    }
+	if ( ! function_exists( 'register_block_type' ) ) {
+		return;
+	}
 
-    wp_register_script(
-        'init-review-system-blocks-editor',
-        INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'js/blocks-editor.js',
-        [
-            'wp-blocks',
-            'wp-element',
-            'wp-block-editor',
-            'wp-components',
-            'wp-i18n',
-            'wp-server-side-render',
-        ],
-        INIT_PLUGIN_SUITE_RS_VERSION,
-        true
-    );
+	wp_register_script(
+		'init-review-system-blocks-editor',
+		INIT_PLUGIN_SUITE_RS_ASSETS_URL . 'js/blocks-editor.js',
+		array(
+			'wp-blocks',
+			'wp-element',
+			'wp-block-editor',
+			'wp-components',
+			'wp-i18n',
+			'wp-server-side-render',
+		),
+		INIT_PLUGIN_SUITE_RS_VERSION,
+		true
+	);
 
-    if ( function_exists( 'wp_set_script_translations' ) ) {
-        wp_set_script_translations(
-            'init-review-system-blocks-editor',
-            'init-review-system',
-            INIT_PLUGIN_SUITE_RS_PATH . 'languages'
-        );
-    }
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations(
+			'init-review-system-blocks-editor',
+			'init-review-system',
+			INIT_PLUGIN_SUITE_RS_PATH . 'languages'
+		);
+	}
 
-    register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/review-score' );
-    register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/review-system' );
-    register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/review-criteria' );
-    register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/reactions' );
+	register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/review-score' );
+	register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/review-system' );
+	register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/review-criteria' );
+	register_block_type( INIT_PLUGIN_SUITE_RS_PATH . 'blocks/reactions' );
 }

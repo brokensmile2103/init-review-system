@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,7 +90,8 @@ Attributes:
 - `id`: Post ID (default: current post)
 - `icon`: `true|false` – Show star icon (default: false)
 - `sub`: `true|false` – Show `/5` subtext (default: true)
-- `class`: Custom CSS class
+- `show_count`: `true|false` – Show the vote count (default: false)
+- `class`: Custom CSS class (multiple classes separated by spaces are supported)
 - `hide_if_empty`: `true|false` – Hide if no reviews (default: false)
 
 === [init_review_criteria] ===
@@ -180,6 +181,33 @@ Customize the meta key used for storing reaction counts.
 **Applies to:** Reaction counts storage
 **Params:** `string $meta_key`, `string $rx_key`
 
+**`init_plugin_suite_review_system_criteria`**
+Override the criteria list for a specific post. Since 2.0.1 applies to both the `[init_review_criteria]` display and the REST API.
+**Applies to:** Criteria display, REST API, abilities
+**Params:** `array|null $criteria`, `int $post_id`
+
+**`init_plugin_suite_review_system_can_view_post`** *(since 2.0.1)*
+Decide whether the current visitor may read/submit review data for a post. By default: publicly viewable posts, or posts the user can `read_post`.
+**Applies to:** REST API, abilities
+**Params:** `bool $can_view`, `WP_Post $post`
+
+**`init_plugin_suite_review_system_client_ip`** *(since 2.0.1)*
+Override the detected client IP used by the strict IP check (e.g. only trust the header set by your own reverse proxy).
+**Applies to:** Strict IP check
+**Params:** `string $ip`
+
+**`init_plugin_suite_review_system_enqueue_style`** *(since 2.0.1)*
+Return `false` to stop the main front-end stylesheet from being loaded on every page (if you load it yourself).
+**Applies to:** Frontend
+**Params:** `bool $enqueue` (default `true`)
+
+**`init_plugin_suite_review_system_after_admin_review_action`** *(action, since 2.0.1)*
+Fires after an admin approves, rejects, or deletes reviews (single or bulk).
+**Params:** `string $action`, `int[] $review_ids`, `int $affected_rows`
+
+**JavaScript events**
+Dispatch `init-review-system:criteria-loaded` on `document` after injecting review markup via AJAX (safe to fire multiple times). Since 2.0.1, dispatch `init-review-system:reactions-loaded` (or call `window.initReviewSystemReactions()`) after injecting a reactions bar.
+
 **`init_plugin_suite_review_system_ttl`**
 Set TTL (in seconds) for object cache on review queries. Defaults to `300` (5 minutes) since 1.19. Return `0` to disable caching entirely, or any other value to change the duration. Cache is stored via `wp_cache_set` with group `init_review_system` and is automatically invalidated on new review submission and on admin approve/reject/delete.
 **Applies to:** REST get reviews, get total reviews
@@ -196,7 +224,7 @@ Set TTL (in seconds) for object cache on review queries. Defaults to `300` (5 mi
 
 1. Upload plugin to `/wp-content/plugins/`
 2. Activate via Plugins menu
-3. Go to **Settings > Init Review System** to configure options
+3. Go to **Review System** in the admin menu to configure options
 
 == FAQ ==
 
@@ -216,6 +244,31 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 2.0.1 – September 26, 2026 =
+- **Fixed:** the activation hook was registered from `includes/init.php` with the wrong `__FILE__`, so it never ran — tables were only created the first time an administrator opened wp-admin, and front-end requests before that could fail. Tables are now created on activation (network-wide activation creates them for every site)
+- **Fixed:** the bundled translations (e.g. Vietnamese) were never loaded for PHP strings because `load_plugin_textdomain()` was missing. WordPress.org language packs still take priority
+- **Fixed:** the Block Editor Vietnamese JSON translation was double UTF-8 encoded (garbled text). Regenerated with WP-CLI; `blocks-editor.js` now uses `__()` directly so its strings are extracted automatically by `wp i18n make-pot`
+- **Fixed:** with strict IP check enabled, a guest whose review was rejected by moderation (banned word, repetition...) could not fix it and resubmit, because the IP was recorded before moderation. The IP is now recorded only after the review is saved
+- **Fixed:** admin notices after approving/rejecting/deleting a single review were never shown (redirect happened first). Bulk actions now also redirect (no resubmission on refresh) and keep the current filters
+- **Fixed:** the review management handlers ran on every admin request (including admin-ajax) and could trigger "Security check failed" for other plugins using the same `action` / `review_id` parameters. They now only run on the plugin's own page
+- **Fixed:** `review-management.js` was not loaded when the admin language was not English (the page hook name depends on the translated menu title)
+- **Fixed:** saving a post re-calculated `_init_review_total` from the rounded average even when nothing was changed in the Review Score metabox, slowly drifting the total (e.g. 13 → 12.99). `_init_review_weighted` is now also recalculated on manual adjustment and removed on reset
+- **Fixed:** "Load more reviews" always started from page 2 even when `paged` > 1, and could show up on the last page. Double clicks no longer load the same page twice
+- **Fixed:** default avatar URL contained a double slash (`assets//img`)
+- **Fixed:** the delete confirmation dialog broke with translations containing quotes; review statuses in the admin list are now translated
+- **Fixed:** shortcode builder translations never loaded (wrong global name), the Copy button failed on non-HTTPS admin, `[init_review_score]` offered an unsupported `schema` option (replaced by `sub`, `show_count`, `hide_if_empty`) and unchecked default-on options (e.g. `css`) were ignored
+- **Security:** REST endpoints and abilities no longer expose or accept votes/reviews/reactions for draft, private, or scheduled posts to visitors who cannot read them (filterable via `init_plugin_suite_review_system_can_view_post`)
+- **Improved (performance):** a vote no longer clears the site-wide average cache, which previously forced an `AVG()` over the whole postmeta table on almost every vote
+- **Improved (performance):** criteria score summary uses one query instead of two and sanitizes each label once instead of once per score; admin summary stats use one query instead of three; review content is tokenized once instead of twice
+- **Improved (performance):** user objects for the initial review list are primed in bulk; the review list query is skipped when there are no reviews
+- **Improved:** review cache versions are time-based, so a persistent object cache evicting the version key can never revive stale entries; the site-wide review list is invalidated too
+- **Improved:** reactions — no DB writes or recount when removing a reaction that does not exist; DB errors are reported instead of returning success; the reactions script data is printed once per page instead of once per bar
+- **Improved (JS):** scripts initialize correctly when deferred/delayed by optimization plugins; star listeners in the review modal were bound twice; re-firing `init-review-system:criteria-loaded` no longer binds handlers twice (which could submit a review twice); blocked `localStorage` no longer breaks the script; multiple reactions bars for the same post share one summary request
+- **Improved:** `[init_review_criteria]` now honors the `init_plugin_suite_review_system_criteria` filter (previously only the REST API did); `class` attributes accept multiple classes; the vote auto-insert and comment-form hooks are named functions (removable with `remove_action`)
+- **Changed:** `wpmu_new_blog` (deprecated) replaced by `wp_initialize_site`; uninstall also removes the DB version option and the global average transient (review data is still kept)
+- **Dev:** codebase follows WordPress Coding Standards (WPCS 3); JavaScript source files are shipped unminified-readable
+- New filters: `init_plugin_suite_review_system_can_view_post`, `init_plugin_suite_review_system_client_ip`, `init_plugin_suite_review_system_enqueue_style`; new action: `init_plugin_suite_review_system_after_admin_review_action`
 
 = 2.0.0 – August 4, 2026 =
 - **New: Abilities API support (WordPress 6.9+)**: registers three read-only abilities under the `init-review-system` category — `init-review-system/get-review-score` (average score + vote count), `init-review-system/get-criteria-reviews` (criteria breakdown + a page of written reviews), and `init-review-system/get-reactions-summary` (emoji reaction counts). All three are discoverable and executable via PHP, `wp_get_abilities()`, and — when a site opts in — the `wp-abilities/v1` REST namespace. Actions that write data (vote, submit review, toggle reaction) are intentionally not exposed as abilities. Fully optional and backward-compatible: on WordPress versions older than 6.9, the integration silently does nothing

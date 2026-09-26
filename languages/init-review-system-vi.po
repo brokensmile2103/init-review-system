@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Init Review System\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-27\n"
-"PO-Revision-Date: 2026-08-04\n"
-"Last-Translator: \n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/init-review-"
+"system\n"
+"POT-Creation-Date: 2026-09-26T04:28:46+00:00\n"
+"PO-Revision-Date: 2026-09-26\n"
+"Last-Translator: Init HTML\n"
 "Language-Team: Vietnamese\n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
@@ -12,529 +13,747 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, Block Editor blocks, Abilities API support, and rich schema support for WordPress sites."
-msgstr "Hệ thống đánh giá đa tiêu chí với bảng điều khiển quản trị, công cụ quản lý hàng loạt, API endpoints, block cho Block Editor, hỗ trợ Abilities API và schema phong phú cho WordPress."
-
-msgid "General Settings"
-msgstr "Cài đặt chung"
-
-msgid "Settings"
-msgstr "Cài đặt"
-
-msgid "Multi-Criteria Review"
-msgstr "Đánh giá theo nhiều tiêu chí"
-
-msgid "Require login to vote"
-msgstr "Yêu cầu đăng nhập để bình chọn"
-
-msgid "Enable strict IP check"
-msgstr "Bật kiểm tra IP nghiêm ngặt"
-
-msgid "Display score position"
-msgstr "Vị trí hiển thị điểm trung bình"
-
-msgid "Display review system"
-msgstr "Vị trí hiển thị hệ thống đánh giá"
-
-msgid "Criteria #%d"
-msgstr "Tiêu chí #%d"
-
-msgid "Only allow logged-in users to vote."
-msgstr "Chỉ cho phép người dùng đã đăng nhập đánh giá."
-
-msgid "Prevent multiple votes from the same IP (via hashed IP & transient)."
-msgstr "Ngăn người dùng bình chọn nhiều lần từ cùng một IP (sử dụng IP hash & transient)."
-
-msgid "No (manual shortcode only)"
-msgstr "Không (chỉ hiển thị bằng shortcode thủ công)"
-
-msgid "Before content"
-msgstr "Trước nội dung"
-
-msgid "After content"
-msgstr "Sau nội dung"
-
-msgid "Before comment form"
-msgstr "Trước biểu mẫu bình luận"
-
-msgid "After comment form"
-msgstr "Sau biểu mẫu bình luận"
-
-msgid "Auto-display average score at selected position."
-msgstr "Tự động hiển thị điểm trung bình ở vị trí đã chọn."
-
-msgid "Auto-display star rating system at selected position."
-msgstr "Tự động hiển thị hệ thống sao đánh giá ở vị trí đã chọn."
-
-msgid "Leave blank to disable"
-msgstr "Để trống để tắt"
-
-msgid "Init Review System Settings"
-msgstr "Cài đặt Init Review System"
-
+#. Plugin Name of the plugin
+#: init-review-system.php includes/abilities-api.php:31 includes/blocks.php:42
+#: includes/settings-page.php:20 includes/shortcodes.php:362
 msgid "Init Review System"
 msgstr "Init Review System"
 
-msgid "Shortcode Builder"
-msgstr "Trình tạo Shortcode"
+#. Plugin URI of the plugin
+#: init-review-system.php
+msgid "https://inithtml.com/plugin/init-review-system/"
+msgstr "https://inithtml.com/plugin/init-review-system/"
 
-msgid "Please select scores and write a review."
-msgstr "Vui lòng chọn điểm và viết đánh giá."
+#. Description of the plugin
+#: init-review-system.php
+msgid ""
+"Multi-criteria review system with admin dashboard, bulk management tools, "
+"REST API endpoints, Block Editor blocks, Abilities API support, and rich "
+"schema support for WordPress sites."
+msgstr ""
+"Hệ thống đánh giá đa tiêu chí với bảng điều khiển quản trị, công cụ quản lý "
+"hàng loạt, API endpoints, block cho Block Editor, hỗ trợ Abilities API và "
+"schema phong phú cho WordPress."
 
-msgid "Your review has been submitted!"
-msgstr "Đánh giá của bạn đã được gửi!"
+#. Author of the plugin
+#: init-review-system.php
+msgid "Init HTML"
+msgstr "Init HTML"
 
-msgid "Submission failed. Please try again later."
-msgstr "Gửi đánh giá thất bại. Vui lòng thử lại sau."
+#. Author URI of the plugin
+#: init-review-system.php
+msgid "https://inithtml.com/"
+msgstr "https://inithtml.com/"
 
-msgid "Copy"
-msgstr "Sao chép"
+#: includes/abilities-api.php:32
+msgid "Abilities exposed by the Init Review System plugin."
+msgstr "Các ability được plugin Init Review System cung cấp."
 
-msgid "Copied!"
-msgstr "Đã sao chép!"
+#: includes/abilities-api.php:56
+msgid "Get Review Score"
+msgstr "Lấy điểm đánh giá"
 
-msgid "Close"
-msgstr "Đóng"
+#: includes/abilities-api.php:57
+msgid ""
+"Returns the average 5-star score and vote count for a post, the same data "
+"shown by the [init_review_score] shortcode."
+msgstr ""
+"Trả về điểm trung bình (thang 5 sao) và số lượt đánh giá của một bài viết — "
+"cùng dữ liệu hiển thị bởi shortcode [init_review_score]."
 
-msgid "Shortcode Preview"
-msgstr "Xem trước Shortcode"
+#: includes/abilities-api.php:64
+msgid "The post ID to get the review score for."
+msgstr "ID bài viết cần lấy điểm đánh giá."
 
-msgid "Review Score"
-msgstr "Điểm đánh giá"
+#: includes/abilities-api.php:94
+msgid "Get Criteria Reviews"
+msgstr "Lấy đánh giá theo tiêu chí"
 
-msgid "Show Icon"
-msgstr "Hiển thị biểu tượng"
+#: includes/abilities-api.php:95
+msgid ""
+"Returns the multi-criteria score breakdown and a page of written reviews for "
+"a post, the same data used by the [init_review_criteria] shortcode."
+msgstr ""
+"Trả về điểm số chi tiết theo từng tiêu chí và một trang review bằng văn bản "
+"của một bài viết — cùng dữ liệu được shortcode [init_review_criteria] sử "
+"dụng."
 
-msgid "Enable Schema.org"
-msgstr "Bật Schema.org"
+#: includes/abilities-api.php:102
+msgid "The post ID to get reviews for."
+msgstr "ID bài viết cần lấy danh sách đánh giá."
 
-msgid "Custom Class"
-msgstr "Lớp CSS tùy chỉnh"
+#: includes/abilities-api.php:107
+msgid "Page number of reviews to return."
+msgstr "Số trang review cần trả về."
 
-msgid "Post ID"
-msgstr "ID bài viết"
+#: includes/abilities-api.php:113
+msgid "Number of reviews per page (max 100)."
+msgstr "Số review mỗi trang (tối đa 100)."
 
-msgid "Posts per page"
-msgstr "Số bài trên mỗi trang"
+#: includes/abilities-api.php:166
+msgid "Get Reactions Summary"
+msgstr "Lấy tổng hợp reactions"
 
-msgid "reviews"
-msgstr "đánh giá"
+#: includes/abilities-api.php:167
+msgid ""
+"Returns emoji reaction counts for a post, the same data used by the "
+"[init_reactions] shortcode."
+msgstr ""
+"Trả về số lượt reaction emoji của một bài viết — cùng dữ liệu được shortcode "
+"[init_reactions] sử dụng."
 
-msgid "Write a review"
-msgstr "Viết đánh giá"
+#: includes/abilities-api.php:174
+msgid "The post ID to get reactions for."
+msgstr "ID bài viết cần lấy reactions."
 
-msgid "Anonymous"
-msgstr "Ẩn danh"
+#: includes/abilities-api.php:213
+msgid "A valid post ID is required."
+msgstr "Cần một ID bài viết hợp lệ."
 
-msgid "No reviews yet."
-msgstr "Chưa có đánh giá nào."
-
-msgid "Load more reviews"
-msgstr "Tải thêm đánh giá"
-
-msgid "Submit your review"
-msgstr "Gửi đánh giá của bạn"
-
-msgid "Review content"
-msgstr "Nội dung đánh giá"
-
-msgid "Write your thoughts..."
-msgstr "Viết cảm nhận của bạn..."
-
-msgid "Submit Review"
-msgstr "Gửi đánh giá"
-
-msgid "Invalid post ID or score."
-msgstr "ID bài viết hoặc điểm đánh giá không hợp lệ."
-
-msgid "Login required to vote."
-msgstr "Cần đăng nhập để bình chọn."
-
-msgid "Invalid nonce."
-msgstr "Nonce không hợp lệ."
-
-msgid "You have already voted recently."
-msgstr "Bạn đã bình chọn gần đây rồi."
-
-msgid "Invalid request data."
-msgstr "Dữ liệu gửi lên không hợp lệ."
-
-msgid "Login required to submit review."
-msgstr "Cần đăng nhập để gửi đánh giá."
-
-msgid "No valid scores provided."
-msgstr "Không có điểm đánh giá hợp lệ nào được cung cấp."
-
-msgid "You have already submitted a review."
-msgstr "Bạn đã gửi đánh giá rồi."
-
-msgid "You have already submitted a review from this IP."
-msgstr "IP này đã gửi đánh giá trước đó."
-
-msgid "Could not insert review."
-msgstr "Không thể lưu đánh giá."
-
-msgid "Review submitted successfully."
-msgstr "Gửi đánh giá thành công."
-
+#: includes/criteria-review.php:268 includes/rest-api.php:516
+#: includes/rest-api.php:561
 msgid "Invalid post ID."
 msgstr "ID bài viết không hợp lệ."
 
+#: includes/reactions-core.php:28
+msgid "Upvote"
+msgstr "Ủng hộ"
+
+#: includes/reactions-core.php:29
+msgid "Funny"
+msgstr "Vui"
+
+#: includes/reactions-core.php:30
+msgid "Love"
+msgstr "Yêu thích"
+
+#: includes/reactions-core.php:31
+msgid "Surprised"
+msgstr "Ngạc nhiên"
+
+#: includes/reactions-core.php:32
+msgid "Angry"
+msgstr "Tức giận"
+
+#: includes/reactions-core.php:33
+msgid "Sad"
+msgstr "Buồn"
+
+#: includes/reset-metabox.php:49 includes/shortcodes.php:361
+msgid "Review Score"
+msgstr "Điểm đánh giá"
+
+#: includes/reset-metabox.php:74
+msgid "No votes yet. This box appears after the first vote."
+msgstr ""
+"Chưa có đánh giá. Metabox sẽ hiển thị sau khi có lượt đánh giá đầu tiên."
+
+#: includes/reset-metabox.php:84
+msgid "Avg"
+msgstr "TB"
+
+#: includes/reset-metabox.php:85
+msgid "Votes"
+msgstr "Lượt"
+
+#: includes/reset-metabox.php:86
+msgid "Total"
+msgstr "Tổng"
+
+#: includes/reset-metabox.php:104
+msgid "Set Average (0–5)"
+msgstr "Đặt điểm trung bình (0–5)"
+
+#: includes/reset-metabox.php:115
+msgid "Set Count (>= 0)"
+msgstr "Đặt số lượt đánh giá (>= 0)"
+
+#: includes/reset-metabox.php:122
+msgid "Total auto = Avg × Count (rounded)"
+msgstr "Tổng điểm tự động = Trung bình × Số lượt (được làm tròn)"
+
+#: includes/reset-metabox.php:128
+msgid "Reset all review data"
+msgstr "Xóa toàn bộ dữ liệu đánh giá"
+
+#: includes/reset-metabox.php:132
+msgid "Save / Update the post to apply changes."
+msgstr "Lưu / Cập nhật bài viết để áp dụng thay đổi."
+
+#: includes/rest-api.php:207 includes/shortcodes.php:77
+msgid "Your review contains banned words."
+msgstr "Bài đánh giá của bạn chứa từ bị cấm."
+
+#: includes/rest-api.php:224 includes/shortcodes.php:78
+msgid "Your review contains banned phrases."
+msgstr "Bài đánh giá của bạn chứa cụm từ bị cấm."
+
+#: includes/rest-api.php:239 includes/shortcodes.php:79
+msgid ""
+"Your review appears to contain no whitespace. Please rewrite it more "
+"naturally."
+msgstr ""
+"Bài đánh giá của bạn dường như không có khoảng trắng. Vui lòng viết lại tự "
+"nhiên hơn."
+
+#: includes/rest-api.php:261 includes/shortcodes.php:80
+msgid "Your review repeats the same word too many times."
+msgstr "Bài đánh giá của bạn lặp lại cùng một từ quá nhiều lần."
+
+#: includes/rest-api.php:286
+msgid "Invalid post ID or score."
+msgstr "ID bài viết hoặc điểm đánh giá không hợp lệ."
+
+#: includes/rest-api.php:294
+msgid "Login required to vote."
+msgstr "Cần đăng nhập để bình chọn."
+
+#: includes/rest-api.php:298 includes/rest-api.php:364
+#: includes/rest-api.php:578 includes/shortcodes.php:71
+msgid "Invalid nonce."
+msgstr "Nonce không hợp lệ."
+
+#: includes/rest-api.php:304
+msgid "You have already voted recently."
+msgstr "Bạn đã bình chọn gần đây rồi."
+
+#: includes/rest-api.php:348 includes/shortcodes.php:72
+msgid "Invalid request data."
+msgstr "Dữ liệu gửi lên không hợp lệ."
+
+#: includes/rest-api.php:360 includes/shortcodes.php:70
+msgid "Login required to submit review."
+msgstr "Cần đăng nhập để gửi đánh giá."
+
+#: includes/rest-api.php:376 includes/shortcodes.php:73
+msgid "No valid scores provided."
+msgstr "Không có điểm đánh giá hợp lệ nào được cung cấp."
+
+#: includes/rest-api.php:381 includes/shortcodes.php:75
+msgid "You have already submitted a review."
+msgstr "Bạn đã gửi đánh giá rồi."
+
+#: includes/rest-api.php:390 includes/shortcodes.php:76
+msgid "You have already submitted a review from this IP."
+msgstr "IP này đã gửi đánh giá trước đó."
+
+#: includes/rest-api.php:408 includes/shortcodes.php:81
+msgid "Could not insert review."
+msgstr "Không thể lưu đánh giá."
+
+#: includes/rest-api.php:432
+msgid "Review submitted successfully."
+msgstr "Gửi đánh giá thành công."
+
+#: includes/rest-api.php:570
+msgid "Login required."
+msgstr "Yêu cầu đăng nhập."
+
+#: includes/rest-api.php:593
+msgid "Could not update reaction."
+msgstr "Không thể cập nhật reaction."
+
+#: includes/review-management.php:25 includes/review-management.php:26
+#: includes/review-management.php:515
 msgid "Manage Reviews"
 msgstr "Quản lý đánh giá"
 
-msgid "All Statuses"
-msgstr "Tất cả trạng thái"
-
-msgid "Approved"
-msgstr "Đã duyệt"
-
-msgid "Pending"
-msgstr "Chờ duyệt"
-
-msgid "Rejected"
-msgstr "Đã từ chối"
-
-msgid "User ID"
-msgstr "ID người dùng"
-
-msgid "Search content..."
-msgstr "Tìm kiếm nội dung..."
-
-msgid "Filter"
-msgstr "Lọc"
-
-msgid "Clear"
-msgstr "Xóa bộ lọc"
-
-msgid "Review"
-msgstr "Đánh giá"
-
-msgid "Post"
-msgstr "Bài viết"
-
-msgid "User"
-msgstr "Người dùng"
-
-msgid "Score"
-msgstr "Điểm"
-
-msgid "Status"
-msgstr "Trạng thái"
-
-msgid "Date"
-msgstr "Ngày"
-
-msgid "Actions"
-msgstr "Thao tác"
-
-msgid "Bulk Actions"
-msgstr "Thao tác hàng loạt"
-
-msgid "Apply"
-msgstr "Áp dụng"
-
-msgid "Approve"
-msgstr "Duyệt"
-
-msgid "Reject"
-msgstr "Từ chối"
-
-msgid "Delete"
-msgstr "Xóa"
-
-msgid "Review deleted successfully."
-msgstr "Đã xóa đánh giá thành công."
-
-msgid "Failed to delete review."
-msgstr "Không thể xóa đánh giá."
-
-msgid "Review approved."
-msgstr "Đã duyệt đánh giá."
-
-msgid "Review rejected."
-msgstr "Đã từ chối đánh giá."
-
-msgid "Security check failed."
-msgstr "Kiểm tra bảo mật thất bại."
-
-msgid "%d review deleted."
-msgid_plural "%d reviews deleted."
-msgstr[0] "Đã xóa %d đánh giá."
-
+#. translators: %d is the number of reviews approved.
+#: includes/review-management.php:292
+#, php-format
 msgid "%d review approved."
 msgid_plural "%d reviews approved."
 msgstr[0] "Đã duyệt %d đánh giá."
 
+#. translators: %d is the number of reviews rejected.
+#: includes/review-management.php:298
+#, php-format
 msgid "%d review rejected."
 msgid_plural "%d reviews rejected."
 msgstr[0] "Đã từ chối %d đánh giá."
 
-msgid "Post not found"
-msgstr "Không tìm thấy bài viết"
+#. translators: %d is the number of reviews deleted.
+#: includes/review-management.php:304
+#, php-format
+msgid "%d review deleted."
+msgid_plural "%d reviews deleted."
+msgstr[0] "Đã xóa %d đánh giá."
 
-msgid "User not found"
-msgstr "Không tìm thấy người dùng"
+#: includes/review-management.php:309
+msgid "Review approved."
+msgstr "Đã duyệt đánh giá."
 
-msgid "Guest"
-msgstr "Khách"
+#: includes/review-management.php:314
+msgid "Review rejected."
+msgstr "Đã từ chối đánh giá."
 
-msgid "No reviews found."
-msgstr "Không tìm thấy đánh giá nào."
+#: includes/review-management.php:319
+msgid "Review deleted successfully."
+msgstr "Đã xóa đánh giá thành công."
 
+#: includes/review-management.php:324
+msgid "Failed to delete review."
+msgstr "Không thể xóa đánh giá."
+
+#: includes/review-management.php:346 includes/review-management.php:526
+msgid "Approved"
+msgstr "Đã duyệt"
+
+#: includes/review-management.php:347 includes/review-management.php:527
+msgid "Pending"
+msgstr "Chờ duyệt"
+
+#: includes/review-management.php:348 includes/review-management.php:528
+msgid "Rejected"
+msgstr "Đã từ chối"
+
+#: includes/review-management.php:505
 msgid "Are you sure you want to delete this review?"
 msgstr "Bạn có chắc chắn muốn xóa đánh giá này?"
 
+#: includes/review-management.php:525
+msgid "All Statuses"
+msgstr "Tất cả trạng thái"
+
+#: includes/review-management.php:531 includes/shortcodes.php:373
+msgid "Post ID"
+msgstr "ID bài viết"
+
+#: includes/review-management.php:533
+msgid "User ID"
+msgstr "ID người dùng"
+
+#: includes/review-management.php:535
+msgid "Search content..."
+msgstr "Tìm kiếm nội dung..."
+
+#: includes/review-management.php:537
+msgid "Filter"
+msgstr "Lọc"
+
+#: includes/review-management.php:540
+msgid "Clear"
+msgstr "Xóa bộ lọc"
+
+#: includes/review-management.php:552 includes/review-management.php:691
+msgid "Bulk Actions"
+msgstr "Thao tác hàng loạt"
+
+#: includes/review-management.php:553 includes/review-management.php:654
+#: includes/review-management.php:692
+msgid "Approve"
+msgstr "Duyệt"
+
+#: includes/review-management.php:554 includes/review-management.php:660
+#: includes/review-management.php:693
+msgid "Reject"
+msgstr "Từ chối"
+
+#: includes/review-management.php:555 includes/review-management.php:665
+#: includes/review-management.php:694
+msgid "Delete"
+msgstr "Xóa"
+
+#: includes/review-management.php:557 includes/review-management.php:696
+msgid "Apply"
+msgstr "Áp dụng"
+
+#: includes/review-management.php:568 includes/review-management.php:677
+msgid "Review"
+msgstr "Đánh giá"
+
+#: includes/review-management.php:569 includes/review-management.php:678
+msgid "Post"
+msgstr "Bài viết"
+
+#: includes/review-management.php:570 includes/review-management.php:679
+msgid "User"
+msgstr "Người dùng"
+
+#: includes/review-management.php:571 includes/review-management.php:680
+msgid "Score"
+msgstr "Điểm"
+
+#: includes/review-management.php:572 includes/review-management.php:681
+msgid "Status"
+msgstr "Trạng thái"
+
+#: includes/review-management.php:573 includes/review-management.php:682
+msgid "Date"
+msgstr "Ngày"
+
+#: includes/review-management.php:574 includes/review-management.php:683
+msgid "Actions"
+msgstr "Thao tác"
+
+#: includes/review-management.php:581
+msgid "No reviews found."
+msgstr "Không tìm thấy đánh giá nào."
+
+#: includes/review-management.php:620
+msgid "Post not found"
+msgstr "Không tìm thấy bài viết"
+
+#: includes/review-management.php:634
+msgid "User not found"
+msgstr "Không tìm thấy người dùng"
+
+#: includes/review-management.php:637
+msgid "Guest"
+msgstr "Khách"
+
+#. translators: %s is the number of items in the list.
+#: includes/review-management.php:705
+#, php-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] "%s mục"
 
+#: includes/review-management.php:734
 msgid "Summary"
 msgstr "Tổng quan"
 
+#: includes/review-management.php:737
 msgid "Total Reviews:"
 msgstr "Tổng đánh giá:"
 
+#: includes/review-management.php:741
 msgid "Approved:"
 msgstr "Đã duyệt:"
 
+#: includes/review-management.php:747
 msgid "Pending:"
 msgstr "Chờ duyệt:"
 
+#: includes/review-management.php:753
 msgid "Rejected:"
 msgstr "Đã từ chối:"
 
+#: includes/review-management.php:759
 msgid "Average Score:"
 msgstr "Điểm trung bình:"
 
-msgid "What do you think?"
-msgstr "Bạn thấy sao?"
+#: includes/settings-page.php:21
+msgid "Review System"
+msgstr "Hệ thống đánh giá"
 
-msgid "Log in"
-msgstr "Đăng nhập"
+#: includes/settings-page.php:32 includes/settings-page.php:33
+#: init-review-system.php:98
+msgid "Settings"
+msgstr "Cài đặt"
 
-msgid "to join the reactions."
-msgstr "để tham gia reaction."
+#: includes/settings-page.php:75
+msgid "General Settings"
+msgstr "Cài đặt chung"
 
-msgid "Login required."
-msgstr "Yêu cầu đăng nhập."
+#: includes/settings-page.php:82
+msgid "Multi-Criteria Review"
+msgstr "Đánh giá theo nhiều tiêu chí"
 
-msgid "Could not update reaction."
-msgstr "Không thể cập nhật reaction."
+#: includes/settings-page.php:90
+msgid "Content Quality Guard"
+msgstr "Bộ lọc chất lượng nội dung"
 
-msgid "Upvote"
-msgstr "Ủng hộ"
+#: includes/settings-page.php:92
+msgid "Pre-submit JS checks and banned words configuration (settings only)."
+msgstr "Kiểm tra JS trước khi gửi và cấu hình từ bị cấm (chỉ phần cài đặt)."
 
-msgid "Funny"
-msgstr "Vui"
+#: includes/settings-page.php:99
+msgid "Require login to vote"
+msgstr "Yêu cầu đăng nhập để bình chọn"
 
-msgid "Love"
-msgstr "Yêu thích"
+#: includes/settings-page.php:107
+msgid "Require double-click to rate"
+msgstr "Yêu cầu nhấn hai lần để đánh giá"
 
-msgid "Surprised"
-msgstr "Ngạc nhiên"
+#: includes/settings-page.php:115
+msgid "Enable strict IP check"
+msgstr "Bật kiểm tra IP nghiêm ngặt"
 
-msgid "Angry"
-msgstr "Tức giận"
-
-msgid "Sad"
-msgstr "Buồn"
-
+#: includes/settings-page.php:123
 msgid "Auto-insert Reactions Bar (before comment form)"
 msgstr "Tự động chèn Thanh Phản Ứng (trước form bình luận)"
 
+#: includes/settings-page.php:131
+msgid "Display score position"
+msgstr "Vị trí hiển thị điểm trung bình"
+
+#: includes/settings-page.php:139
+msgid "Display review system"
+msgstr "Vị trí hiển thị hệ thống đánh giá"
+
+#. translators: %d is the index number of the review criteria.
+#: includes/settings-page.php:149
+#, php-format
+msgid "Criteria #%d"
+msgstr "Tiêu chí #%d"
+
+#: includes/settings-page.php:160
+msgid "Enable JS pre-submit checks"
+msgstr "Bật kiểm tra JS trước khi gửi"
+
+#: includes/settings-page.php:168
+msgid "Banned words (exact match, one per line)"
+msgstr "Từ bị cấm (so khớp chính xác, mỗi dòng một từ)"
+
+#: includes/settings-page.php:176
+msgid "Banned phrases (substring, one per line)"
+msgstr "Cụm từ bị cấm (so khớp chuỗi con, mỗi dòng một cụm)"
+
+#: includes/settings-page.php:236
 msgid "Automatically insert the Reactions Bar right before the comment form."
 msgstr "Tự động chèn Thanh Phản Ứng ngay trước form bình luận."
 
+#: includes/settings-page.php:238
 msgid "Use this if you want a global injection without editing templates."
-msgstr "Dùng tuỳ chọn này nếu bạn muốn chèn tự động mà không cần chỉnh sửa template."
+msgstr ""
+"Dùng tuỳ chọn này nếu bạn muốn chèn tự động mà không cần chỉnh sửa template."
 
+#: includes/settings-page.php:251
+msgid "Only allow logged-in users to vote."
+msgstr "Chỉ cho phép người dùng đã đăng nhập đánh giá."
+
+#: includes/settings-page.php:265
+msgid "Users must double-click a star to confirm rating."
+msgstr "Người dùng phải nhấn hai lần vào ngôi sao để xác nhận đánh giá."
+
+#: includes/settings-page.php:267
+msgid "Helps prevent accidental ratings/misclicks."
+msgstr "Giúp tránh trường hợp bấm nhầm khi đánh giá."
+
+#: includes/settings-page.php:280
+msgid "Prevent multiple votes from the same IP (via hashed IP & transient)."
+msgstr ""
+"Ngăn người dùng bình chọn nhiều lần từ cùng một IP (sử dụng IP hash & "
+"transient)."
+
+#: includes/settings-page.php:297 includes/settings-page.php:318
+msgid "No (manual shortcode only)"
+msgstr "Không (chỉ hiển thị bằng shortcode thủ công)"
+
+#: includes/settings-page.php:298 includes/settings-page.php:319
+msgid "Before content"
+msgstr "Trước nội dung"
+
+#: includes/settings-page.php:299 includes/settings-page.php:320
+msgid "After content"
+msgstr "Sau nội dung"
+
+#: includes/settings-page.php:301
+msgid "Auto-display average score at selected position."
+msgstr "Tự động hiển thị điểm trung bình ở vị trí đã chọn."
+
+#: includes/settings-page.php:321
+msgid "Before comment form"
+msgstr "Trước biểu mẫu bình luận"
+
+#: includes/settings-page.php:322
+msgid "After comment form"
+msgstr "Sau biểu mẫu bình luận"
+
+#: includes/settings-page.php:324
+msgid "Auto-display star rating system at selected position."
+msgstr "Tự động hiển thị hệ thống sao đánh giá ở vị trí đã chọn."
+
+#: includes/settings-page.php:370
+msgid "Leave blank to disable"
+msgstr "Để trống để tắt"
+
+#: includes/settings-page.php:384
+msgid ""
+"Run basic client-side checks before submit (e.g., excessive repeated words, "
+"missing whitespaces)."
+msgstr ""
+"Chạy kiểm tra cơ bản phía trình duyệt trước khi gửi (ví dụ: từ lặp quá "
+"nhiều, thiếu khoảng trắng)."
+
+#: includes/settings-page.php:399
+msgid "One word per line. Exact match (case-insensitive)."
+msgstr "Mỗi dòng một từ. So khớp chính xác (không phân biệt hoa thường)."
+
+#: includes/settings-page.php:415
+msgid "One phrase per line. Substring contains check (case-insensitive)."
+msgstr ""
+"Mỗi dòng một cụm từ. Kiểm tra chứa chuỗi con (không phân biệt hoa thường)."
+
+#: includes/settings-page.php:428
+msgid "Init Review System Settings"
+msgstr "Cài đặt Init Review System"
+
+#: includes/settings-page.php:437 includes/shortcodes.php:360
+msgid "Shortcode Builder"
+msgstr "Trình tạo Shortcode"
+
+#: includes/shortcodes.php:64
+msgid "Please select scores and write a review."
+msgstr "Vui lòng chọn điểm và viết đánh giá."
+
+#: includes/shortcodes.php:65
+msgid "Your review has been submitted!"
+msgstr "Đánh giá của bạn đã được gửi!"
+
+#: includes/shortcodes.php:66
+msgid "Submission failed. Please try again later."
+msgstr "Gửi đánh giá thất bại. Vui lòng thử lại sau."
+
+#: includes/shortcodes.php:67 templates/review-criteria-display.php:51
+msgid "reviews"
+msgstr "đánh giá"
+
+#: includes/shortcodes.php:74
+msgid "Please rate all required criteria."
+msgstr "Vui lòng chấm điểm tất cả các tiêu chí bắt buộc."
+
+#: includes/shortcodes.php:356
+msgid "Copy"
+msgstr "Sao chép"
+
+#: includes/shortcodes.php:357
+msgid "Copied!"
+msgstr "Đã sao chép!"
+
+#: includes/shortcodes.php:358 templates/review-criteria-display.php:144
+msgid "Close"
+msgstr "Đóng"
+
+#: includes/shortcodes.php:359
+msgid "Shortcode Preview"
+msgstr "Xem trước Shortcode"
+
+#: includes/shortcodes.php:363
+msgid "Review Widget"
+msgstr "Widget đánh giá"
+
+#: includes/shortcodes.php:364
+msgid "Review Criteria"
+msgstr "Đánh giá theo tiêu chí"
+
+#: includes/shortcodes.php:365
+msgid "Reactions Bar"
+msgstr "Thanh Reactions"
+
+#: includes/shortcodes.php:366
+msgid "Show Icon"
+msgstr "Hiển thị biểu tượng"
+
+#: includes/shortcodes.php:367 assets/js/blocks-editor.js:88
+msgid "Show \"/5\" Suffix"
+msgstr "Hiện hậu tố \"/5\""
+
+#: includes/shortcodes.php:368 assets/js/blocks-editor.js:89
+msgid "Show Review Count"
+msgstr "Hiện số lượt đánh giá"
+
+#: includes/shortcodes.php:369 assets/js/blocks-editor.js:90
+msgid "Hide If No Reviews"
+msgstr "Ẩn nếu chưa có đánh giá"
+
+#: includes/shortcodes.php:370
+msgid "Enable Schema.org"
+msgstr "Bật Schema.org"
+
+#: includes/shortcodes.php:371
+msgid "Custom Class"
+msgstr "Lớp CSS tùy chỉnh"
+
+#: includes/shortcodes.php:372 assets/js/blocks-editor.js:166
+msgid "Load CSS"
+msgstr "Tải CSS"
+
+#: includes/shortcodes.php:374
+msgid "Posts per page"
+msgstr "Số bài trên mỗi trang"
+
+#: includes/utils.php:266 templates/review-item.php:23
+msgid "Anonymous"
+msgstr "Ẩn danh"
+
+#: templates/reactions-bar.php:36
+msgid "What do you think?"
+msgstr "Bạn thấy sao?"
+
+#. translators: %s is the number of reactions.
+#: templates/reactions-bar.php:51
+#, php-format
 msgid "%s reaction"
 msgid_plural "%s reactions"
 msgstr[0] "%s phản ứng"
 
-msgid "Content Quality Guard"
-msgstr "Bộ lọc chất lượng nội dung"
+#: templates/reactions-bar.php:95
+msgid "Log in"
+msgstr "Đăng nhập"
 
-msgid "Pre-submit JS checks and banned words configuration (settings only)."
-msgstr "Kiểm tra JS trước khi gửi và cấu hình từ bị cấm (chỉ phần cài đặt)."
+#: templates/reactions-bar.php:97
+msgid "to join the reactions."
+msgstr "để tham gia reaction."
 
-msgid "Enable JS pre-submit checks"
-msgstr "Bật kiểm tra JS trước khi gửi"
+#: templates/review-criteria-display.php:76
+msgid "Write a review"
+msgstr "Viết đánh giá"
 
-msgid "Run basic client-side checks before submit (e.g., excessive repeated words, missing whitespaces)."
-msgstr "Chạy kiểm tra cơ bản phía trình duyệt trước khi gửi (ví dụ: từ lặp quá nhiều, thiếu khoảng trắng)."
+#: templates/review-criteria-display.php:96
+msgid "No reviews yet."
+msgstr "Chưa có đánh giá nào."
 
-msgid "Banned words (exact match, one per line)"
-msgstr "Từ bị cấm (so khớp chính xác, mỗi dòng một từ)"
+#: templates/review-criteria-display.php:109
+msgid "Load more reviews"
+msgstr "Tải thêm đánh giá"
 
-msgid "One word per line. Exact match (case-insensitive)."
-msgstr "Mỗi dòng một từ. So khớp chính xác (không phân biệt hoa thường)."
+#: templates/review-criteria-display.php:146
+msgid "Submit your review"
+msgstr "Gửi đánh giá của bạn"
 
-msgid "Banned phrases (substring, one per line)"
-msgstr "Cụm từ bị cấm (so khớp chuỗi con, mỗi dòng một cụm)"
+#: templates/review-criteria-display.php:165
+msgid "Review content"
+msgstr "Nội dung đánh giá"
 
-msgid "One phrase per line. Substring contains check (case-insensitive)."
-msgstr "Mỗi dòng một cụm từ. Kiểm tra chứa chuỗi con (không phân biệt hoa thường)."
+#: templates/review-criteria-display.php:166
+msgid "Write your thoughts..."
+msgstr "Viết cảm nhận của bạn..."
 
-msgid "Your review contains banned words."
-msgstr "Bài đánh giá của bạn chứa từ bị cấm."
+#: templates/review-criteria-display.php:170
+msgid "Submit Review"
+msgstr "Gửi đánh giá"
 
-msgid "Your review contains banned phrases."
-msgstr "Bài đánh giá của bạn chứa cụm từ bị cấm."
+#: assets/js/blocks-editor.js:30
+msgid "Post ID (0 = current post)"
+msgstr "ID bài viết (0 = bài viết hiện tại)"
 
-msgid "Your review appears to contain no whitespace. Please rewrite it more naturally."
-msgstr "Bài đánh giá của bạn dường như không có khoảng trắng. Vui lòng viết lại tự nhiên hơn."
+#: assets/js/blocks-editor.js:41
+msgid "Custom CSS class"
+msgstr "Class CSS tùy chỉnh"
 
-msgid "Your review repeats the same word too many times."
-msgstr "Bài đánh giá của bạn lặp lại cùng một từ quá nhiều lần."
+#: assets/js/blocks-editor.js:85
+msgid "Review Score Settings"
+msgstr "Cài đặt Điểm đánh giá"
 
-msgid "Please rate all required criteria."
-msgstr "Vui lòng chấm điểm tất cả các tiêu chí bắt buộc."
+#: assets/js/blocks-editor.js:87
+msgid "Show Star Icon"
+msgstr "Hiện biểu tượng ngôi sao"
 
-msgid "Require double-click to rate"
-msgstr "Yêu cầu nhấn hai lần để đánh giá"
+#: assets/js/blocks-editor.js:108
+msgid "Review Widget Settings"
+msgstr "Cài đặt Review Widget"
 
-msgid "Users must double-click a star to confirm rating."
-msgstr "Người dùng phải nhấn hai lần vào ngôi sao để xác nhận đánh giá."
+#: assets/js/blocks-editor.js:110 assets/js/blocks-editor.js:146
+msgid "Output Schema.org Markup"
+msgstr "Xuất markup Schema.org"
 
-msgid "Helps prevent accidental ratings/misclicks."
-msgstr "Giúp tránh trường hợp bấm nhầm khi đánh giá."
+#: assets/js/blocks-editor.js:128
+msgid "Review Criteria Settings"
+msgstr "Cài đặt Đánh giá theo tiêu chí"
 
-msgid "Avg"
-msgstr "TB"
+#: assets/js/blocks-editor.js:131
+msgid "Reviews Per Page (0 = all)"
+msgstr "Số review mỗi trang (0 = tất cả)"
 
-msgid "Votes"
-msgstr "Lượt"
+#: assets/js/blocks-editor.js:139
+msgid "Page Number"
+msgstr "Số trang"
 
-msgid "Total"
-msgstr "Tổng"
-
-msgid "Set Average (0–5)"
-msgstr "Đặt điểm trung bình (0–5)"
-
-msgid "Set Count (>= 0)"
-msgstr "Đặt số lượt đánh giá (>= 0)"
-
-msgid "Total auto = Avg × Count (rounded)"
-msgstr "Tổng điểm tự động = Trung bình × Số lượt (được làm tròn)"
-
-msgid "Reset all review data"
-msgstr "Xóa toàn bộ dữ liệu đánh giá"
-
-msgid "Save / Update the post to apply changes."
-msgstr "Lưu / Cập nhật bài viết để áp dụng thay đổi."
-
-msgid "No votes yet. This box appears after the first vote."
-msgstr "Chưa có đánh giá. Metabox sẽ hiển thị sau khi có lượt đánh giá đầu tiên."
-
-msgid "Abilities exposed by the Init Review System plugin."
-msgstr "Các ability được plugin Init Review System cung cấp."
-
-msgid "Get Review Score"
-msgstr "Lấy điểm đánh giá"
-
-msgid "Returns the average 5-star score and vote count for a post, the same data shown by the [init_review_score] shortcode."
-msgstr "Trả về điểm trung bình (thang 5 sao) và số lượt đánh giá của một bài viết — cùng dữ liệu hiển thị bởi shortcode [init_review_score]."
-
-msgid "The post ID to get the review score for."
-msgstr "ID bài viết cần lấy điểm đánh giá."
-
-msgid "A valid post ID is required."
-msgstr "Cần một ID bài viết hợp lệ."
-
-msgid "Get Criteria Reviews"
-msgstr "Lấy đánh giá theo tiêu chí"
-
-msgid "Returns the multi-criteria score breakdown and a page of written reviews for a post, the same data used by the [init_review_criteria] shortcode."
-msgstr "Trả về điểm số chi tiết theo từng tiêu chí và một trang review bằng văn bản của một bài viết — cùng dữ liệu được shortcode [init_review_criteria] sử dụng."
-
-msgid "The post ID to get reviews for."
-msgstr "ID bài viết cần lấy danh sách đánh giá."
-
-msgid "Page number of reviews to return."
-msgstr "Số trang review cần trả về."
-
-msgid "Number of reviews per page (max 100)."
-msgstr "Số review mỗi trang (tối đa 100)."
-
-msgid "Get Reactions Summary"
-msgstr "Lấy tổng hợp reactions"
-
-msgid "Returns emoji reaction counts for a post, the same data used by the [init_reactions] shortcode."
-msgstr "Trả về số lượt reaction emoji của một bài viết — cùng dữ liệu được shortcode [init_reactions] sử dụng."
-
-msgid "The post ID to get reactions for."
-msgstr "ID bài viết cần lấy reactions."
-
-# --- Block metadata (block.json) — translated server-side via translate_settings_using_i18n_schema() ---
-#: blocks/review-score/block.json
-msgctxt "block title"
-msgid "Review Score"
-msgstr "Điểm đánh giá"
-
-#: blocks/review-score/block.json
-msgctxt "block description"
-msgid "Insert the average review score (read-only) for a post."
-msgstr "Chèn điểm đánh giá trung bình (chỉ đọc) của một bài viết."
-
-#: blocks/review-score/block.json blocks/review-system/block.json
-#: blocks/review-criteria/block.json
-msgctxt "block keyword"
-msgid "review"
-msgstr "đánh giá"
-
-#: blocks/review-score/block.json blocks/review-system/block.json
-#: blocks/review-criteria/block.json
-msgctxt "block keyword"
-msgid "rating"
-msgstr "xếp hạng"
-
-#: blocks/review-score/block.json
-msgctxt "block keyword"
-msgid "score"
-msgstr "điểm"
-
-#: blocks/review-score/block.json blocks/review-system/block.json
-#: blocks/review-criteria/block.json blocks/reactions/block.json
-msgctxt "block keyword"
-msgid "init"
-msgstr "init"
-
-#: blocks/review-system/block.json
-msgctxt "block title"
-msgid "Review Widget"
-msgstr "Review Widget"
-
-#: blocks/review-system/block.json
-msgctxt "block description"
-msgid "Insert the interactive 5-star voting widget, with optional Schema.org markup."
-msgstr "Chèn widget đánh giá 5 sao tương tác, có thể kèm markup Schema.org."
-
-#: blocks/review-system/block.json
-msgctxt "block keyword"
-msgid "vote"
-msgstr "bình chọn"
-
-#: blocks/review-system/block.json
-msgctxt "block keyword"
-msgid "stars"
-msgstr "sao"
-
-#: blocks/review-criteria/block.json
-msgctxt "block title"
-msgid "Review Criteria"
-msgstr "Đánh giá theo tiêu chí"
-
-#: blocks/review-criteria/block.json
-msgctxt "block description"
-msgid "Insert the multi-criteria review breakdown, written reviews list, and submission form."
-msgstr "Chèn bảng điểm chi tiết theo tiêu chí, danh sách review bằng văn bản, và form gửi đánh giá."
-
-#: blocks/review-criteria/block.json
-msgctxt "block keyword"
-msgid "criteria"
-msgstr "tiêu chí"
+#: assets/js/blocks-editor.js:164
+msgid "Reactions Settings"
+msgstr "Cài đặt Reactions"
 
 #: blocks/reactions/block.json
 msgctxt "block title"
@@ -561,44 +780,76 @@ msgctxt "block keyword"
 msgid "like"
 msgstr "thích"
 
-msgid "Post ID (0 = current post)"
-msgstr "ID bài viết (0 = bài viết hiện tại)"
+#: blocks/reactions/block.json blocks/review-criteria/block.json
+#: blocks/review-score/block.json blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "init"
+msgstr "init"
 
-msgid "Custom CSS class"
-msgstr "Class CSS tùy chỉnh"
+#: blocks/review-criteria/block.json
+msgctxt "block title"
+msgid "Review Criteria"
+msgstr "Đánh giá theo tiêu chí"
 
-msgid "Review Score Settings"
-msgstr "Cài đặt Điểm đánh giá"
+#: blocks/review-criteria/block.json
+msgctxt "block description"
+msgid ""
+"Insert the multi-criteria review breakdown, written reviews list, and "
+"submission form."
+msgstr ""
+"Chèn bảng điểm chi tiết theo tiêu chí, danh sách review bằng văn bản, và "
+"form gửi đánh giá."
 
-msgid "Show Star Icon"
-msgstr "Hiện biểu tượng ngôi sao"
+#: blocks/review-criteria/block.json blocks/review-score/block.json
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "review"
+msgstr "đánh giá"
 
-msgid "Show \"/5\" Suffix"
-msgstr "Hiện hậu tố \"/5\""
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "criteria"
+msgstr "tiêu chí"
 
-msgid "Show Review Count"
-msgstr "Hiện số lượt đánh giá"
+#: blocks/review-criteria/block.json blocks/review-score/block.json
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "rating"
+msgstr "xếp hạng"
 
-msgid "Hide If No Reviews"
-msgstr "Ẩn nếu chưa có đánh giá"
+# --- Block metadata (block.json) — translated server-side via translate_settings_using_i18n_schema() ---
+#: blocks/review-score/block.json
+msgctxt "block title"
+msgid "Review Score"
+msgstr "Điểm đánh giá"
 
-msgid "Review Widget Settings"
-msgstr "Cài đặt Review Widget"
+#: blocks/review-score/block.json
+msgctxt "block description"
+msgid "Insert the average review score (read-only) for a post."
+msgstr "Chèn điểm đánh giá trung bình (chỉ đọc) của một bài viết."
 
-msgid "Output Schema.org Markup"
-msgstr "Xuất markup Schema.org"
+#: blocks/review-score/block.json
+msgctxt "block keyword"
+msgid "score"
+msgstr "điểm"
 
-msgid "Review Criteria Settings"
-msgstr "Cài đặt Đánh giá theo tiêu chí"
+#: blocks/review-system/block.json
+msgctxt "block title"
+msgid "Review Widget"
+msgstr "Review Widget"
 
-msgid "Reviews Per Page (0 = all)"
-msgstr "Số review mỗi trang (0 = tất cả)"
+#: blocks/review-system/block.json
+msgctxt "block description"
+msgid ""
+"Insert the interactive 5-star voting widget, with optional Schema.org markup."
+msgstr "Chèn widget đánh giá 5 sao tương tác, có thể kèm markup Schema.org."
 
-msgid "Page Number"
-msgstr "Số trang"
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "vote"
+msgstr "bình chọn"
 
-msgid "Reactions Settings"
-msgstr "Cài đặt Reactions"
-
-msgid "Load CSS"
-msgstr "Tải CSS"
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "stars"
+msgstr "sao"

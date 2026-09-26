@@ -1,536 +1,779 @@
+# Copyright (C) 2026 Init HTML
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Init Review System\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-27\n"
+"Project-Id-Version: Init Review System 2.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/init-review-system\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2026-09-26T04:28:46+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: init-review-system\n"
 
-msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, Block Editor blocks, Abilities API support, and rich schema support for WordPress sites."
-msgstr ""
-
-msgid "General Settings"
-msgstr ""
-
-msgid "Settings"
-msgstr ""
-
-msgid "Multi-Criteria Review"
-msgstr ""
-
-msgid "Require login to vote"
-msgstr ""
-
-msgid "Enable strict IP check"
-msgstr ""
-
-msgid "Display score position"
-msgstr ""
-
-msgid "Display review system"
-msgstr ""
-
-msgid "Criteria #%d"
-msgstr ""
-
-msgid "Only allow logged-in users to vote."
-msgstr ""
-
-msgid "Prevent multiple votes from the same IP (via hashed IP & transient)."
-msgstr ""
-
-msgid "No (manual shortcode only)"
-msgstr ""
-
-msgid "Before content"
-msgstr ""
-
-msgid "After content"
-msgstr ""
-
-msgid "Before comment form"
-msgstr ""
-
-msgid "After comment form"
-msgstr ""
-
-msgid "Auto-display average score at selected position."
-msgstr ""
-
-msgid "Auto-display star rating system at selected position."
-msgstr ""
-
-msgid "Leave blank to disable"
-msgstr ""
-
-msgid "Init Review System Settings"
-msgstr ""
-
+#. Plugin Name of the plugin
+#: init-review-system.php
+#: includes/abilities-api.php:31
+#: includes/blocks.php:42
+#: includes/settings-page.php:20
+#: includes/shortcodes.php:362
 msgid "Init Review System"
 msgstr ""
 
-msgid "Shortcode Builder"
+#. Plugin URI of the plugin
+#: init-review-system.php
+msgid "https://inithtml.com/plugin/init-review-system/"
 msgstr ""
 
-msgid "Please select scores and write a review."
+#. Description of the plugin
+#: init-review-system.php
+msgid "Multi-criteria review system with admin dashboard, bulk management tools, REST API endpoints, Block Editor blocks, Abilities API support, and rich schema support for WordPress sites."
 msgstr ""
 
-msgid "Your review has been submitted!"
+#. Author of the plugin
+#: init-review-system.php
+msgid "Init HTML"
 msgstr ""
 
-msgid "Submission failed. Please try again later."
+#. Author URI of the plugin
+#: init-review-system.php
+msgid "https://inithtml.com/"
 msgstr ""
 
-msgid "Copy"
+#: includes/abilities-api.php:32
+msgid "Abilities exposed by the Init Review System plugin."
 msgstr ""
 
-msgid "Copied!"
+#: includes/abilities-api.php:56
+msgid "Get Review Score"
 msgstr ""
 
-msgid "Close"
+#: includes/abilities-api.php:57
+msgid "Returns the average 5-star score and vote count for a post, the same data shown by the [init_review_score] shortcode."
 msgstr ""
 
-msgid "Shortcode Preview"
+#: includes/abilities-api.php:64
+msgid "The post ID to get the review score for."
 msgstr ""
 
-msgid "Review Score"
+#: includes/abilities-api.php:94
+msgid "Get Criteria Reviews"
 msgstr ""
 
-msgid "Show Icon"
+#: includes/abilities-api.php:95
+msgid "Returns the multi-criteria score breakdown and a page of written reviews for a post, the same data used by the [init_review_criteria] shortcode."
 msgstr ""
 
-msgid "Enable Schema.org"
+#: includes/abilities-api.php:102
+msgid "The post ID to get reviews for."
 msgstr ""
 
-msgid "Custom Class"
+#: includes/abilities-api.php:107
+msgid "Page number of reviews to return."
 msgstr ""
 
-msgid "Post ID"
+#: includes/abilities-api.php:113
+msgid "Number of reviews per page (max 100)."
 msgstr ""
 
-msgid "Posts per page"
+#: includes/abilities-api.php:166
+msgid "Get Reactions Summary"
 msgstr ""
 
-msgid "reviews"
+#: includes/abilities-api.php:167
+msgid "Returns emoji reaction counts for a post, the same data used by the [init_reactions] shortcode."
 msgstr ""
 
-msgid "Write a review"
+#: includes/abilities-api.php:174
+msgid "The post ID to get reactions for."
 msgstr ""
 
-msgid "Anonymous"
+#: includes/abilities-api.php:213
+msgid "A valid post ID is required."
 msgstr ""
 
-msgid "No reviews yet."
-msgstr ""
-
-msgid "Load more reviews"
-msgstr ""
-
-msgid "Submit your review"
-msgstr ""
-
-msgid "Review content"
-msgstr ""
-
-msgid "Write your thoughts..."
-msgstr ""
-
-msgid "Submit Review"
-msgstr ""
-
-msgid "Invalid post ID or score."
-msgstr ""
-
-msgid "Login required to vote."
-msgstr ""
-
-msgid "Invalid nonce."
-msgstr ""
-
-msgid "You have already voted recently."
-msgstr ""
-
-msgid "Invalid request data."
-msgstr ""
-
-msgid "Login required to submit review."
-msgstr ""
-
-msgid "No valid scores provided."
-msgstr ""
-
-msgid "You have already submitted a review."
-msgstr ""
-
-msgid "You have already submitted a review from this IP."
-msgstr ""
-
-msgid "Could not insert review."
-msgstr ""
-
-msgid "Review submitted successfully."
-msgstr ""
-
+#: includes/criteria-review.php:268
+#: includes/rest-api.php:516
+#: includes/rest-api.php:561
 msgid "Invalid post ID."
 msgstr ""
 
-msgid "Manage Reviews"
-msgstr ""
-
-msgid "All Statuses"
-msgstr ""
-
-msgid "Approved"
-msgstr ""
-
-msgid "Pending"
-msgstr ""
-
-msgid "Rejected"
-msgstr ""
-
-msgid "User ID"
-msgstr ""
-
-msgid "Search content..."
-msgstr ""
-
-msgid "Filter"
-msgstr ""
-
-msgid "Clear"
-msgstr ""
-
-msgid "Review"
-msgstr ""
-
-msgid "Post"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Score"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "Date"
-msgstr ""
-
-msgid "Actions"
-msgstr ""
-
-msgid "Bulk Actions"
-msgstr ""
-
-msgid "Apply"
-msgstr ""
-
-msgid "Approve"
-msgstr ""
-
-msgid "Reject"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Review deleted successfully."
-msgstr ""
-
-msgid "Failed to delete review."
-msgstr ""
-
-msgid "Review approved."
-msgstr ""
-
-msgid "Review rejected."
-msgstr ""
-
-msgid "Security check failed."
-msgstr ""
-
-msgid "%d review deleted."
-msgid_plural "%d reviews deleted."
-msgstr[0] "Đã xóa %d đánh giá."
-
-msgid "%d review approved."
-msgid_plural "%d reviews approved."
-msgstr[0] "Đã duyệt %d đánh giá."
-
-msgid "%d review rejected."
-msgid_plural "%d reviews rejected."
-msgstr[0] "Đã từ chối %d đánh giá."
-
-msgid "Post not found"
-msgstr ""
-
-msgid "User not found"
-msgstr ""
-
-msgid "Guest"
-msgstr ""
-
-msgid "No reviews found."
-msgstr ""
-
-msgid "Are you sure you want to delete this review?"
-msgstr ""
-
-msgid "%s item"
-msgid_plural "%s items"
-msgstr[0] "%s mục"
-
-msgid "Summary"
-msgstr ""
-
-msgid "Total Reviews:"
-msgstr ""
-
-msgid "Approved:"
-msgstr ""
-
-msgid "Pending:"
-msgstr ""
-
-msgid "Rejected:"
-msgstr ""
-
-msgid "Average Score:"
-msgstr ""
-
-msgid "What do you think?"
-msgstr ""
-
-msgid "Log in"
-msgstr ""
-
-msgid "to join the reactions."
-msgstr ""
-
-msgid "Login required."
-msgstr ""
-
-msgid "Could not update reaction."
-msgstr ""
-
+#: includes/reactions-core.php:28
 msgid "Upvote"
 msgstr ""
 
+#: includes/reactions-core.php:29
 msgid "Funny"
 msgstr ""
 
+#: includes/reactions-core.php:30
 msgid "Love"
 msgstr ""
 
+#: includes/reactions-core.php:31
 msgid "Surprised"
 msgstr ""
 
+#: includes/reactions-core.php:32
 msgid "Angry"
 msgstr ""
 
+#: includes/reactions-core.php:33
 msgid "Sad"
 msgstr ""
 
+#: includes/reset-metabox.php:49
+#: includes/shortcodes.php:361
+msgid "Review Score"
+msgstr ""
+
+#: includes/reset-metabox.php:74
+msgid "No votes yet. This box appears after the first vote."
+msgstr ""
+
+#: includes/reset-metabox.php:84
+msgid "Avg"
+msgstr ""
+
+#: includes/reset-metabox.php:85
+msgid "Votes"
+msgstr ""
+
+#: includes/reset-metabox.php:86
+msgid "Total"
+msgstr ""
+
+#: includes/reset-metabox.php:104
+msgid "Set Average (0–5)"
+msgstr ""
+
+#: includes/reset-metabox.php:115
+msgid "Set Count (>= 0)"
+msgstr ""
+
+#: includes/reset-metabox.php:122
+msgid "Total auto = Avg × Count (rounded)"
+msgstr ""
+
+#: includes/reset-metabox.php:128
+msgid "Reset all review data"
+msgstr ""
+
+#: includes/reset-metabox.php:132
+msgid "Save / Update the post to apply changes."
+msgstr ""
+
+#: includes/rest-api.php:207
+#: includes/shortcodes.php:77
+msgid "Your review contains banned words."
+msgstr ""
+
+#: includes/rest-api.php:224
+#: includes/shortcodes.php:78
+msgid "Your review contains banned phrases."
+msgstr ""
+
+#: includes/rest-api.php:239
+#: includes/shortcodes.php:79
+msgid "Your review appears to contain no whitespace. Please rewrite it more naturally."
+msgstr ""
+
+#: includes/rest-api.php:261
+#: includes/shortcodes.php:80
+msgid "Your review repeats the same word too many times."
+msgstr ""
+
+#: includes/rest-api.php:286
+msgid "Invalid post ID or score."
+msgstr ""
+
+#: includes/rest-api.php:294
+msgid "Login required to vote."
+msgstr ""
+
+#: includes/rest-api.php:298
+#: includes/rest-api.php:364
+#: includes/rest-api.php:578
+#: includes/shortcodes.php:71
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/rest-api.php:304
+msgid "You have already voted recently."
+msgstr ""
+
+#: includes/rest-api.php:348
+#: includes/shortcodes.php:72
+msgid "Invalid request data."
+msgstr ""
+
+#: includes/rest-api.php:360
+#: includes/shortcodes.php:70
+msgid "Login required to submit review."
+msgstr ""
+
+#: includes/rest-api.php:376
+#: includes/shortcodes.php:73
+msgid "No valid scores provided."
+msgstr ""
+
+#: includes/rest-api.php:381
+#: includes/shortcodes.php:75
+msgid "You have already submitted a review."
+msgstr ""
+
+#: includes/rest-api.php:390
+#: includes/shortcodes.php:76
+msgid "You have already submitted a review from this IP."
+msgstr ""
+
+#: includes/rest-api.php:408
+#: includes/shortcodes.php:81
+msgid "Could not insert review."
+msgstr ""
+
+#: includes/rest-api.php:432
+msgid "Review submitted successfully."
+msgstr ""
+
+#: includes/rest-api.php:570
+msgid "Login required."
+msgstr ""
+
+#: includes/rest-api.php:593
+msgid "Could not update reaction."
+msgstr ""
+
+#: includes/review-management.php:25
+#: includes/review-management.php:26
+#: includes/review-management.php:515
+msgid "Manage Reviews"
+msgstr ""
+
+#. translators: %d is the number of reviews approved.
+#: includes/review-management.php:292
+#, php-format
+msgid "%d review approved."
+msgid_plural "%d reviews approved."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d is the number of reviews rejected.
+#: includes/review-management.php:298
+#, php-format
+msgid "%d review rejected."
+msgid_plural "%d reviews rejected."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d is the number of reviews deleted.
+#: includes/review-management.php:304
+#, php-format
+msgid "%d review deleted."
+msgid_plural "%d reviews deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/review-management.php:309
+msgid "Review approved."
+msgstr ""
+
+#: includes/review-management.php:314
+msgid "Review rejected."
+msgstr ""
+
+#: includes/review-management.php:319
+msgid "Review deleted successfully."
+msgstr ""
+
+#: includes/review-management.php:324
+msgid "Failed to delete review."
+msgstr ""
+
+#: includes/review-management.php:346
+#: includes/review-management.php:526
+msgid "Approved"
+msgstr ""
+
+#: includes/review-management.php:347
+#: includes/review-management.php:527
+msgid "Pending"
+msgstr ""
+
+#: includes/review-management.php:348
+#: includes/review-management.php:528
+msgid "Rejected"
+msgstr ""
+
+#: includes/review-management.php:505
+msgid "Are you sure you want to delete this review?"
+msgstr ""
+
+#: includes/review-management.php:525
+msgid "All Statuses"
+msgstr ""
+
+#: includes/review-management.php:531
+#: includes/shortcodes.php:373
+msgid "Post ID"
+msgstr ""
+
+#: includes/review-management.php:533
+msgid "User ID"
+msgstr ""
+
+#: includes/review-management.php:535
+msgid "Search content..."
+msgstr ""
+
+#: includes/review-management.php:537
+msgid "Filter"
+msgstr ""
+
+#: includes/review-management.php:540
+msgid "Clear"
+msgstr ""
+
+#: includes/review-management.php:552
+#: includes/review-management.php:691
+msgid "Bulk Actions"
+msgstr ""
+
+#: includes/review-management.php:553
+#: includes/review-management.php:654
+#: includes/review-management.php:692
+msgid "Approve"
+msgstr ""
+
+#: includes/review-management.php:554
+#: includes/review-management.php:660
+#: includes/review-management.php:693
+msgid "Reject"
+msgstr ""
+
+#: includes/review-management.php:555
+#: includes/review-management.php:665
+#: includes/review-management.php:694
+msgid "Delete"
+msgstr ""
+
+#: includes/review-management.php:557
+#: includes/review-management.php:696
+msgid "Apply"
+msgstr ""
+
+#: includes/review-management.php:568
+#: includes/review-management.php:677
+msgid "Review"
+msgstr ""
+
+#: includes/review-management.php:569
+#: includes/review-management.php:678
+msgid "Post"
+msgstr ""
+
+#: includes/review-management.php:570
+#: includes/review-management.php:679
+msgid "User"
+msgstr ""
+
+#: includes/review-management.php:571
+#: includes/review-management.php:680
+msgid "Score"
+msgstr ""
+
+#: includes/review-management.php:572
+#: includes/review-management.php:681
+msgid "Status"
+msgstr ""
+
+#: includes/review-management.php:573
+#: includes/review-management.php:682
+msgid "Date"
+msgstr ""
+
+#: includes/review-management.php:574
+#: includes/review-management.php:683
+msgid "Actions"
+msgstr ""
+
+#: includes/review-management.php:581
+msgid "No reviews found."
+msgstr ""
+
+#: includes/review-management.php:620
+msgid "Post not found"
+msgstr ""
+
+#: includes/review-management.php:634
+msgid "User not found"
+msgstr ""
+
+#: includes/review-management.php:637
+msgid "Guest"
+msgstr ""
+
+#. translators: %s is the number of items in the list.
+#: includes/review-management.php:705
+#, php-format
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/review-management.php:734
+msgid "Summary"
+msgstr ""
+
+#: includes/review-management.php:737
+msgid "Total Reviews:"
+msgstr ""
+
+#: includes/review-management.php:741
+msgid "Approved:"
+msgstr ""
+
+#: includes/review-management.php:747
+msgid "Pending:"
+msgstr ""
+
+#: includes/review-management.php:753
+msgid "Rejected:"
+msgstr ""
+
+#: includes/review-management.php:759
+msgid "Average Score:"
+msgstr ""
+
+#: includes/settings-page.php:21
+msgid "Review System"
+msgstr ""
+
+#: includes/settings-page.php:32
+#: includes/settings-page.php:33
+#: init-review-system.php:98
+msgid "Settings"
+msgstr ""
+
+#: includes/settings-page.php:75
+msgid "General Settings"
+msgstr ""
+
+#: includes/settings-page.php:82
+msgid "Multi-Criteria Review"
+msgstr ""
+
+#: includes/settings-page.php:90
+msgid "Content Quality Guard"
+msgstr ""
+
+#: includes/settings-page.php:92
+msgid "Pre-submit JS checks and banned words configuration (settings only)."
+msgstr ""
+
+#: includes/settings-page.php:99
+msgid "Require login to vote"
+msgstr ""
+
+#: includes/settings-page.php:107
+msgid "Require double-click to rate"
+msgstr ""
+
+#: includes/settings-page.php:115
+msgid "Enable strict IP check"
+msgstr ""
+
+#: includes/settings-page.php:123
 msgid "Auto-insert Reactions Bar (before comment form)"
 msgstr ""
 
+#: includes/settings-page.php:131
+msgid "Display score position"
+msgstr ""
+
+#: includes/settings-page.php:139
+msgid "Display review system"
+msgstr ""
+
+#. translators: %d is the index number of the review criteria.
+#: includes/settings-page.php:149
+#, php-format
+msgid "Criteria #%d"
+msgstr ""
+
+#: includes/settings-page.php:160
+msgid "Enable JS pre-submit checks"
+msgstr ""
+
+#: includes/settings-page.php:168
+msgid "Banned words (exact match, one per line)"
+msgstr ""
+
+#: includes/settings-page.php:176
+msgid "Banned phrases (substring, one per line)"
+msgstr ""
+
+#: includes/settings-page.php:236
 msgid "Automatically insert the Reactions Bar right before the comment form."
 msgstr ""
 
-msgid "Default: OFF. Use this if you want a global injection without editing templates."
+#: includes/settings-page.php:238
+msgid "Use this if you want a global injection without editing templates."
 msgstr ""
 
+#: includes/settings-page.php:251
+msgid "Only allow logged-in users to vote."
+msgstr ""
+
+#: includes/settings-page.php:265
+msgid "Users must double-click a star to confirm rating."
+msgstr ""
+
+#: includes/settings-page.php:267
+msgid "Helps prevent accidental ratings/misclicks."
+msgstr ""
+
+#: includes/settings-page.php:280
+msgid "Prevent multiple votes from the same IP (via hashed IP & transient)."
+msgstr ""
+
+#: includes/settings-page.php:297
+#: includes/settings-page.php:318
+msgid "No (manual shortcode only)"
+msgstr ""
+
+#: includes/settings-page.php:298
+#: includes/settings-page.php:319
+msgid "Before content"
+msgstr ""
+
+#: includes/settings-page.php:299
+#: includes/settings-page.php:320
+msgid "After content"
+msgstr ""
+
+#: includes/settings-page.php:301
+msgid "Auto-display average score at selected position."
+msgstr ""
+
+#: includes/settings-page.php:321
+msgid "Before comment form"
+msgstr ""
+
+#: includes/settings-page.php:322
+msgid "After comment form"
+msgstr ""
+
+#: includes/settings-page.php:324
+msgid "Auto-display star rating system at selected position."
+msgstr ""
+
+#: includes/settings-page.php:370
+msgid "Leave blank to disable"
+msgstr ""
+
+#: includes/settings-page.php:384
+msgid "Run basic client-side checks before submit (e.g., excessive repeated words, missing whitespaces)."
+msgstr ""
+
+#: includes/settings-page.php:399
+msgid "One word per line. Exact match (case-insensitive)."
+msgstr ""
+
+#: includes/settings-page.php:415
+msgid "One phrase per line. Substring contains check (case-insensitive)."
+msgstr ""
+
+#: includes/settings-page.php:428
+msgid "Init Review System Settings"
+msgstr ""
+
+#: includes/settings-page.php:437
+#: includes/shortcodes.php:360
+msgid "Shortcode Builder"
+msgstr ""
+
+#: includes/shortcodes.php:64
+msgid "Please select scores and write a review."
+msgstr ""
+
+#: includes/shortcodes.php:65
+msgid "Your review has been submitted!"
+msgstr ""
+
+#: includes/shortcodes.php:66
+msgid "Submission failed. Please try again later."
+msgstr ""
+
+#: includes/shortcodes.php:67
+#: templates/review-criteria-display.php:51
+msgid "reviews"
+msgstr ""
+
+#: includes/shortcodes.php:74
+msgid "Please rate all required criteria."
+msgstr ""
+
+#: includes/shortcodes.php:356
+msgid "Copy"
+msgstr ""
+
+#: includes/shortcodes.php:357
+msgid "Copied!"
+msgstr ""
+
+#: includes/shortcodes.php:358
+#: templates/review-criteria-display.php:144
+msgid "Close"
+msgstr ""
+
+#: includes/shortcodes.php:359
+msgid "Shortcode Preview"
+msgstr ""
+
+#: includes/shortcodes.php:363
+msgid "Review Widget"
+msgstr ""
+
+#: includes/shortcodes.php:364
+msgid "Review Criteria"
+msgstr ""
+
+#: includes/shortcodes.php:365
+msgid "Reactions Bar"
+msgstr ""
+
+#: includes/shortcodes.php:366
+msgid "Show Icon"
+msgstr ""
+
+#: includes/shortcodes.php:367
+#: assets/js/blocks-editor.js:88
+msgid "Show \"/5\" Suffix"
+msgstr ""
+
+#: includes/shortcodes.php:368
+#: assets/js/blocks-editor.js:89
+msgid "Show Review Count"
+msgstr ""
+
+#: includes/shortcodes.php:369
+#: assets/js/blocks-editor.js:90
+msgid "Hide If No Reviews"
+msgstr ""
+
+#: includes/shortcodes.php:370
+msgid "Enable Schema.org"
+msgstr ""
+
+#: includes/shortcodes.php:371
+msgid "Custom Class"
+msgstr ""
+
+#: includes/shortcodes.php:372
+#: assets/js/blocks-editor.js:166
+msgid "Load CSS"
+msgstr ""
+
+#: includes/shortcodes.php:374
+msgid "Posts per page"
+msgstr ""
+
+#: includes/utils.php:266
+#: templates/review-item.php:23
+msgid "Anonymous"
+msgstr ""
+
+#: templates/reactions-bar.php:36
+msgid "What do you think?"
+msgstr ""
+
+#. translators: %s is the number of reactions.
+#: templates/reactions-bar.php:51
+#, php-format
 msgid "%s reaction"
 msgid_plural "%s reactions"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Content Quality Guard"
+#: templates/reactions-bar.php:95
+msgid "Log in"
 msgstr ""
 
-msgid "Pre-submit JS checks and banned words configuration (settings only)."
+#: templates/reactions-bar.php:97
+msgid "to join the reactions."
 msgstr ""
 
-msgid "Enable JS pre-submit checks"
+#: templates/review-criteria-display.php:76
+msgid "Write a review"
 msgstr ""
 
-msgid "Run basic client-side checks before submit (e.g., excessive repeated words, missing whitespaces)."
+#: templates/review-criteria-display.php:96
+msgid "No reviews yet."
 msgstr ""
 
-msgid "Banned words (exact match, one per line)"
+#: templates/review-criteria-display.php:109
+msgid "Load more reviews"
 msgstr ""
 
-msgid "One word per line. Exact match (case-insensitive)."
+#: templates/review-criteria-display.php:146
+msgid "Submit your review"
 msgstr ""
 
-msgid "Banned phrases (substring, one per line)"
+#: templates/review-criteria-display.php:165
+msgid "Review content"
 msgstr ""
 
-msgid "One phrase per line. Substring contains check (case-insensitive)."
+#: templates/review-criteria-display.php:166
+msgid "Write your thoughts..."
 msgstr ""
 
-msgid "Your review contains banned words."
+#: templates/review-criteria-display.php:170
+msgid "Submit Review"
 msgstr ""
 
-msgid "Your review contains banned phrases."
+#: assets/js/blocks-editor.js:30
+msgid "Post ID (0 = current post)"
 msgstr ""
 
-msgid "Your review appears to contain no whitespace. Please rewrite it more naturally."
+#: assets/js/blocks-editor.js:41
+msgid "Custom CSS class"
 msgstr ""
 
-msgid "Your review repeats the same word too many times."
+#: assets/js/blocks-editor.js:85
+msgid "Review Score Settings"
 msgstr ""
 
-msgid "Please rate all required criteria."
+#: assets/js/blocks-editor.js:87
+msgid "Show Star Icon"
 msgstr ""
 
-msgid "Require double-click to rate"
+#: assets/js/blocks-editor.js:108
+msgid "Review Widget Settings"
 msgstr ""
 
-msgid "Users must double-click a star to confirm rating."
+#: assets/js/blocks-editor.js:110
+#: assets/js/blocks-editor.js:146
+msgid "Output Schema.org Markup"
 msgstr ""
 
-msgid "Helps prevent accidental ratings/misclicks."
+#: assets/js/blocks-editor.js:128
+msgid "Review Criteria Settings"
 msgstr ""
 
-msgid "Avg"
+#: assets/js/blocks-editor.js:131
+msgid "Reviews Per Page (0 = all)"
 msgstr ""
 
-msgid "Votes"
+#: assets/js/blocks-editor.js:139
+msgid "Page Number"
 msgstr ""
 
-msgid "Total"
-msgstr ""
-
-msgid "Set Average (0–5)"
-msgstr ""
-
-msgid "Set Count (>= 0)"
-msgstr ""
-
-msgid "Total auto = Avg × Count (rounded)"
-msgstr ""
-
-msgid "Reset all review data"
-msgstr ""
-
-msgid "Save / Update the post to apply changes."
-msgstr ""
-
-msgid "No votes yet. This box appears after the first vote."
-msgstr ""
-
-msgid "Abilities exposed by the Init Review System plugin."
-msgstr ""
-
-msgid "Get Review Score"
-msgstr ""
-
-msgid "Returns the average 5-star score and vote count for a post, the same data shown by the [init_review_score] shortcode."
-msgstr ""
-
-msgid "The post ID to get the review score for."
-msgstr ""
-
-msgid "A valid post ID is required."
-msgstr ""
-
-msgid "Get Criteria Reviews"
-msgstr ""
-
-msgid "Returns the multi-criteria score breakdown and a page of written reviews for a post, the same data used by the [init_review_criteria] shortcode."
-msgstr ""
-
-msgid "The post ID to get reviews for."
-msgstr ""
-
-msgid "Page number of reviews to return."
-msgstr ""
-
-msgid "Number of reviews per page (max 100)."
-msgstr ""
-
-msgid "Get Reactions Summary"
-msgstr ""
-
-msgid "Returns emoji reaction counts for a post, the same data used by the [init_reactions] shortcode."
-msgstr ""
-
-msgid "The post ID to get reactions for."
-msgstr ""
-
-# --- Block metadata (block.json) — translated server-side via translate_settings_using_i18n_schema() ---
-#: blocks/review-score/block.json
-msgctxt "block title"
-msgid "Review Score"
-msgstr ""
-
-#: blocks/review-score/block.json
-msgctxt "block description"
-msgid "Insert the average review score (read-only) for a post."
-msgstr ""
-
-#: blocks/review-score/block.json blocks/review-system/block.json
-#: blocks/review-criteria/block.json
-msgctxt "block keyword"
-msgid "review"
-msgstr ""
-
-#: blocks/review-score/block.json blocks/review-system/block.json
-#: blocks/review-criteria/block.json
-msgctxt "block keyword"
-msgid "rating"
-msgstr ""
-
-#: blocks/review-score/block.json
-msgctxt "block keyword"
-msgid "score"
-msgstr ""
-
-#: blocks/review-score/block.json blocks/review-system/block.json
-#: blocks/review-criteria/block.json blocks/reactions/block.json
-msgctxt "block keyword"
-msgid "init"
-msgstr ""
-
-#: blocks/review-system/block.json
-msgctxt "block title"
-msgid "Review Widget"
-msgstr ""
-
-#: blocks/review-system/block.json
-msgctxt "block description"
-msgid "Insert the interactive 5-star voting widget, with optional Schema.org markup."
-msgstr ""
-
-#: blocks/review-system/block.json
-msgctxt "block keyword"
-msgid "vote"
-msgstr ""
-
-#: blocks/review-system/block.json
-msgctxt "block keyword"
-msgid "stars"
-msgstr ""
-
-#: blocks/review-criteria/block.json
-msgctxt "block title"
-msgid "Review Criteria"
-msgstr ""
-
-#: blocks/review-criteria/block.json
-msgctxt "block description"
-msgid "Insert the multi-criteria review breakdown, written reviews list, and submission form."
-msgstr ""
-
-#: blocks/review-criteria/block.json
-msgctxt "block keyword"
-msgid "criteria"
+#: assets/js/blocks-editor.js:164
+msgid "Reactions Settings"
 msgstr ""
 
 #: blocks/reactions/block.json
@@ -558,44 +801,74 @@ msgctxt "block keyword"
 msgid "like"
 msgstr ""
 
-msgid "Post ID (0 = current post)"
+#: blocks/reactions/block.json
+#: blocks/review-criteria/block.json
+#: blocks/review-score/block.json
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "init"
 msgstr ""
 
-msgid "Custom CSS class"
+#: blocks/review-criteria/block.json
+msgctxt "block title"
+msgid "Review Criteria"
 msgstr ""
 
-msgid "Review Score Settings"
+#: blocks/review-criteria/block.json
+msgctxt "block description"
+msgid "Insert the multi-criteria review breakdown, written reviews list, and submission form."
 msgstr ""
 
-msgid "Show Star Icon"
+#: blocks/review-criteria/block.json
+#: blocks/review-score/block.json
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "review"
 msgstr ""
 
-msgid "Show \"/5\" Suffix"
+#: blocks/review-criteria/block.json
+msgctxt "block keyword"
+msgid "criteria"
 msgstr ""
 
-msgid "Show Review Count"
+#: blocks/review-criteria/block.json
+#: blocks/review-score/block.json
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "rating"
 msgstr ""
 
-msgid "Hide If No Reviews"
+#: blocks/review-score/block.json
+msgctxt "block title"
+msgid "Review Score"
 msgstr ""
 
-msgid "Review Widget Settings"
+#: blocks/review-score/block.json
+msgctxt "block description"
+msgid "Insert the average review score (read-only) for a post."
 msgstr ""
 
-msgid "Output Schema.org Markup"
+#: blocks/review-score/block.json
+msgctxt "block keyword"
+msgid "score"
 msgstr ""
 
-msgid "Review Criteria Settings"
+#: blocks/review-system/block.json
+msgctxt "block title"
+msgid "Review Widget"
 msgstr ""
 
-msgid "Reviews Per Page (0 = all)"
+#: blocks/review-system/block.json
+msgctxt "block description"
+msgid "Insert the interactive 5-star voting widget, with optional Schema.org markup."
 msgstr ""
 
-msgid "Page Number"
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "vote"
 msgstr ""
 
-msgid "Reactions Settings"
-msgstr ""
-
-msgid "Load CSS"
+#: blocks/review-system/block.json
+msgctxt "block keyword"
+msgid "stars"
 msgstr ""

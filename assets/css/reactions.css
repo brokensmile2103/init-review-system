@@ -1,1 +1,168 @@
-.init-reaction-bar{margin:20px auto;padding:20px;border-radius:12px;background:var(--irs-rx-bg,rgb(125 125 125 / .06));text-align:center;max-width:640px}.init-reaction-title{font-weight:600;margin-bottom:15px;font-size:1.1rem}.init-reaction-total{margin-bottom:12px;font-size:.95rem;font-weight:500;color:#555}.init-reaction-total span{font-weight:700;color:#000}.init-reaction-list{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}.init-reaction-bar .init-rx{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:70px;height:75px;padding:10px;border-radius:12px;border:1px solid rgb(0 0 0 / .08);background:#fff;cursor:pointer;font:inherit;transition:transform .15s ease,box-shadow .15s ease,background .15s ease;text-align:center}.init-reaction-bar .init-rx .rx-emoji{font-size:24px;line-height:1}.init-reaction-bar .init-rx .rx-count{font-weight:700;font-size:.9rem;line-height:1}.init-reaction-bar .init-rx .rx-label{font-size:.8rem;opacity:.8;line-height:1}.init-reaction-bar .init-rx:hover{transform:translateY(-2px);box-shadow:0 3px 12px rgb(0 0 0 / .08);background:#fdfdfd}.init-reaction-bar .init-rx.is-active{border-color:#f39c12;box-shadow:0 0 0 2px #f39c1240}.init-reaction-bar .init-rx.is-disabled{cursor:not-allowed;background:#f9f9f9;border:1px dashed rgb(0 0 0 / .2);opacity:1}.init-reaction-bar .init-rx.is-disabled:hover{transform:none;box-shadow:none;background:#f8f8f8}.init-reaction-login-hint{margin-top:10px;font-size:.95rem;opacity:.85}.init-reaction-login-hint a{text-decoration:underline;font-weight:500}.init-reaction-bar.dark{background:rgb(255 255 255 / .1)}.init-reaction-bar.dark .init-reaction-title{color:#eee}.init-reaction-bar.dark .init-reaction-total{color:#aaa}.init-reaction-bar.dark .init-reaction-total span{color:#fff}.init-reaction-bar.dark .init-rx{background:#1e1e1e;border:1px solid rgb(255 255 255 / .08);color:#ddd}.init-reaction-bar.dark .init-rx:hover{background:#242424;box-shadow:0 3px 12px rgb(0 0 0 / .6)}.init-reaction-bar.dark .init-rx.is-active{border-color:#f39c12;box-shadow:0 0 0 2px rgb(243 156 18 / .35)}.init-reaction-bar.dark .init-rx.is-disabled{background:#181818;border:1px dashed rgb(255 255 255 / .2);color:#888}.init-reaction-bar.dark .init-rx.is-disabled:hover{background:#181818}.init-reaction-bar.dark .rx-label{opacity:.75}.init-reaction-bar.dark .rx-count{color:#fff}.init-reaction-bar.dark .init-reaction-login-hint{color:#aaa}.init-reaction-bar.dark .init-reaction-login-hint a{color:#f39c12}
+/* ===== Reaction Bar (Centered Layout) ===== */
+.init-reaction-bar {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 12px;
+    background: var(--irs-rx-bg, rgba(125,125,125,.06));
+    text-align: center;
+    max-width: 640px; /* optional: giới hạn chiều rộng */
+}
+
+.init-reaction-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+/* tổng reactions */
+.init-reaction-total {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #555;
+}
+.init-reaction-total span {
+    font-weight: 700;
+    color: #000;
+}
+
+/* danh sách reactions: căn giữa */
+.init-reaction-list {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+/* nút reaction */
+.init-reaction-bar .init-rx {
+    display: inline-flex;
+    flex-direction: column; /* emoji trên, text dưới */
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 70px;
+    height: 75px;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: #fff;
+    cursor: pointer;
+    font: inherit;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    text-align: center;
+}
+
+.init-reaction-bar .init-rx .rx-emoji {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.init-reaction-bar .init-rx .rx-count {
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.init-reaction-bar .init-rx .rx-label {
+    font-size: 0.8rem;
+    opacity: .8;
+    line-height: 1;
+}
+
+/* hover & active */
+.init-reaction-bar .init-rx:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    background: #fdfdfd;
+}
+.init-reaction-bar .init-rx.is-active {
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px #f39c1240;
+}
+
+/* state: disabled (không login) */
+.init-reaction-bar .init-rx.is-disabled {
+    cursor: not-allowed;
+    background: #f9f9f9;
+    border: 1px dashed rgba(0,0,0,.2);
+    opacity: 1; /* giữ text/emoji rõ ràng */
+}
+.init-reaction-bar .init-rx.is-disabled:hover {
+    transform: none;
+    box-shadow: none;
+    background: #f8f8f8;
+}
+
+/* hint login */
+.init-reaction-login-hint {
+    margin-top: 10px;
+    font-size: .95rem;
+    opacity: .85;
+}
+.init-reaction-login-hint a {
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+/* ===== Reaction Bar Dark Mode ===== */
+.init-reaction-bar.dark {
+    background: rgba(255,255,255,.1);
+}
+
+/* text chung */
+.init-reaction-bar.dark .init-reaction-title {
+    color: #eee;
+}
+.init-reaction-bar.dark .init-reaction-total {
+    color: #aaa;
+}
+.init-reaction-bar.dark .init-reaction-total span {
+    color: #fff;
+}
+
+/* nút reaction */
+.init-reaction-bar.dark .init-rx {
+    background: #1e1e1e;
+    border: 1px solid rgba(255,255,255,.08);
+    color: #ddd;
+}
+
+/* hover */
+.init-reaction-bar.dark .init-rx:hover {
+    background: #242424;
+    box-shadow: 0 3px 12px rgba(0,0,0,.6);
+}
+
+/* active */
+.init-reaction-bar.dark .init-rx.is-active {
+    border-color: #f39c12;
+    box-shadow: 0 0 0 2px rgba(243,156,18,.35);
+}
+
+/* disabled */
+.init-reaction-bar.dark .init-rx.is-disabled {
+    background: #181818;
+    border: 1px dashed rgba(255,255,255,.2);
+    color: #888;
+}
+.init-reaction-bar.dark .init-rx.is-disabled:hover {
+    background: #181818;
+}
+
+/* label + count */
+.init-reaction-bar.dark .rx-label {
+    opacity: .75;
+}
+.init-reaction-bar.dark .rx-count {
+    color: #fff;
+}
+
+/* login hint */
+.init-reaction-bar.dark .init-reaction-login-hint {
+    color: #aaa;
+}
+.init-reaction-bar.dark .init-reaction-login-hint a {
+    color: #f39c12;
+}

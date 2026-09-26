@@ -1,1 +1,42 @@
-document.addEventListener("DOMContentLoaded",function(){const e=document.getElementById("cb-select-all-1"),n=document.getElementById("cb-select-all-2"),t=document.querySelectorAll('input[name="reviews[]"]');function c(c){t.forEach(e=>e.checked=c),e&&(e.checked=c),n&&(n.checked=c)}e&&e.addEventListener("change",function(){c(this.checked)}),n&&n.addEventListener("change",function(){c(this.checked)}),t.forEach(c=>{c.addEventListener("change",function(){const c=document.querySelectorAll('input[name="reviews[]"]:checked').length,d=c===t.length,i=c>0;e&&(e.checked=d,e.indeterminate=i&&!d),n&&(n.checked=d,n.indeterminate=i&&!d)})})});
+// Handle select all checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll1 = document.getElementById('cb-select-all-1');
+    const selectAll2 = document.getElementById('cb-select-all-2');
+    const checkboxes = document.querySelectorAll('input[name="reviews[]"]');
+    
+    function toggleAll(checked) {
+        checkboxes.forEach(cb => cb.checked = checked);
+        if (selectAll1) selectAll1.checked = checked;
+        if (selectAll2) selectAll2.checked = checked;
+    }
+    
+    if (selectAll1) {
+        selectAll1.addEventListener('change', function() {
+            toggleAll(this.checked);
+        });
+    }
+    
+    if (selectAll2) {
+        selectAll2.addEventListener('change', function() {
+            toggleAll(this.checked);
+        });
+    }
+    
+    // Update select all state based on individual checkboxes
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            const checkedCount = document.querySelectorAll('input[name="reviews[]"]:checked').length;
+            const allChecked = checkedCount === checkboxes.length;
+            const someChecked = checkedCount > 0;
+            
+            if (selectAll1) {
+                selectAll1.checked = allChecked;
+                selectAll1.indeterminate = someChecked && !allChecked;
+            }
+            if (selectAll2) {
+                selectAll2.checked = allChecked;
+                selectAll2.indeterminate = someChecked && !allChecked;
+            }
+        });
+    });
+});

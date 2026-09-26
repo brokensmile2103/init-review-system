@@ -4,7 +4,7 @@
 
 **No bloat. Just clean reviews. Built for themes and developers.**
 
-[![Version](https://img.shields.io/badge/stable-v2.0.0-blue.svg)](https://wordpress.org/plugins/init-review-system/)
+[![Version](https://img.shields.io/badge/stable-v2.0.1-blue.svg)](https://wordpress.org/plugins/init-review-system/)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 ![Made with ❤️ in HCMC](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20in%20HCMC-blue)
 
@@ -14,7 +14,7 @@ Init Review System adds a fast and flexible 5-star rating system and emoji-based
 
 Votes and reactions are stored using REST, tracked via localStorage (for guests), and can be auto-inserted, embedded via shortcode, or added natively as Block Editor blocks. Output is schema-ready with `AggregateRating` for SEO, and all components are cleanly theme-compatible.
 
-## What's New in v2.0.0
+## What's New in v2.0.x
 
 - **Block Editor (Gutenberg) support**: four dynamic blocks — Review Score, Review Widget, Review Criteria, Reactions Bar — grouped under their own **Init Review System** category in the block inserter. Each block is registered via `block.json` with a PHP `render.php` that calls the exact same shortcode function as its shortcode counterpart, so output never diverges. A single no-build-step vanilla JS file powers the editor integration, with `wp.serverSideRender` for live preview
 - **Abilities API support (WordPress 6.9+)**: registers three read-only abilities — `init-review-system/get-review-score`, `init-review-system/get-criteria-reviews`, `init-review-system/get-reactions-summary` — discoverable and executable via PHP, `wp_get_abilities()`, and the `wp-abilities/v1` REST namespace when a site opts in. Actions that write data (vote, submit review, toggle reaction) are intentionally **not** exposed as abilities. Fully optional: on WordPress versions older than 6.9, this silently does nothing

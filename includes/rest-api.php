@@ -60,6 +60,27 @@ function init_plugin_suite_review_system_register_rest_routes() {
 	);
 
 	// Public endpoint - no need to protect.
+	// Public endpoint: review đã đăng còn tồn tại không (front-end dùng để làm mới cờ "đã review" của khách).
+	register_rest_route(
+		INIT_PLUGIN_SUITE_RS_NAMESPACE,
+		'/criteria-review-status',
+		array(
+			'methods'             => 'GET',
+			'callback'            => 'init_plugin_suite_review_system_rest_criteria_review_status',
+			'permission_callback' => '__return_true',
+			'args'                => array(
+				'post_id'   => array(
+					'required' => true,
+					'type'     => 'integer',
+				),
+				'review_id' => array(
+					'required' => true,
+					'type'     => 'integer',
+				),
+			),
+		)
+	);
+
 	register_rest_route(
 		INIT_PLUGIN_SUITE_RS_NAMESPACE,
 		'/get-criteria-reviews',
@@ -410,6 +431,7 @@ function init_plugin_suite_review_system_rest_submit_criteria_review( $request )
 
 	if ( $check_ip ) {
 		init_plugin_suite_review_system_mark_ip_recent( $post_id, 'criteria' );
+		init_plugin_suite_review_system_save_review_ip_hash( $insert_id, $post_id );
 	}
 
 	$avg_score = round( array_sum( $valid_scores ) / count( $valid_scores ), 2 );
@@ -465,6 +487,30 @@ function init_plugin_suite_review_system_render_review_item( $review, $criteria,
 		)
 	);
 	return (string) ob_get_clean();
+}
+
+/**
+ * GET /criteria-review-status — review (của khách) đã đăng còn tồn tại không.
+ *
+ * @since 2.0.2
+ *
+ * @param WP_REST_Request $request Request.
+ * @return WP_REST_Response|WP_Error
+ */
+function init_plugin_suite_review_system_rest_criteria_review_status( WP_REST_Request $request ) {
+	$post_id = absint( $request['post_id'] );
+
+	if ( ! $post_id || ! init_plugin_suite_review_system_can_view_post( $post_id ) ) {
+		return new WP_Error( 'invalid_data', __( 'Invalid request data.', 'init-review-system' ), array( 'status' => 400 ) );
+	}
+
+	$review = init_plugin_suite_review_system_get_review_by_id( absint( $request['review_id'] ) );
+	$exists = $review
+		&& (int) $review['post_id'] === $post_id
+		&& 0 === (int) $review['user_id']
+		&& 'approved' === $review['status'];
+
+	return rest_ensure_response( array( 'exists' => (bool) $exists ) );
 }
 
 /**

@@ -2,9 +2,9 @@
 Contributors: brokensmile.2103
 Tags: review, rating, vote, reaction, schema
 Requires at least: 6.9
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -244,6 +244,12 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 2.0.2 – November 23, 2026 =
+- **Fixed:** after a review was deleted, its author could not write a new one for the same post — the "Write a review" button stayed disabled forever. The front-end kept a permanent `localStorage` flag (`init_criteria_reviewed_{post_id}`) that was never cleared when the review disappeared. Logged-in users now rely on the server (which already knew the review was gone) and any stale flag is removed. Guests store their review ID instead of a plain flag, and it is verified with the server on page load before the button is locked
+- **Fixed:** with strict IP check enabled, a guest whose review was deleted or rejected by an admin stayed blocked from reviewing that post again for 7 days. The review now remembers a hash of the guest IP (new `ip_hash` column, added automatically on update) and the IP is released from the recent list when the review is deleted or rejected (single or bulk). Reviews posted before this update cannot be released this way and simply expire after 7 days as before
+- **Changed:** guests' old-format flag (`1`, without a review ID) can't be verified, so it is discarded — such guests may review again (the server-side checks still apply)
+- New REST endpoint: `GET /criteria-review-status` (`post_id`, `review_id`) returns `{ "exists": true|false }` for an approved guest review
 
 = 2.0.1 – September 26, 2026 =
 - **Fixed:** the activation hook was registered from `includes/init.php` with the wrong `__FILE__`, so it never ran — tables were only created the first time an administrator opened wp-admin, and front-end requests before that could fail. Tables are now created on activation (network-wide activation creates them for every site)

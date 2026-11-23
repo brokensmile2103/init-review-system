@@ -189,6 +189,63 @@ function init_plugin_suite_review_system_mark_ip_recent( $post_id, $type = 'defa
 }
 
 /**
+ * Gỡ một IP (đã băm) khỏi danh sách "gần đây" của bài viết.
+ *
+ * Dùng khi review của khách bị xoá/từ chối: nếu không gỡ, bật strict IP check
+ * sẽ khiến IP đó không thể review lại bài viết trong suốt 7 ngày.
+ *
+ * @since 2.0.2
+ *
+ * @param int    $post_id ID bài viết.
+ * @param string $hash    Hash IP (xem init_plugin_suite_review_system_ip_recent_key()).
+ * @param string $type    Loại (simple, criteria...).
+ * @return void
+ */
+function init_plugin_suite_review_system_unmark_ip_recent( $post_id, $hash, $type = 'criteria' ) {
+	if ( '' === (string) $hash ) {
+		return;
+	}
+
+	$key  = 'irs_recent_ips_' . absint( $post_id ) . '_' . $type;
+	$list = get_transient( $key );
+	if ( ! is_array( $list ) || ! in_array( $hash, $list, true ) ) {
+		return;
+	}
+
+	$list = array_values( array_diff( $list, array( $hash ) ) );
+	if ( empty( $list ) ) {
+		delete_transient( $key );
+	} else {
+		set_transient( $key, $list, WEEK_IN_SECONDS );
+	}
+}
+
+/**
+ * Lưu hash IP của khách vào review vừa tạo, để khi review bị xoá/từ chối còn biết IP nào cần gỡ.
+ *
+ * @since 2.0.2
+ *
+ * @param int $review_id ID review.
+ * @param int $post_id   ID bài viết.
+ * @return void
+ */
+function init_plugin_suite_review_system_save_review_ip_hash( $review_id, $post_id ) {
+	global $wpdb;
+
+	list( , $hash ) = init_plugin_suite_review_system_ip_recent_key( $post_id, 'criteria' );
+
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->update(
+		$wpdb->prefix . 'init_criteria_reviews',
+		array( 'ip_hash' => $hash ),
+		array( 'id' => absint( $review_id ) ),
+		array( '%s' ),
+		array( '%d' )
+	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+}
+
+/**
  * Tìm file template: ưu tiên bản override trong theme
  * (`{theme}/init-review-system/{template}`), sau đó tới bản của plugin.
  *

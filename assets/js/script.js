@@ -1,4 +1,8 @@
 // === Init Review System — front-end ===
+// v2.0.2:
+// - Xoá review xong người dùng có thể viết lại: nút "Viết review" không còn bị khoá mãi bởi cờ
+//   localStorage cũ. Người đã đăng nhập dùng trạng thái do server render; khách thì cờ cục bộ
+//   được đối chiếu với server (review còn tồn tại không) rồi mới khoá.
 // v2.0.1:
 // - Khởi tạo được cả khi script bị defer/delay bởi plugin tối ưu (DOMContentLoaded đã qua).
 // - Mỗi phần tử chỉ được gắn event đúng 1 lần, kể cả khi bắn lại
@@ -28,6 +32,13 @@ const initReviewSystemStorage = {
             window.localStorage.setItem(key, value);
         } catch (e) {
             // Bỏ qua: không lưu được thì chỉ mất cờ "đã vote" phía client.
+        }
+    },
+    remove(key) {
+        try {
+            window.localStorage.removeItem(key);
+        } catch (e) {
+            // Bỏ qua.
         }
     }
 };
@@ -235,6 +246,20 @@ function disableStars(stars) {
     stars.forEach(star => { star.style.pointerEvents = 'none'; });
 }
 
+// Hỏi server review (của khách) còn tồn tại không. Trả về true/false, hoặc null nếu không
+// xác định được (lỗi mạng...) — khi đó giữ nguyên trạng thái khoá.
+async function initReviewSystemVerifyGuestReview(data, postId, reviewId) {
+    try {
+        const url = `${data.rest_url}/criteria-review-status?post_id=${encodeURIComponent(postId)}&review_id=${encodeURIComponent(reviewId)}`;
+        const response = await fetch(url, { credentials: 'same-origin' });
+        if (!response.ok) return null;
+        const result = await response.json();
+        return !!result?.exists;
+    } catch (e) {
+        return null;
+    }
+}
+
 // === Review nhiều tiêu chí ===
 // Hàm riêng (không gắn thẳng vào DOMContentLoaded) để nơi khác (vd: theme
 // lazy-load tab Review qua AJAX) có thể gọi lại sau khi khối
@@ -249,19 +274,48 @@ function initReviewSystemCriteriaModal() {
     const localKey   = `init_criteria_reviewed_${postId}`;
     const data       = window.InitReviewSystemData || {};
 
-    const hasReviewed  = !!initReviewSystemStorage.get(localKey);
-    const requireLogin = !!data.require_login;
     const isLoggedIn   = !!data.is_logged_in;
-    const canReview    = !hasReviewed && (!requireLogin || isLoggedIn);
 
-    if (openBtn && !canReview) {
-        openBtn.classList.add('is-disabled');
-        openBtn.setAttribute('disabled', 'disabled');
+    // Trạng thái nút do server render (đã tính cả "đã review chưa" lẫn "bắt buộc đăng nhập")
+    // là nguồn đúng nhất; chỉ ghi nhận ở lần chạy đầu, vì sau đó script có thể tự khoá nút.
+    if (openBtn && openBtn.dataset.irsServerLocked === undefined) {
+        openBtn.dataset.irsServerLocked = openBtn.hasAttribute('disabled') ? '1' : '0';
+    }
+    const serverLocked = openBtn?.dataset.irsServerLocked === '1';
+
+    const lockBtn = () => {
+        openBtn?.classList.add('is-disabled');
+        openBtn?.setAttribute('disabled', 'disabled');
+    };
+    const unlockBtn = () => {
+        openBtn?.classList.remove('is-disabled');
+        openBtn?.removeAttribute('disabled');
+    };
+
+    if (isLoggedIn) {
+        // Server biết chính xác user đã review hay chưa — cờ localStorage cũ (có thể đã
+        // lỗi thời sau khi review bị xoá) không được phép khoá nút.
+        initReviewSystemStorage.remove(localKey);
+    } else if (!serverLocked && postId) {
+        const stored = initReviewSystemStorage.get(localKey);
+        if (stored && /^\d+$/.test(stored)) {
+            // Khách đã review: khoá tạm rồi hỏi server review đó còn không.
+            lockBtn();
+            initReviewSystemVerifyGuestReview(data, postId, stored).then(exists => {
+                if (exists === false) {
+                    initReviewSystemStorage.remove(localKey);
+                    unlockBtn();
+                }
+            });
+        } else if (stored) {
+            // Cờ định dạng cũ ('1', không có ID) — không thể đối chiếu, bỏ đi.
+            initReviewSystemStorage.remove(localKey);
+        }
     }
 
     if (initReviewSystemBindOnce(openBtn, 'Open')) {
         openBtn.addEventListener('click', () => {
-            if (!canReview) return;
+            if (openBtn.hasAttribute('disabled')) return;
             const currentModal = document.getElementById('init-review-modal');
             currentModal?.classList.add('is-active');
             clearInlineMsg(currentModal?.querySelector('.init-review-modal-form'));
@@ -428,7 +482,11 @@ function initReviewSystemBindModal(modal) {
             const result = await response.json().catch(() => ({}));
 
             if (response.ok && result?.success) {
-                initReviewSystemStorage.set(localKey, '1');
+                // Chỉ khách mới cần cờ cục bộ (lưu ID review để đối chiếu lại với server).
+                // Người đã đăng nhập: server tự biết, nên không lưu.
+                if (!data.is_logged_in) {
+                    initReviewSystemStorage.set(localKey, String(result.review_id || '1'));
+                }
                 notifySuccess(i18n.success, form);
 
                 setTimeout(() => {

@@ -197,6 +197,7 @@ function init_plugin_suite_review_system_create_criteria_review_table() {
         review_content LONGTEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         status VARCHAR(20) DEFAULT 'approved',
+        ip_hash VARCHAR(16) NOT NULL DEFAULT '',
         PRIMARY KEY  (id),
         KEY post_id (post_id),
         KEY user_id (user_id),

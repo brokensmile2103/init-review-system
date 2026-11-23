@@ -102,7 +102,7 @@ function init_plugin_suite_review_system_apply_review_action( $action, $review_i
 	// không tự chạy qua hook after_insert như luồng submit thường.
 	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,PluginCheck.Security.DirectDB.UnescapedDBParameter
 	$affected_reviews = $wpdb->get_results(
-		$wpdb->prepare( "SELECT post_id, user_id FROM {$table_name} WHERE id IN ($placeholders)", ...$review_ids ),
+		$wpdb->prepare( "SELECT post_id, user_id, ip_hash FROM {$table_name} WHERE id IN ($placeholders)", ...$review_ids ),
 		ARRAY_A
 	);
 
@@ -123,6 +123,16 @@ function init_plugin_suite_review_system_apply_review_action( $action, $review_i
 
 	if ( false === $result ) {
 		return false;
+	}
+
+	// Review của khách bị xoá/từ chối thì không còn tính là "đã review":
+	// gỡ IP khỏi danh sách chống trùng để họ (hoặc người cùng IP) viết lại được.
+	if ( in_array( $action, array( 'delete', 'reject' ), true ) ) {
+		foreach ( (array) $affected_reviews as $row ) {
+			if ( 0 === (int) $row['user_id'] && ! empty( $row['ip_hash'] ) ) {
+				init_plugin_suite_review_system_unmark_ip_recent( $row['post_id'], $row['ip_hash'], 'criteria' );
+			}
+		}
 	}
 
 	// Invalidate mỗi cặp post/user đúng 1 lần.

@@ -207,6 +207,7 @@ function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page
 		$cache_key = "reviews_{$post_id}_v{$version}_{$paged}_{$per_page}_{$status}";
 		$cached    = wp_cache_get( $cache_key, 'init_review_system' );
 		if ( false !== $cached ) {
+			init_plugin_suite_review_system_prime_review_meta( $cached ); // 2.0.3
 			return $cached;
 		}
 	}
@@ -246,6 +247,8 @@ function init_plugin_suite_review_system_get_reviews_by_post_id( $post_id, $page
 	if ( $ttl > 0 ) {
 		wp_cache_set( $cache_key, $results, 'init_review_system', $ttl );
 	}
+
+	init_plugin_suite_review_system_prime_review_meta( $results ); // 2.0.3
 
 	return $results;
 }
@@ -324,6 +327,8 @@ function init_plugin_suite_review_system_get_reviews_by_post_ids( $post_ids = ar
 	);
 	$results = $wpdb->get_results( $sql, ARRAY_A );
 	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber,PluginCheck.Security.DirectDB.UnescapedDBParameter
+
+	init_plugin_suite_review_system_prime_review_meta( $results ); // 2.0.3
 
 	return init_plugin_suite_review_system_unserialize_reviews( $results );
 }
@@ -601,6 +606,8 @@ function init_plugin_suite_review_system_get_reviews_by_user_id( $user_id, $page
 	// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
 	$results = $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
 	// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter
+
+	init_plugin_suite_review_system_prime_review_meta( $results ); // 2.0.3
 
 	return init_plugin_suite_review_system_unserialize_reviews( $results );
 }

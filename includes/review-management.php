@@ -110,6 +110,9 @@ function init_plugin_suite_review_system_apply_review_action( $action, $review_i
 		$result = $wpdb->query(
 			$wpdb->prepare( "DELETE FROM {$table_name} WHERE id IN ($placeholders)", ...$review_ids )
 		);
+		if ( false !== $result ) {
+			init_plugin_suite_review_system_delete_all_review_meta( $review_ids ); // 2.0.3: review meta đi theo review.
+		}
 	} else {
 		$status = ( 'approve' === $action ) ? 'approved' : 'rejected';
 		$result = $wpdb->query(

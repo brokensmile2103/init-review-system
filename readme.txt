@@ -4,7 +4,7 @@ Tags: review, rating, vote, reaction, schema
 Requires at least: 6.9
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -244,6 +244,10 @@ Yes. You can define up to 5 custom criteria and show them using the provided sho
 No. The plugin currently supports only a 5-star scale.
 
 == Changelog ==
+
+= 2.0.3 – November 27, 2026 =
+- **New:** review meta, like post meta and comment meta, so themes and plugins can store extra data for each review. New table `{prefix}init_review_meta` (created automatically on update) and functions `init_plugin_suite_review_system_add_review_meta()`, `_update_review_meta()`, `_get_review_meta()`, `_delete_review_meta()` and `_prime_review_meta()`, built on the WordPress Metadata API (meta type `init_review`, object cache, `added/updated/deleted_init_review_meta` hooks)
+- **Improved:** review lists load the meta of all their reviews in one query, only on sites that use review meta, and a review's meta is removed when the review is deleted
 
 = 2.0.2 – November 23, 2026 =
 - **Fixed:** after a review was deleted, its author could not write a new one for the same post — the "Write a review" button stayed disabled forever. The front-end kept a permanent `localStorage` flag (`init_criteria_reviewed_{post_id}`) that was never cleared when the review disappeared. Logged-in users now rely on the server (which already knew the review was gone) and any stale flag is removed. Guests store their review ID instead of a plain flag, and it is verified with the server on page load before the button is locked

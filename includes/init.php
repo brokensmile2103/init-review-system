@@ -58,13 +58,14 @@ function init_plugin_suite_review_system_on_activation( $network_wide = false ) 
 }
 
 /**
- * Tạo/cập nhật cả 2 bảng và ghi lại DB version cho site hiện tại.
+ * Tạo/cập nhật các bảng (review, reaction, review meta) và ghi lại DB version cho site hiện tại.
  *
  * @return void
  */
 function init_plugin_suite_review_system_install_tables() {
 	init_plugin_suite_review_system_create_criteria_review_table();
 	init_plugin_suite_review_system_create_reactions_table();
+	init_plugin_suite_review_system_create_review_meta_table(); // 2.0.3
 
 	update_option( 'irs_plugin_db_version', INIT_PLUGIN_SUITE_RS_VERSION );
 }

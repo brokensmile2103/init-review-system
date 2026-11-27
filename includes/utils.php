@@ -319,6 +319,9 @@ function init_plugin_suite_review_system_enrich_reviews( $reviews, $avatar_size 
 		cache_users( $user_ids );
 	}
 
+	// 2.0.3: nạp sẵn review meta cho cả danh sách (1 query, chỉ khi site có dùng meta).
+	init_plugin_suite_review_system_prime_review_meta( $reviews );
+
 	$default_avatar = init_plugin_suite_review_system_get_default_avatar_url();
 	$anonymous      = __( 'Anonymous', 'init-review-system' );
 
